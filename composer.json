@@ -10,7 +10,7 @@
     ],
     "minimum-stability": "stable",
     "require": {
-        "ezsystems/ezpublish-legacy": "2014.11.*"
+        "ezsystems/ezpublish-legacy": "dev-master"
     },
     "autoload": {
         "psr-4": {
