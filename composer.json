@@ -1,0 +1,19 @@
+{
+    "name": "ezsystems/legacy-bridge",
+    "description": "eZ Platform bridge to eZ Publish Legacy",
+    "license": "GPL-2.0",
+    "authors": [
+        {
+            "name": "eZ Systems",
+            "email": "dev-team@ez.no"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "eZ\\Bundle\\EzPublishLegacyBundle\\": "bundle/",
+            "eZ\\Publish\\Core\\MVC\\Legacy\\": "mvc"
+        }
+    }
+}
