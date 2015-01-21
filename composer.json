@@ -9,7 +9,9 @@
         }
     ],
     "minimum-stability": "stable",
-    "require": {},
+    "require": {
+        "ezsystems/ezpublish-legacy": "2014.11.*"
+    },
     "autoload": {
         "psr-4": {
             "eZ\\Bundle\\EzPublishLegacyBundle\\": "bundle/",
