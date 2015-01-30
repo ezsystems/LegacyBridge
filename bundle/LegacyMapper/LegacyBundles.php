@@ -9,9 +9,8 @@
 
 namespace eZ\Bundle\EzPublishLegacyBundle\LegacyMapper;
 
-use eZ\Publish\Core\MVC\Legacy\LegacyEvents;
 use eZ\Publish\Core\MVC\Legacy\Event\PreBuildKernelEvent;
-use eZ\Publish\Core\MVC\ConfigResolverInterface;
+use eZ\Publish\Core\MVC\Legacy\LegacyEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -19,11 +18,6 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 class LegacyBundles implements EventSubscriberInterface
 {
-    /**
-     * @var \eZ\Publish\Core\MVC\ConfigResolverInterface
-     */
-    private $configResolver;
-
     /**
      * @var array
      */
@@ -36,12 +30,8 @@ class LegacyBundles implements EventSubscriberInterface
      */
     private $enabled = true;
 
-    public function __construct(
-        ConfigResolverInterface $configResolver,
-        array $options = array()
-    )
+    public function __construct( array $options = array() )
     {
-        $this->configResolver = $configResolver;
         $this->options = $options;
     }
 
