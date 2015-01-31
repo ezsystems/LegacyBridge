@@ -1,0 +1,18 @@
+<phpunit
+  backupGlobals="false"
+  backupStaticAttributes="false"
+  bootstrap="bootstrap.php"
+  convertErrorsToExceptions="true"
+  convertNoticesToExceptions="true"
+  convertWarningsToExceptions="true"
+  colors="false"
+  >
+  <testsuites>
+    <testsuite name="eZ Publish Legacy MVC suite">
+        <directory>mvc</directory>
+    </testsuite>
+    <testsuite name="eZ Publish Legacy Bundle suite">
+        <directory>bundle</directory>
+    </testsuite>
+  </testsuites>
+</phpunit>

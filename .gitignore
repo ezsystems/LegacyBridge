@@ -1,1 +1,5 @@
 /vendor/
+composer.lock
+ezpublish_legacy
+bin
+config.php
