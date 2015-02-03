@@ -19,8 +19,8 @@ use eZScript;
 use eZCache;
 
 /**
- * Purger for legacy cache.
- * Hooks into cache:clear command.
+ * Purger for legacy file based cache.
+ * Hooks into cache:clear command, which again is used by composer install and update.
  */
 class LegacyCachePurger implements CacheClearerInterface
 {
@@ -77,7 +77,7 @@ class LegacyCachePurger implements CacheClearerInterface
                         )
                     )
                 );
-                $helper->clearItems( eZCache::fetchList(), false );
+                $helper->clearItems( eZCache::fetchByTag( "template,ini,i18n" ), "Legacy file cache (Template, ini and i18n)" );
             },
             false,
             false
