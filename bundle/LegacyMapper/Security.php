@@ -17,6 +17,7 @@ use eZ\Publish\Core\MVC\Legacy\LegacyEvents;
 use ezpWebBasedKernelHandler;
 use eZUser;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\SecurityContextInterface;
 
 /**
@@ -104,7 +105,9 @@ class Security implements EventSubscriberInterface
         // IS_AUTHENTICATED_FULLY inherits from IS_AUTHENTICATED_REMEMBERED.
         // User can be either authenticated by providing credentials during current session
         // or by "remember me" if available.
-        return $this->securityContext->isGranted( 'IS_AUTHENTICATED_REMEMBERED' );
+        return
+            $this->securityContext->getToken() instanceof TokenInterface
+            && $this->securityContext->isGranted( 'IS_AUTHENTICATED_REMEMBERED' );
     }
 
     /**
