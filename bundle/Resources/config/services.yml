@@ -35,6 +35,8 @@ parameters:
     ezpublish_legacy.siteaccess_mapper.class: eZ\Bundle\EzPublishLegacyBundle\LegacyMapper\SiteAccess
     ezpublish_legacy.siteaccess_mapper.options: { fragment_path: %fragment.path% }
     ezpublish_legacy.session_mapper.class: eZ\Bundle\EzPublishLegacyBundle\LegacyMapper\Session
+    ezpublish_legacy.session_storage_proxy.class: eZ\Publish\Core\MVC\Legacy\Session\LegacySessionStorage
+    ezpublish_legacy.session_handler_proxy.class: eZ\Publish\Core\MVC\Legacy\Session\LegacySessionProxy
     ezpublish_legacy.configuration_mapper.class: eZ\Bundle\EzPublishLegacyBundle\LegacyMapper\Configuration
     ezpublish_legacy.configuration_mapper.options:
         imagemagick_enabled: %ezpublish.image.imagemagick.enabled%
@@ -194,6 +196,14 @@ services:
             - [setRequest, [@?request=]]
         tags:
             - { name: kernel.event_subscriber }
+
+    ezpublish_legacy.session_storage_proxy:
+        class: %ezpublish_legacy.session_storage_proxy.class%
+        arguments: [@ezpublish_legacy.kernel, ~]
+
+    ezpublish_legacy.session_handler_proxy:
+        class: %ezpublish_legacy.session_handler_proxy.class%
+        arguments: [@ezpublish_legacy.kernel, ~]
 
     ezpublish_legacy.configuration_mapper:
         class: %ezpublish_legacy.configuration_mapper.class%
