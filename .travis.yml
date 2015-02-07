@@ -20,18 +20,18 @@ branches:
 before_install:
   # Setup github key to avoid api rate limit
   - ./composer_install_github_key.sh
-  - if [ $SUITE == "phpunit" ]; then ./.travis/phpunit_before_install.sh; fi
-  - if [ $SUITE == "behat" ]; then ./travis/behat_before_install.sh; fi
+  - if [[ $SUITE == "phpunit" ]]; then ./.travis/phpunit_before_install.sh; fi
+  - if [[ $SUITE == "behat" ]]; then ./travis/behat_before_install.sh; fi
 
 # setup requirements for running unit tests
 before_script:
-  - if [ $SUITE == "phpunit" ]; then ./.travis/phpunit_before_script.sh; fi
-  - if [ $SUITE == "behat" ]; then ./.travis/behat_before_script.sh; fi
+  - if [[ $SUITE == "phpunit" ]]; then ./.travis/phpunit_before_script.sh; fi
+  - if [[ $SUITE == "behat" ]]; then ./.travis/behat_before_script.sh; fi
 
 # execute the test command
 script:
-    - if [ $SUITE == "phpunit" ]; then ./bin/phpunit -d date.timezone='America/New_York' -d memory_limit=-1; fi
-    - if [ $SUITE == "behat" ]; then ./bin/behat --profile $PROFILE --suite $TEST
+    - if [[ $SUITE == "phpunit" ]]; then ./bin/phpunit -d date.timezone='America/New_York' -d memory_limit=-1; fi
+    - if [[ $SUITE == "behat" ]]; then ./bin/behat --profile $PROFILE --suite $TEST
 
 # disable mail notifications
 notification:
