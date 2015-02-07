@@ -2,30 +2,36 @@ language: php
 
 # run tests on php misc php versions
 php:
-  - 5.4
-  - 5.5
+#  - 5.4
+#  - 5.5
   - 5.6
+
+env:
+  - SUITE=phpunit
+  - SUITE=behat INSTALL="demoContentNonUniqueDB" PROFILE="demo" TEST="content"
+  - SUITE=behat INSTALL="demoCleanNonUniqueDB" PROFILE="legacyAdmin" TEST="full"
 
 # test only master (+ Pull requests)
 branches:
   only:
     - master
 
-# setup requirements for running unit tests
-before_script:
-  # TEMP get latests version of composer which is faster
-  ##- composer self-update
-  # Disable xdebug to speed things up as we don't currently generate coverge on travis
-  - if [ $TRAVIS_PHP_VERSION != "hhvm" ]; then phpenv config-rm xdebug.ini ; fi
+# Get ezpublish5 repo, and use it as the build dir
+before_install:
   # Setup github key to avoid api rate limit
   - ./composer_install_github_key.sh
-  # Install packages using composer
-  - composer install --dev --prefer-dist
-  # Copy default test configuration
-  - cp config.php-DEVELOPMENT config.php
+  - if [ $SUITE == "phpunit" ]; then ./.travis/phpunit_before_install.sh; fi
+  - if [ $SUITE == "behat" ]; then ./travis/behat_before_install.sh; fi
 
-# execute phpunit as the script command
-script: "./bin/phpunit -d date.timezone='America/New_York' -d memory_limit=-1"
+# setup requirements for running unit tests
+before_script:
+  - if [ $SUITE == "phpunit" ]; then ./.travis/phpunit_before_script.sh; fi
+  - if [ $SUITE == "behat" ]; then ./.travis/behat_before_script.sh; fi
+
+# execute the test command
+script:
+    - if [ $SUITE == "phpunit" ]; then ./bin/phpunit -d date.timezone='America/New_York' -d memory_limit=-1; fi
+    - if [ $SUITE == "behat" ]; then ./bin/behat --profile $PROFILE --suite $TEST
 
 # disable mail notifications
 notification:
