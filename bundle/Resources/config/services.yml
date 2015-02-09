@@ -70,6 +70,8 @@ parameters:
 
     ezpublish_legacy.legacy_bundles.extension_locator.class: eZ\Bundle\EzPublishLegacyBundle\LegacyBundles\LegacyExtensionsLocator
 
+    ezpublish_legacy.setup_listener.class: eZ\Bundle\EzPublishLegacyBundle\EventListener\SetupListener
+
 services:
     ezpublish_legacy.kernel:
         alias: ezpublish_legacy.kernel.lazy
@@ -315,3 +317,11 @@ services:
 
     ezpublish_legacy.legacy_bundles.extension_locator:
         class: %ezpublish_legacy.legacy_bundles.extension_locator.class%
+
+    ezpublish_legacy.setup_listener:
+        class: %ezpublish_legacy.setup_listener.class%
+        arguments:
+            - @router
+            - %ezpublish.siteaccess.default%
+        tags:
+            - { name: kernel.event_subscriber }
