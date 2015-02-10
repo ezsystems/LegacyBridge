@@ -137,6 +137,14 @@ class SecurityTest extends PHPUnit_Framework_TestCase
             ->will( $this->returnValue( false ) );
         $this->securityContext
             ->expects( $this->once() )
+            ->method( 'getToken' )
+            ->will(
+                $this->returnValue(
+                    $this->getMock( '\Symfony\Component\Security\Core\Authentication\Token\TokenInterface' )
+                )
+            );
+        $this->securityContext
+            ->expects( $this->once() )
             ->method( 'isGranted' )
             ->with( 'IS_AUTHENTICATED_REMEMBERED' )
             ->will( $this->returnValue( false ) );
@@ -165,6 +173,14 @@ class SecurityTest extends PHPUnit_Framework_TestCase
             ->method( 'getParameter' )
             ->with( 'legacy_mode' )
             ->will( $this->returnValue( false ) );
+        $this->securityContext
+            ->expects( $this->once() )
+            ->method( 'getToken' )
+            ->will(
+                $this->returnValue(
+                    $this->getMock( '\Symfony\Component\Security\Core\Authentication\Token\TokenInterface' )
+                )
+            );
         $this->securityContext
             ->expects( $this->once() )
             ->method( 'isGranted' )
