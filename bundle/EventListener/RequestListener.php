@@ -10,6 +10,7 @@
 namespace eZ\Bundle\EzPublishLegacyBundle\EventListener;
 
 use eZ\Publish\API\Repository\Repository;
+use eZ\Publish\Core\Base\Exceptions\NotFoundException;
 use eZ\Publish\Core\MVC\ConfigResolverInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
@@ -69,7 +70,15 @@ class RequestListener implements EventSubscriberInterface
             return;
         }
 
-        $apiUser = $this->repository->getUserService()->loadUser( $request->getSession()->get( 'eZUserLoggedInID' ) );
+        try
+        {
+            $apiUser = $this->repository->getUserService()->loadUser($request->getSession()->get('eZUserLoggedInID'));
+        }
+        catch ( NotFoundException $e )
+        {
+            // The user was not found in storage. Load anonymous user instead.
+            $apiUser = $this->repository->getUserService()->loadUser( 10 );
+        }
         $this->repository->setCurrentUser( $apiUser );
 
         $token = $this->securityContext->getToken();
