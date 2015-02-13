@@ -9,6 +9,7 @@
 
 namespace eZ\Bundle\EzPublishLegacyBundle\EventListener;
 
+use eZ\Publish\API\Repository\Exceptions\NotFoundException;
 use eZ\Publish\API\Repository\Repository;
 use eZ\Publish\Core\MVC\ConfigResolverInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -60,23 +61,33 @@ class RequestListener implements EventSubscriberInterface
     {
         /** @var \eZ\Publish\Core\MVC\ConfigResolverInterface $configResolver */
         $request = $event->getRequest();
+        $session = $request->getSession();
         if (
             $event->getRequestType() !== HttpKernelInterface::MASTER_REQUEST
             || !$this->configResolver->getParameter( 'legacy_mode' )
-            || !( $request->getSession()->isStarted() && $request->getSession()->has( 'eZUserLoggedInID' ) )
+            || !( $session->isStarted() && $session->has( 'eZUserLoggedInID' ) )
         )
         {
             return;
         }
 
-        $apiUser = $this->repository->getUserService()->loadUser( $request->getSession()->get( 'eZUserLoggedInID' ) );
-        $this->repository->setCurrentUser( $apiUser );
-
-        $token = $this->securityContext->getToken();
-        if ( $token instanceof TokenInterface )
+        try
         {
-            $token->setUser( new User( $apiUser ) );
-            $token->setAuthenticated( true );
+            $apiUser = $this->repository->getUserService()->loadUser( $session->get( 'eZUserLoggedInID' ) );
+            $this->repository->setCurrentUser( $apiUser );
+
+            $token = $this->securityContext->getToken();
+            if ( $token instanceof TokenInterface )
+            {
+                $token->setUser( new User( $apiUser ) );
+                $token->setAuthenticated( true );
+            }
+        }
+        catch ( NotFoundException $e )
+        {
+            // Invalid user ID, the user may have been removed => invalidate the token and the session.
+            $this->securityContext->setToken( null );
+            $session->invalidate();
         }
     }
 }
