@@ -70,6 +70,9 @@ parameters:
     ezpublish_legacy.config_scope_listener.class: eZ\Bundle\EzPublishLegacyBundle\EventListener\ConfigScopeListener
     ezpublish_legacy.legacy_kernel_listener.class: eZ\Bundle\EzPublishLegacyBundle\EventListener\LegacyKernelListener
 
+    # Overriding base IndexRequest event listener
+    ezpublish.request_index_listener.class: eZ\Bundle\EzPublishLegacyBundle\EventListener\IndexRequestListener
+
     ezpublish_legacy.legacy_bundles.extension_locator.class: eZ\Bundle\EzPublishLegacyBundle\LegacyBundles\LegacyExtensionsLocator
 
     ezpublish_legacy.setup_listener.class: eZ\Bundle\EzPublishLegacyBundle\EventListener\SetupListener
