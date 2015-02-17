@@ -93,6 +93,7 @@ class LegacySessionStorage implements SessionStorageInterface
                     eZSession::triggerCallback( 'regenerate_pre', array( $db, $escNewKey, $escOldKey, $escUserID ) );
                     eZSession::triggerCallback( 'regenerate_post', array( $db, $escNewKey, $escOldKey, $escUserID ) );
                 },
+                false,
                 false
             );
         }
