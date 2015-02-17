@@ -32,7 +32,7 @@ class LegacySessionProxy extends AbstractProxy implements SessionHandlerInterfac
      */
     private $sessionHandler;
 
-    public function __construct( Closure $legacyKernelClosure, SessionHandlerInterface $sessionHandler = null )
+    public function __construct( Closure $legacyKernelClosure, SessionHandlerInterface $sessionHandler )
     {
         $this->legacyKernelClosure = $legacyKernelClosure;
         $this->sessionHandler = $sessionHandler;
@@ -51,11 +51,7 @@ class LegacySessionProxy extends AbstractProxy implements SessionHandlerInterfac
 
     public function open( $savePath, $sessionName )
     {
-        $return = true;
-        if ( $this->sessionHandler )
-        {
-            $return = (bool)$this->sessionHandler->open( $savePath, $sessionName );
-        }
+        $return = (bool)$this->sessionHandler->open( $savePath, $sessionName );
 
         if ( $return === true )
         {
@@ -68,33 +64,17 @@ class LegacySessionProxy extends AbstractProxy implements SessionHandlerInterfac
     public function close()
     {
         $this->active = false;
-
-        if ( $this->sessionHandler )
-        {
-            return (bool)$this->sessionHandler->close();
-        }
-
-        return true;
+        return (bool)$this->sessionHandler->close();
     }
 
-    public function read($sessionId)
+    public function read( $sessionId )
     {
-        if ( $this->sessionHandler )
-        {
-            return (string)$this->sessionHandler->read( $sessionId );
-        }
-
-        return '';
+        return (string)$this->sessionHandler->read( $sessionId );
     }
 
     public function write( $sessionId, $data )
     {
-        if ( $this->sessionHandler )
-        {
-            return (bool)$this->sessionHandler->write( $sessionId, $data );
-        }
-
-        return false;
+        return (bool)$this->sessionHandler->write( $sessionId, $data );
     }
 
     public function destroy( $sessionId )
@@ -107,12 +87,7 @@ class LegacySessionProxy extends AbstractProxy implements SessionHandlerInterfac
             false
         );
 
-        if ( $this->sessionHandler )
-        {
-            return $this->sessionHandler->destroy( $sessionId );
-        }
-
-        return false;
+        return $this->sessionHandler->destroy( $sessionId );
     }
 
     public function gc( $maxlifetime )
@@ -125,11 +100,7 @@ class LegacySessionProxy extends AbstractProxy implements SessionHandlerInterfac
                 $db = eZDB::instance();
                 eZSession::triggerCallback( 'gc_pre', array( $db, $maxlifetime ) );
 
-                $success = false;
-                if ( $sessionHandler )
-                {
-                    $success = $sessionHandler->gc( $maxlifetime );
-                }
+                $success = $sessionHandler->gc( $maxlifetime );
 
                 eZSession::triggerCallback( 'gc_post', array( $db, $maxlifetime ) );
                 return $success;

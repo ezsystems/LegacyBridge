@@ -30,12 +30,17 @@ class LegacySessionPass implements CompilerPassInterface
         $sessionStorageProxyDef->replaceArgument( 1, new Reference( (string)$sessionStorageAlias ) );
         $container->setAlias( 'session.storage', 'ezpublish_legacy.session_storage_proxy' );
 
-        $sessionHandlerProxyDef = $container->findDefinition( 'ezpublish_legacy.session_handler_proxy' );
         if ( $container->hasAlias( 'session.handler' ) )
         {
             $sessionHandlerAlias = $container->getAlias( 'session.handler' );
-            $sessionHandlerProxyDef->replaceArgument( 1, new Reference( (string)$sessionHandlerAlias ) );
+            $interfaces = class_implements( $container->findDefinition( (string)$sessionHandlerAlias ) );
+            // Only swap session handler if it implements appropriate interface.
+            if ( isset( $interfaces['SessionHandlerInterface'] ) )
+            {
+                $sessionHandlerProxyDef = $container->findDefinition( 'ezpublish_legacy.session_handler_proxy' );
+                $sessionHandlerProxyDef->replaceArgument( 1, new Reference( (string)$sessionHandlerAlias ) );
+                $container->setAlias( 'session.handler', 'ezpublish_legacy.session_handler_proxy' );
+            }
         }
-        $container->setAlias( 'session.handler', 'ezpublish_legacy.session_handler_proxy' );
     }
 }
