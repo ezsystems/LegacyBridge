@@ -10,6 +10,8 @@
 namespace eZ\Publish\Core\MVC\Legacy\Session;
 
 use Symfony\Component\HttpFoundation\Session\SessionBagInterface;
+use Symfony\Component\HttpFoundation\Session\Storage\MetadataBag;
+use Symfony\Component\HttpFoundation\Session\Storage\NativeSessionStorage;
 use Symfony\Component\HttpFoundation\Session\Storage\SessionStorageInterface;
 use ezpEvent;
 use eZSession;
@@ -19,11 +21,15 @@ use Closure;
 /**
  * Session storage proxy for legacy.
  * Ensures that appropriate legacy session events are triggered whenever needed.
+ *
+ * Note that it extends NativeSessionStorage. This is only a workaround to strictly respect its full interface, as it
+ * has methods that are not part of an interface.
+ * See https://jira.ez.no/browse/EZP-24017
  */
-class LegacySessionStorage implements SessionStorageInterface
+class LegacySessionStorage extends NativeSessionStorage
 {
     /**
-     * @var SessionStorageInterface
+     * @var SessionStorageInterface|NativeSessionStorage
      */
     private $innerSessionStorage;
 
@@ -127,5 +133,39 @@ class LegacySessionStorage implements SessionStorageInterface
     public function getMetadataBag()
     {
         return $this->innerSessionStorage->getMetadataBag();
+    }
+
+    // Below reimplementation of public methods from NativeSessionStorage.
+
+    public function setMetadataBag( MetadataBag $metaBag = null )
+    {
+        if ( $this->innerSessionStorage instanceof NativeSessionStorage )
+        {
+            $this->innerSessionStorage->setMetadataBag( $metaBag );
+        }
+    }
+
+    public function getSaveHandler()
+    {
+        if ( $this->innerSessionStorage instanceof NativeSessionStorage )
+        {
+            return $this->innerSessionStorage->getSaveHandler();
+        }
+    }
+
+    public function setSaveHandler( $saveHandler = null )
+    {
+        if ( $this->innerSessionStorage instanceof NativeSessionStorage )
+        {
+            $this->innerSessionStorage->setSaveHandler( $saveHandler );
+        }
+    }
+
+    public function setOptions( array $options )
+    {
+        if ( $this->innerSessionStorage instanceof NativeSessionStorage )
+        {
+            $this->innerSessionStorage->setOptions( $options );
+        }
     }
 }
