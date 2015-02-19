@@ -277,10 +277,21 @@ class Configuration extends ContainerAware implements EventSubscriberInterface
     private function getMultiSiteSettings()
     {
         $rootLocationId = $this->configResolver->getParameter( 'content.tree_root.location_id' );
+        $indexPage = $this->configResolver->getParameter( 'index_page' );
         $defaultPage = $this->configResolver->getParameter( 'default_page' );
         if ( $rootLocationId === null )
         {
-            return array();
+            // return SiteSettings if there is no MultiSite (rootLocation is not defined)
+            $result = array();
+            if ( $indexPage !== null )
+            {
+                $result['site.ini/SiteSettings/IndexPage'] = $indexPage;
+            }
+            if ( $defaultPage !== null )
+            {
+                $result['site.ini/SiteSettings/DefaultPage'] = $defaultPage;
+            }
+            return $result;
         }
 
         $pathPrefix = trim( $this->urlAliasGenerator->getPathPrefixByRootLocationId( $rootLocationId ), '/' );
@@ -296,7 +307,7 @@ class Configuration extends ContainerAware implements EventSubscriberInterface
             'site.ini/SiteAccessSettings/PathPrefix'        => $pathPrefix,
             'site.ini/SiteAccessSettings/PathPrefixExclude' => $pathPrefixExcludeItems,
             'logfile.ini/AccessLogFileSettings/PathPrefix'  => $pathPrefix,
-            'site.ini/SiteSettings/IndexPage'               => "/content/view/full/$rootLocationId/",
+            'site.ini/SiteSettings/IndexPage'               => $indexPage !== null ? $indexPage : "/content/view/full/$rootLocationId/",
             'site.ini/SiteSettings/DefaultPage'             => $defaultPage !== null ? $defaultPage : "/content/view/full/$rootLocationId/",
             'content.ini/NodeSettings/RootNode'             => $rootLocationId,
         );
