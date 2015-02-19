@@ -160,7 +160,7 @@ class PersistenceCachePurger implements CacheClearerInterface
      */
     public function contentVersion( $contentId, $versionNo )
     {
-        if ( $this->allCleared === true )
+        if ( $this->allCleared === true || $this->isSwitchedOff() )
             return;
 
         $this->cache->clear( 'content', $contentId, $versionNo );
