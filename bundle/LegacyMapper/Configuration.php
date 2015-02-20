@@ -218,6 +218,7 @@ class Configuration extends ContainerAware implements EventSubscriberInterface
         // Register persistence cache event listeners
         $ezpEvent->attach( 'content/cache', array( $this->persistenceCachePurger, 'content' ) );
         $ezpEvent->attach( 'content/cache/all', array( $this->persistenceCachePurger, 'all' ) );
+        $ezpEvent->attach( 'content/cache/version', array( $this->persistenceCachePurger, 'contentVersion' ) );
         $ezpEvent->attach( 'content/class/cache/all', array( $this->persistenceCachePurger, 'contentType' ) );
         $ezpEvent->attach( 'content/class/cache', array( $this->persistenceCachePurger, 'contentType' ) );
         $ezpEvent->attach( 'content/class/group/cache', array( $this->persistenceCachePurger, 'contentTypeGroup' ) );

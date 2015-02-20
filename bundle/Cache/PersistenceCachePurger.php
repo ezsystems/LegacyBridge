@@ -153,6 +153,20 @@ class PersistenceCachePurger implements CacheClearerInterface
     }
 
     /**
+     * Clears persistence cache for given $contentId and $versionNo.
+     *
+     * @param int $contentId
+     * @param int $versionNo
+     */
+    public function contentVersion( $contentId, $versionNo )
+    {
+        if ( $this->allCleared === true || $this->isSwitchedOff() )
+            return;
+
+        $this->cache->clear( 'content', $contentId, $versionNo );
+    }
+
+    /**
      * Clear all contentType persistence cache, or by id
      *
      * @param int|null $id Purges all contentType cache if null
