@@ -85,7 +85,10 @@ EOT
             {
                 $filesystem->mkdir( $targetDir, 0777 );
                 // We use a custom iterator to ignore VCS files
+                $currentDir = getcwd();
+                chdir( realpath( $targetArg ) );
                 $filesystem->mirror( $originDir, $targetDir, Finder::create()->in( $originDir ) );
+                chdir( $currentDir );
             }
         }
 
