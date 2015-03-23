@@ -250,6 +250,7 @@ services:
             - @ezpublish.siteaccess
         tags:
             - { name: kernel.cache_clearer }
+        lazy: true
 
     ezpublish_legacy.switchable_http_cache_purger:
         class: %ezpublish_legacy.switchable_http_cache_purger.class%
