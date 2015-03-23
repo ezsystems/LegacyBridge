@@ -68,16 +68,6 @@ class Kernel extends ezpKernel
         $this->setUseExceptions( true );
     }
 
-    /**
-     * Checks if LegacyKernel has already been instantiated.
-     *
-     * @return bool
-     */
-    public static function hasInstance()
-    {
-        return static::$instance !== null;
-    }
-
     public static function resetInstance()
     {
         static::$instance = null;
