@@ -310,7 +310,6 @@ class Configuration extends ContainerAware implements EventSubscriberInterface
             'logfile.ini/AccessLogFileSettings/PathPrefix'  => $pathPrefix,
             'site.ini/SiteSettings/IndexPage'               => $indexPage !== null ? $indexPage : "/content/view/full/$rootLocationId/",
             'site.ini/SiteSettings/DefaultPage'             => $defaultPage !== null ? $defaultPage : "/content/view/full/$rootLocationId/",
-            'content.ini/NodeSettings/RootNode'             => $rootLocationId,
         );
     }
 }
