@@ -10,6 +10,7 @@ namespace eZ\Bundle\EzPublishLegacyBundle\Controller;
 
 use eZ\Publish\API\Repository\ContentService;
 use eZ\Publish\API\Repository\LocationService;
+use eZ\Publish\Core\Helper\ContentPreviewHelper;
 use eZ\Publish\Core\MVC\Symfony\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Form\Extension\Csrf\CsrfProvider\CsrfProviderInterface;
@@ -35,11 +36,15 @@ class WebsiteToolbarController extends Controller
     /** @var \eZ\Publish\API\Repository\ContentService */
     private $contentService;
 
+    /** @var ContentPreviewHelper */
+    private $previewHelper;
+
     public function __construct(
         EngineInterface $engine,
         ContentService $contentService,
         LocationService $locationService,
         SecurityContextInterface $securityContext,
+        ContentPreviewHelper $previewHelper,
         CsrfProviderInterface $csrfProvider = null
     )
     {
@@ -48,6 +53,7 @@ class WebsiteToolbarController extends Controller
         $this->locationService = $locationService;
         $this->securityContext = $securityContext;
         $this->csrfProvider = $csrfProvider;
+        $this->previewHelper = $previewHelper;
     }
 
     /**
@@ -56,6 +62,9 @@ class WebsiteToolbarController extends Controller
      * If the logged in user doesn't have the required permission, an empty response is returned
      *
      * @param mixed $locationId
+     * @param Request $request
+     *
+     * @return Response
      */
     public function websiteToolbarAction( $locationId, Request $request )
     {
@@ -84,10 +93,25 @@ class WebsiteToolbarController extends Controller
             $parameters['form_token'] = $this->csrfProvider->generateCsrfToken( 'legacy' );
         }
 
-        $parameters['redirect_uri'] = $request->attributes->get( 'semanticPathinfo' );
-        $response->setContent(
-            $this->legacyTemplateEngine->render( 'design:parts/website_toolbar.tpl', $parameters )
-        );
+        if ( $this->previewHelper->isPreviewActive() )
+        {
+            $template = 'design:parts/website_toolbar_versionview.tpl';
+            $previewedContent = $this->previewHelper->getPreviewedContent();
+            $previewedVersionInfo = $previewedContent->versionInfo;
+            $parameters += array(
+                'object' => $previewedContent,
+                'version' => $previewedVersionInfo,
+                'language' => $previewedVersionInfo->initialLanguageCode,
+                'is_creator' => $previewedVersionInfo->creatorId === $this->getRepository()->getCurrentUser()->id
+            );
+        }
+        else
+        {
+            $template = 'design:parts/website_toolbar.tpl';
+            $parameters['redirect_uri'] = $request->attributes->get( 'semanticPathinfo' );
+        }
+
+        $response->setContent( $this->legacyTemplateEngine->render( $template, $parameters ) );
 
         return $response;
     }

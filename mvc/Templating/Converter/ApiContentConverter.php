@@ -11,8 +11,10 @@ namespace eZ\Publish\Core\MVC\Legacy\Templating\Converter;
 
 use eZ\Publish\API\Repository\Values\Content\Content;
 use eZ\Publish\API\Repository\Values\Content\Location;
+use eZ\Publish\API\Repository\Values\Content\VersionInfo;
 use eZContentObject;
 use eZContentObjectTreeNode;
+use eZContentObjectVersion;
 
 class ApiContentConverter implements MultipleObjectConverter
 {
@@ -68,6 +70,10 @@ class ApiContentConverter implements MultipleObjectConverter
                 {
                     return eZContentObjectTreeNode::fetch( $object->id );
                 }
+                else if ( $object instanceof VersionInfo )
+                {
+                    return eZContentObjectVersion::fetchVersion( $object->versionNo, $object->getContentInfo()->id );
+                }
             },
             false,
             false
@@ -119,6 +125,10 @@ class ApiContentConverter implements MultipleObjectConverter
                     else if ( $apiObject instanceof Location )
                     {
                         $convertedObjects[$alias] = eZContentObjectTreeNode::fetch( $apiObject->id );
+                    }
+                    else if ( $apiObject instanceof VersionInfo )
+                    {
+                        $convertedObjects[$alias] = eZContentObjectVersion::fetchVersion( $apiObject->versionNo, $apiObject->getContentInfo()->id );
                     }
                 }
 

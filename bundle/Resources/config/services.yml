@@ -168,6 +168,7 @@ services:
             - @ezpublish.api.service.content
             - @ezpublish.api.service.location
             - @security.context
+            - @ezpublish.content_preview_helper
             - @?form.csrf_provider
 
     ezpublish_legacy.router:

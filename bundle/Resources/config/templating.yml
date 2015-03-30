@@ -41,6 +41,7 @@ services:
         tags:
             - {name: ezpublish_legacy.templating.converter, for: %ezpublish.api.content.class%}
             - {name: ezpublish_legacy.templating.converter, for: %ezpublish.api.location.class%}
+            - {name: ezpublish_legacy.templating.converter, for: %ezpublish.api.version.class%}
 
     ezpublish_legacy.templating.pageparts_converter:
         class: %ezpublish_legacy.templating.pageparts_converter.class%
