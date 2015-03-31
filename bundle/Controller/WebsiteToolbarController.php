@@ -70,24 +70,6 @@ class WebsiteToolbarController extends Controller
     {
         $response = new Response();
 
-        // Happens in PreviewController. See EZP-22823.
-        if ( $locationId === null )
-        {
-            return $response;
-        }
-
-        $authorizationAttribute = new AuthorizationAttribute(
-            'websitetoolbar',
-            'use',
-            array( 'valueObject' => $this->loadContentByLocationId( $locationId ) )
-        );
-
-        if ( !$this->securityContext->isGranted( $authorizationAttribute ) )
-        {
-            return $response;
-        }
-
-        $parameters = array( 'current_node_id' => $locationId );
         if ( isset( $this->csrfProvider ) )
         {
             $parameters['form_token'] = $this->csrfProvider->generateCsrfToken( 'legacy' );
@@ -96,19 +78,38 @@ class WebsiteToolbarController extends Controller
         if ( $this->previewHelper->isPreviewActive() )
         {
             $template = 'design:parts/website_toolbar_versionview.tpl';
-            $previewedContent = $this->previewHelper->getPreviewedContent();
+            $previewedContent = $authValueObject = $this->previewHelper->getPreviewedContent();
             $previewedVersionInfo = $previewedContent->versionInfo;
-            $parameters += array(
+            $parameters = array(
                 'object' => $previewedContent,
                 'version' => $previewedVersionInfo,
                 'language' => $previewedVersionInfo->initialLanguageCode,
                 'is_creator' => $previewedVersionInfo->creatorId === $this->getRepository()->getCurrentUser()->id
             );
         }
+        else if ( $locationId === null )
+        {
+            return $response;
+        }
         else
         {
+            $authValueObject = $this->loadContentByLocationId( $locationId );
             $template = 'design:parts/website_toolbar.tpl';
-            $parameters['redirect_uri'] = $request->attributes->get( 'semanticPathinfo' );
+            $parameters = array(
+                'current_node_id' => $locationId,
+                'redirect_uri' => $request->attributes->get( 'semanticPathinfo' )
+            );
+        }
+
+        $authorizationAttribute = new AuthorizationAttribute(
+            'websitetoolbar',
+            'use',
+            array( 'valueObject' => $authValueObject )
+        );
+
+        if ( !$this->securityContext->isGranted( $authorizationAttribute ) )
+        {
+            return $response;
         }
 
         $response->setContent( $this->legacyTemplateEngine->render( $template, $parameters ) );
