@@ -19,3 +19,10 @@ _ezpublishLegacyLogout:
     path: /user/logout
     defaults:
         _controller: ezpublish_legacy.controller:logoutAction
+
+_ezpublishLegacyRest:
+    path: /api/{provider}/v1/{path}
+    defaults:
+        _controller: ezpublish_legacy.rest.controller:restAction
+    requirements:
+        path: .*
