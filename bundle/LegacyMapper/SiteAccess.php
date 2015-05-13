@@ -11,6 +11,7 @@ namespace eZ\Bundle\EzPublishLegacyBundle\LegacyMapper;
 
 use eZ\Publish\Core\MVC\Legacy\LegacyEvents;
 use eZ\Publish\Core\MVC\Legacy\Event\PreBuildKernelWebHandlerEvent;
+use eZ\Publish\Core\MVC\Symfony\SiteAccess\Matcher\CompoundInterface;
 use eZSiteAccess;
 use Symfony\Component\DependencyInjection\ContainerAware;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -88,6 +89,22 @@ class SiteAccess extends ContainerAware implements EventSubscriberInterface
             $aPathinfo = explode( '/', substr( $pathinfo, 1 ) );
             $aSemanticPathinfo = explode( '/', substr( $semanticPathinfo, 1 ) );
             $uriPart = array_diff( $aPathinfo, $aSemanticPathinfo, $this->getFragmentPathItems() );
+        }
+
+        // Handle host_uri match
+        if ( $siteAccess->matcher instanceof CompoundInterface )
+        {
+            $subMatchers = $siteAccess->matcher->getSubMatchers();
+            if ( !$subMatchers )
+            {
+                throw new \RuntimeException( 'Compound matcher used but not submatchers found.' );
+            }
+
+            if ( count( $subMatchers ) == 2 && isset( $subMatchers['Map\Host'] ) && isset( $subMatchers['Map\URI'] ))
+            {
+                $legacyAccessType = eZSiteAccess::TYPE_HTTP_HOST_URI;
+                $uriPart = array( $subMatchers['Map\URI']->getMapKey() );
+            }
         }
 
         $event->getParameters()->set(
