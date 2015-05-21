@@ -80,7 +80,6 @@ class RequestListener implements EventSubscriberInterface
             if ( $token instanceof TokenInterface )
             {
                 $token->setUser( new User( $apiUser ) );
-                $token->setAuthenticated( true );
             }
         }
         catch ( NotFoundException $e )

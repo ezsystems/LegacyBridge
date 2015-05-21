@@ -108,10 +108,6 @@ class RequestListenerTest extends PHPUnit_Framework_TestCase
             ->expects( $this->once() )
             ->method( 'setUser' )
             ->with( $this->isInstanceOf( 'eZ\Publish\Core\MVC\Symfony\Security\User' ) );
-        $token
-            ->expects( $this->once() )
-            ->method( 'setAuthenticated' )
-            ->with( true );
 
         $event = new GetResponseEvent(
             $this->getMock( 'Symfony\Component\HttpKernel\HttpKernelInterface' ),
