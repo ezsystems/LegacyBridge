@@ -8,6 +8,7 @@ parameters:
     # Core overrides
     router.class: eZ\Bundle\EzPublishLegacyBundle\Routing\DefaultRouter
     ezpublish.security.login_listener.class: eZ\Bundle\EzPublishLegacyBundle\Security\SecurityListener
+    security.authentication.listener.rememberme.class: eZ\Bundle\EzPublishLegacyBundle\Security\RememberMeListener
 
     ezpublish_legacy.kernel.lazy_loader.class: eZ\Publish\Core\MVC\Legacy\Kernel\Loader
     ezpublish_legacy.kernel_handler.class: ezpKernelHandler

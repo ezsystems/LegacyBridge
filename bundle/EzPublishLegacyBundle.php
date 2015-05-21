@@ -9,6 +9,7 @@
 
 namespace eZ\Bundle\EzPublishLegacyBundle;
 
+use eZ\Bundle\EzPublishLegacyBundle\DependencyInjection\Compiler\RememberMeListenerPass;
 use eZ\Bundle\EzPublishLegacyBundle\DependencyInjection\Compiler\LegacyBundlesPass;
 use eZ\Bundle\EzPublishLegacyBundle\DependencyInjection\Compiler\LegacySessionPass;
 use eZ\Bundle\EzPublishLegacyBundle\DependencyInjection\Compiler\RelatedSiteAccessesCleanupPass;
@@ -52,6 +53,7 @@ class EzPublishLegacyBundle extends Bundle
         $container->addCompilerPass( new LegacyBundlesPass( $this->kernel ) );
         $container->addCompilerPass( new RoutingPass() );
         $container->addCompilerPass( new LegacySessionPass() );
+        $container->addCompilerPass( new RememberMeListenerPass() );
 
         /** @var \Symfony\Bundle\SecurityBundle\DependencyInjection\SecurityExtension $securityExtension */
         $securityExtension = $container->getExtension( 'security' );
