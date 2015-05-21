@@ -9,6 +9,7 @@
 
 namespace eZ\Publish\Core\MVC\Legacy\Kernel;
 
+use eZ\Bundle\EzPublishLegacyBundle\Rest\ResponseWriter;
 use eZ\Publish\Core\MVC\Legacy\Event\PostBuildKernelEvent;
 use eZ\Publish\Core\MVC\Legacy\Event\PreResetLegacyKernelEvent;
 use eZ\Publish\Core\MVC\Legacy\Kernel as LegacyKernel;
@@ -16,6 +17,7 @@ use eZ\Publish\Core\MVC\Legacy\LegacyEvents;
 use eZ\Publish\Core\MVC\Legacy\Event\PreBuildKernelWebHandlerEvent;
 use eZ\Publish\Core\MVC\Legacy\Event\PreBuildKernelEvent;
 use ezpKernelHandler;
+use ezpKernelRest;
 use Symfony\Component\DependencyInjection\ContainerAware;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -61,6 +63,9 @@ class Loader extends ContainerAware
 
     /** @var ezpKernelHandler */
     private $cliHandler;
+
+    /** @var ezpKernelHandler */
+    private $restHandler;
 
     public function __construct( $legacyRootDir, $webrootDir, EventDispatcherInterface $eventDispatcher, URIHelper $uriHelper, LoggerInterface $logger = null )
     {
@@ -258,6 +263,62 @@ class Loader extends ContainerAware
     }
 
     /**
+     * Builds the legacy kernel handler for the tree menu in admin interface.
+     *
+     * @return \Closure A closure returning an \ezpKernelTreeMenu instance.
+     */
+    public function buildLegacyKernelHandlerRest( $mvcConfiguration )
+    {
+        $legacyRootDir = $this->legacyRootDir;
+        $webrootDir = $this->webrootDir;
+        $uriHelper = $this->uriHelper;
+        $eventDispatcher = $this->eventDispatcher;
+        $container = $this->container;
+        $that = $this;
+
+        return function () use ( $legacyRootDir, $webrootDir, $container, $uriHelper, $eventDispatcher, $that )
+        {
+            if ( !$that->getRestHandler() )
+            {
+                chdir( $legacyRootDir );
+
+                $legacyParameters = new ParameterBag();
+                $request = $container->get( 'request' );
+
+                if ( $that->getBuildEventsEnabled() )
+                {
+                    // PRE_BUILD_LEGACY_KERNEL for non request related stuff
+                    $eventDispatcher->dispatch( LegacyEvents::PRE_BUILD_LEGACY_KERNEL, new PreBuildKernelEvent( $legacyParameters ) );
+
+                    // Pure web stuff
+                    $eventDispatcher->dispatch(
+                        LegacyEvents::PRE_BUILD_LEGACY_KERNEL_WEB,
+                        new PreBuildKernelWebHandlerEvent( $legacyParameters, $request )
+                    );
+                }
+
+                $that->setRestHandler( new ezpKernelRest( $legacyParameters->all(), 'eZ\Bundle\EzPublishLegacyBundle\Rest\ResponseWriter' ) );
+                chdir( $webrootDir );
+            }
+
+            return $that->getRestHandler();
+        };
+    }
+
+    /**
+     * @return ezpKernelhandler
+     */
+    public function getRestHandler()
+    {
+        return $this->restHandler;
+    }
+
+    public function setRestHandler( ezpKernelHandler $handler )
+    {
+        $this->restHandler = $handler;
+    }
+
+    /**
      * Resets the legacy kernel instances from the container
      *
      * @return void
@@ -274,10 +335,12 @@ class Loader extends ContainerAware
         LegacyKernel::resetInstance();
         $this->webHandler = null;
         $this->cliHandler = null;
+        $this->restHandler = null;
 
         $this->container->set( 'ezpublish_legacy.kernel', null );
         $this->container->set( 'ezpublish_legacy.kernel.lazy', null );
         $this->container->set( 'ezpublish_legacy.kernel_handler.web', null );
         $this->container->set( 'ezpublish_legacy.kernel_handler.cli', null );
+        $this->container->set( 'ezpublish_legacy.kernel_handler.rest', null );
     }
 }
