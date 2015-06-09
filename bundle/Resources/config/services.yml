@@ -139,8 +139,6 @@ services:
             - @ezpublish_legacy.response_manager
             - @ezpublish_legacy.templating.legacy_helper
             - @router
-        calls:
-            - [setRequest, [@?request=]]
 
     ezpublish_legacy.treemenu.controller:
         class: %ezpublish_legacy.treemenu.controller.class%
@@ -216,7 +214,7 @@ services:
         class: %ezpublish_legacy.session_mapper.class%
         arguments: [@session.storage, %ezpublish.session.attribute_bag.storage_key%, @?session]
         calls:
-            - [setRequest, [@?request=]]
+            - [setRequestStack, [@request_stack]]
         tags:
             - { name: kernel.event_subscriber }
 

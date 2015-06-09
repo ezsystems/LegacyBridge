@@ -14,6 +14,7 @@ use eZ\Publish\Core\MVC\Legacy\Event\PreBuildKernelEvent;
 use eZ\Publish\Core\MVC\Legacy\LegacyEvents;
 use PHPUnit_Framework_TestCase;
 use Symfony\Component\HttpFoundation\ParameterBag;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class SessionTest extends PHPUnit_Framework_TestCase
 {
@@ -26,6 +27,11 @@ class SessionTest extends PHPUnit_Framework_TestCase
      * @var \PHPUnit_Framework_MockObject_MockObject|\Symfony\Component\HttpFoundation\Request
      */
     private $request;
+
+    /**
+     * @var RequestStack
+     */
+    private $requestStack;
 
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
@@ -41,6 +47,8 @@ class SessionTest extends PHPUnit_Framework_TestCase
             ->getMockBuilder( 'Symfony\Component\HttpFoundation\Request' )
             ->setMethods( array( 'hasPreviousSession' ) )
             ->getMock();
+        $this->requestStack = new RequestStack();
+        $this->requestStack->push( $this->request );
     }
 
     public function testGetSubscribedEvents()
@@ -100,7 +108,7 @@ class SessionTest extends PHPUnit_Framework_TestCase
             ->will( $this->returnValue( $hasPreviousSession ) );
 
         $sessionMapper = new SessionMapper( $this->sessionStorage, $storageKey, $this->session );
-        $sessionMapper->setRequest( $this->request );
+        $sessionMapper->setRequestStack( $this->requestStack );
         $event = new PreBuildKernelEvent( new ParameterBag(), $this->request );
 
         $sessionMapper->onBuildKernelHandler( $event );

@@ -12,6 +12,7 @@ namespace eZ\Publish\Core\MVC\Legacy\View\Provider;
 use eZ\Publish\API\Repository\Values\Content\Content as APIContent;
 use eZ\Publish\Core\MVC\Legacy\Templating\LegacyHelper;
 use eZ\Publish\Core\MVC\Legacy\View\Provider;
+use eZ\Publish\Core\MVC\Symfony\RequestStackAware;
 use eZ\Publish\Core\MVC\Symfony\View\Provider\Location as LocationViewProviderInterface;
 use eZ\Publish\API\Repository\Values\Content\Location as APILocation;
 use eZ\Publish\Core\MVC\Symfony\View\ContentView;
@@ -23,15 +24,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 class Location extends Provider implements LocationViewProviderInterface
 {
-    /**
-     * @var \Symfony\Component\HttpFoundation\Request
-     */
-    protected $request;
-
-    public function setRequest( Request $request = null )
-    {
-        $this->request = $request;
-    }
+    use RequestStackAware;
 
     /**
      * Returns a ContentView object corresponding to $location.
@@ -48,8 +41,9 @@ class Location extends Provider implements LocationViewProviderInterface
         $legacyHelper = $this->legacyHelper;
         $currentViewProvider = $this;
         $viewParameters = array();
-        if ( isset( $this->request ) )
-            $viewParameters = $this->request->attributes->get( 'viewParameters', array() );
+        $request = $this->getCurrentRequest();
+        if ( isset( $request ) )
+            $viewParameters = $request->attributes->get( 'viewParameters', array() );
 
         $legacyContentClosure = function ( array $params ) use ( $location, $viewType, $logger, $legacyHelper, $viewParameters, $currentViewProvider )
         {
@@ -152,7 +146,7 @@ class Location extends Provider implements LocationViewProviderInterface
     public function renderPreview( APIContent $content, array $params, LegacyHelper $legacyHelper )
     {
         /** @var \eZ\Publish\Core\MVC\Symfony\SiteAccess $siteAccess */
-        $siteAccess = $this->request->attributes->get( 'siteaccess' );
+        $siteAccess = $this->getCurrentRequest()->attributes->get( 'siteaccess' );
         $moduleResult = array();
 
         // Filling up moduleResult

@@ -11,8 +11,8 @@ namespace eZ\Bundle\EzPublishLegacyBundle\LegacyMapper;
 
 use eZ\Publish\Core\MVC\Legacy\Event\PreBuildKernelEvent;
 use eZ\Publish\Core\MVC\Legacy\LegacyEvents;
+use eZ\Publish\Core\MVC\Symfony\RequestStackAware;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpFoundation\Session\Storage\SessionStorageInterface;
 
@@ -21,6 +21,8 @@ use Symfony\Component\HttpFoundation\Session\Storage\SessionStorageInterface;
  */
 class Session implements EventSubscriberInterface
 {
+    use RequestStackAware;
+
     /**
      * @var \Symfony\Component\HttpFoundation\Session\SessionInterface
      */
@@ -36,21 +38,11 @@ class Session implements EventSubscriberInterface
      */
     private $sessionStorageKey;
 
-    /**
-     * @var \Symfony\Component\HttpFoundation\Request
-     */
-    private $request;
-
     public function __construct( SessionStorageInterface $sessionStorage, $sessionStorageKey, SessionInterface $session = null )
     {
         $this->sessionStorage = $sessionStorage;
         $this->sessionStorageKey = $sessionStorageKey;
         $this->session = $session;
-    }
-
-    public function setRequest( Request $request = null )
-    {
-        $this->request = $request;
     }
 
     public static function getSubscribedEvents()
@@ -78,12 +70,12 @@ class Session implements EventSubscriberInterface
         );
         if ( isset( $this->session ) )
         {
+            $request = $this->getCurrentRequest();
             $sessionInfos['configured'] = true;
-
             $sessionInfos['name'] = $this->session->getName();
             $sessionInfos['started'] = $this->session->isStarted();
             $sessionInfos['namespace'] = $this->sessionStorageKey;
-            $sessionInfos['has_previous'] = isset( $this->request ) ? $this->request->hasPreviousSession() : false;
+            $sessionInfos['has_previous'] = isset( $request ) ? $request->hasPreviousSession() : false;
             $sessionInfos['storage'] = $this->sessionStorage;
         }
 
