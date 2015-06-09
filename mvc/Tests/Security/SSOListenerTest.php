@@ -43,7 +43,7 @@ class SSOListenerTest extends PHPUnit_Framework_TestCase
         parent::setUp();
 
         $this->ssoListener = new SSOListener(
-            $this->getMock( 'Symfony\Component\Security\Core\SecurityContextInterface' ),
+            $this->getMock( 'Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface' ),
             $this->getMock( 'Symfony\Component\Security\Core\Authentication\AuthenticationManagerInterface' ),
             'firewall_key'
         );

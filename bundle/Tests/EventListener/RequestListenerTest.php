@@ -7,13 +7,12 @@
  * @version //autogentag//
  */
 
-namespace eZ\Bundle\EzPublishCoreBundle\Tests\EventListener;
+namespace eZ\Bundle\EzPublishLegacyBundle\Tests\EventListener;
 
 use PHPUnit_Framework_TestCase;
 use eZ\Bundle\EzPublishLegacyBundle\EventListener\RequestListener;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 class RequestListenerTest extends PHPUnit_Framework_TestCase
@@ -31,14 +30,14 @@ class RequestListenerTest extends PHPUnit_Framework_TestCase
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|\Symfony\Component\Security\Core\SecurityContextInterface
      */
-    private $securityContext;
+    private $tokenStorage;
 
     protected function setUp()
     {
         parent::setUp();
         $this->configResolver = $this->getMock( 'eZ\Publish\Core\MVC\ConfigResolverInterface' );
         $this->repository = $this->getMock( 'eZ\Publish\API\Repository\Repository' );
-        $this->securityContext = $this->getMock( 'Symfony\Component\Security\Core\SecurityContextInterface' );
+        $this->tokenStorage = $this->getMock( 'Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface' );
     }
 
     public function testGetSubscribedEvents()
@@ -98,7 +97,7 @@ class RequestListenerTest extends PHPUnit_Framework_TestCase
             ->will( $this->returnValue( $userId ) );
 
         $token = $this->getMock( 'Symfony\Component\Security\Core\Authentication\Token\TokenInterface' );
-        $this->securityContext
+        $this->tokenStorage
             ->expects( $this->once() )
             ->method( 'getToken' )
             ->will(
@@ -114,7 +113,7 @@ class RequestListenerTest extends PHPUnit_Framework_TestCase
             $request,
             HttpKernelInterface::MASTER_REQUEST
         );
-        $listener = new RequestListener( $this->configResolver, $this->repository, $this->securityContext );
+        $listener = new RequestListener( $this->configResolver, $this->repository, $this->tokenStorage );
         $listener->onKernelRequest( $event );
     }
 }

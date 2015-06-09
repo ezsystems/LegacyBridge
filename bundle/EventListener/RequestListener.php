@@ -16,8 +16,8 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\SecurityContextInterface;
 use eZ\Publish\Core\MVC\Symfony\Security\User;
 
 class RequestListener implements EventSubscriberInterface
@@ -33,15 +33,15 @@ class RequestListener implements EventSubscriberInterface
     private $repository;
 
     /**
-     * @var \Symfony\Component\Security\Core\SecurityContextInterface
+     * @var \Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface
      */
-    private $securityContext;
+    private $tokenStorage;
 
-    public function __construct( ConfigResolverInterface $configResolver, Repository $repository, SecurityContextInterface $securityContext )
+    public function __construct( ConfigResolverInterface $configResolver, Repository $repository, TokenStorageInterface $tokenStorage )
     {
         $this->configResolver = $configResolver;
         $this->repository = $repository;
-        $this->securityContext = $securityContext;
+        $this->tokenStorage = $tokenStorage;
     }
 
     public static function getSubscribedEvents()
@@ -76,7 +76,7 @@ class RequestListener implements EventSubscriberInterface
             $apiUser = $this->repository->getUserService()->loadUser( $session->get( 'eZUserLoggedInID' ) );
             $this->repository->setCurrentUser( $apiUser );
 
-            $token = $this->securityContext->getToken();
+            $token = $this->tokenStorage->getToken();
             if ( $token instanceof TokenInterface )
             {
                 $token->setUser( new User( $apiUser ) );
@@ -85,7 +85,7 @@ class RequestListener implements EventSubscriberInterface
         catch ( NotFoundException $e )
         {
             // Invalid user ID, the user may have been removed => invalidate the token and the session.
-            $this->securityContext->setToken( null );
+            $this->tokenStorage->setToken( null );
             $session->invalidate();
         }
     }

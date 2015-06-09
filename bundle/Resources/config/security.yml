@@ -11,7 +11,7 @@ services:
 
     ezpublish_legacy.security_mapper:
         class: %ezpublish_legacy.security_mapper.class%
-        arguments: [@ezpublish.api.repository, @ezpublish.config.resolver, @security.context]
+        arguments: [@ezpublish.api.repository, @ezpublish.config.resolver, @security.token_storage, @security.authorization_checker]
         tags:
             - { name: kernel.event_subscriber }
 
@@ -19,7 +19,7 @@ services:
         class: %ezpublish_legacy.security.sso_firewall_listener.class%
         abstract: true
         arguments:
-            - @security.context
+            - @security.token_storage
             - @security.authentication.manager
             - ~     # Will be replaced at compile time by the security factory to be the right user provider
             - @?logger

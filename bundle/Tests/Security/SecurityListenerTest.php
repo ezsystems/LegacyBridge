@@ -23,7 +23,8 @@ class SecurityListenerTest extends BaseTest
             $this->repository,
             $this->configResolver,
             $this->eventDispatcher,
-            $this->securityContext
+            $this->tokenStorage,
+            $this->authChecker
         );
     }
 
@@ -40,10 +41,10 @@ class SecurityListenerTest extends BaseTest
             ->with( 'legacy_mode' )
             ->will( $this->returnValue( true ) );
 
-        $this->securityContext
+        $this->tokenStorage
             ->expects( $this->never() )
             ->method( 'getToken' );
-        $this->securityContext
+        $this->authChecker
             ->expects( $this->never() )
             ->method( 'isGranted' );
 
@@ -63,10 +64,10 @@ class SecurityListenerTest extends BaseTest
             ->with( 'legacy_mode' )
             ->will( $this->returnValue( false ) );
 
-        $this->securityContext
+        $this->tokenStorage
             ->expects( $this->never() )
             ->method( 'getToken' );
-        $this->securityContext
+        $this->authChecker
             ->expects( $this->never() )
             ->method( 'isGranted' );
 

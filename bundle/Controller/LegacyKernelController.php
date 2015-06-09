@@ -44,11 +44,6 @@ class LegacyKernelController
     private $uriHelper;
 
     /**
-     * @var \Symfony\Component\HttpFoundation\Request
-     */
-    private $request;
-
-    /**
      * @var \eZ\Bundle\EzPublishLegacyBundle\LegacyResponse\LegacyResponseManager
      */
     private $legacyResponseManager;
@@ -79,18 +74,13 @@ class LegacyKernelController
         $this->router = $router;
     }
 
-    public function setRequest( Request $request = null )
-    {
-        $this->request = $request;
-    }
-
     /**
      * Base fallback action.
      * Will be basically used for every legacy module.
      *
      * @return \eZ\Bundle\EzPublishLegacyBundle\LegacyResponse
      */
-    public function indexAction()
+    public function indexAction( Request $request )
     {
         $kernelClosure = $this->kernelClosure;
         /** @var \eZ\Publish\Core\MVC\Legacy\Kernel $kernel */
@@ -99,7 +89,7 @@ class LegacyKernelController
         $legacyMode = $this->configResolver->getParameter( 'legacy_mode' );
         $kernel->setUseExceptions( false );
         // Fix up legacy URI with current request since we can be in a sub-request here.
-        $this->uriHelper->updateLegacyURI( $this->request );
+        $this->uriHelper->updateLegacyURI( $request );
 
         // If we have a layout for legacy AND we're not in legacy mode, we ask the legacy kernel not to generate layout.
         if ( isset( $this->legacyLayout ) && !$legacyMode )

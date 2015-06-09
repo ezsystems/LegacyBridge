@@ -86,8 +86,7 @@ services:
 
     ezpublish_legacy.kernel.lazy:
         class: Closure
-        factory_service: ezpublish_legacy.kernel.lazy_loader
-        factory_method: buildLegacyKernel
+        factory: ["@ezpublish_legacy.kernel.lazy_loader", buildLegacyKernel]
         arguments: [@ezpublish_legacy.kernel_handler]
 
     ezpublish_legacy.kernel.lazy_loader:
@@ -103,25 +102,21 @@ services:
 
     ezpublish_legacy.rest.kernel_handler:
         class: %ezpublish_legacy.kernel_handler.rest.class%
-        factory_service: ezpublish_legacy.kernel.lazy_loader
-        factory_method: buildLegacyKernelHandlerRest
+        factory: ["@ezpublish_legacy.kernel.lazy_loader", buildLegacyKernelHandlerRest]
         arguments: [%ezpublish_legacy.kernel_handler.rest.class%]
 
     ezpublish_legacy.kernel_handler.web:
         class: %ezpublish_legacy.kernel_handler.class%
-        factory_service: ezpublish_legacy.kernel.lazy_loader
-        factory_method: buildLegacyKernelHandlerWeb
+        factory: ["@ezpublish_legacy.kernel.lazy_loader", buildLegacyKernelHandlerWeb]
         arguments: [%ezpublish_legacy.kernel_handler.web.class%]
 
     ezpublish_legacy.kernel_handler.treemenu:
         class: %ezpublish_legacy.kernel_handler.treemenu.class%
-        factory_service: ezpublish_legacy.kernel.lazy_loader
-        factory_method: buildLegacyKernelHandlerTreeMenu
+        factory: ["@ezpublish_legacy.kernel.lazy_loader", buildLegacyKernelHandlerTreeMenu]
 
     ezpublish_legacy.kernel_handler.cli:
         class: %ezpublish_legacy.kernel_handler.cli.class%
-        factory_service: ezpublish_legacy.kernel.lazy_loader
-        factory_method: buildLegacyKernelHandlerCLI
+        factory: ["@ezpublish_legacy.kernel.lazy_loader", buildLegacyKernelHandlerCLI]
 
     ezpublish_legacy.kernel_handler:
         alias: ezpublish_legacy.kernel_handler.web
@@ -139,8 +134,6 @@ services:
             - @ezpublish_legacy.response_manager
             - @ezpublish_legacy.templating.legacy_helper
             - @router
-        calls:
-            - [setRequest, [@?request=]]
 
     ezpublish_legacy.treemenu.controller:
         class: %ezpublish_legacy.treemenu.controller.class%
@@ -184,7 +177,7 @@ services:
             - @templating.engine.eztpl
             - @ezpublish.api.service.content
             - @ezpublish.api.service.location
-            - @security.context
+            - @security.authorization_checker
             - @ezpublish.content_preview_helper
             - @?form.csrf_provider
 
@@ -216,7 +209,7 @@ services:
         class: %ezpublish_legacy.session_mapper.class%
         arguments: [@session.storage, %ezpublish.session.attribute_bag.storage_key%, @?session]
         calls:
-            - [setRequest, [@?request=]]
+            - [setRequestStack, [@request_stack]]
         tags:
             - { name: kernel.event_subscriber }
 
@@ -304,8 +297,7 @@ services:
     # uses factory to make sure steps are injected only when service is needed
     ezpublish_legacy.webconfigurator:
         class: %ezpublish_legacy.webconfigurator.class%
-        factory_service: ezpublish_legacy.webconfigurator.factory
-        factory_method: buildWebConfigurator
+        factory: ["@ezpublish_legacy.webconfigurator.factory", buildWebConfigurator]
         arguments:
             - %kernel.root_dir%
 
@@ -325,7 +317,7 @@ services:
 
     ezpublish_legacy.request_listener:
         class: %ezpublish_legacy.request_listener.class%
-        arguments: [@ezpublish.config.resolver, @ezpublish.api.repository, @security.context]
+        arguments: [@ezpublish.config.resolver, @ezpublish.api.repository, @security.token_storage]
         tags:
             - { name: kernel.event_subscriber }
 
