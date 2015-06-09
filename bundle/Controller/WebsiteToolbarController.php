@@ -15,7 +15,7 @@ use eZ\Publish\Core\MVC\Symfony\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Form\Extension\Csrf\CsrfProvider\CsrfProviderInterface;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Security\Core\SecurityContextInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Templating\EngineInterface;
 use eZ\Publish\Core\MVC\Symfony\Security\Authorization\Attribute as AuthorizationAttribute;
 
@@ -27,8 +27,8 @@ class WebsiteToolbarController extends Controller
     /** @var \Symfony\Component\Templating\EngineInterface */
     private $legacyTemplateEngine;
 
-    /** @var \Symfony\Component\Security\Core\SecurityContextInterface */
-    private $securityContext;
+    /** @var \Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface */
+    private $authChecker;
 
     /** @var \eZ\Publish\API\Repository\LocationService */
     private $locationService;
@@ -43,7 +43,7 @@ class WebsiteToolbarController extends Controller
         EngineInterface $engine,
         ContentService $contentService,
         LocationService $locationService,
-        SecurityContextInterface $securityContext,
+        AuthorizationCheckerInterface $authChecker,
         ContentPreviewHelper $previewHelper,
         CsrfProviderInterface $csrfProvider = null
     )
@@ -51,7 +51,7 @@ class WebsiteToolbarController extends Controller
         $this->legacyTemplateEngine = $engine;
         $this->contentService = $contentService;
         $this->locationService = $locationService;
-        $this->securityContext = $securityContext;
+        $this->authChecker = $authChecker;
         $this->csrfProvider = $csrfProvider;
         $this->previewHelper = $previewHelper;
     }
@@ -107,7 +107,7 @@ class WebsiteToolbarController extends Controller
             array( 'valueObject' => $authValueObject )
         );
 
-        if ( !$this->securityContext->isGranted( $authorizationAttribute ) )
+        if ( !$this->authChecker->isGranted( $authorizationAttribute ) )
         {
             return $response;
         }

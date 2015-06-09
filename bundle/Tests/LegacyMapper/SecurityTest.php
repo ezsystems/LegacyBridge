@@ -34,14 +34,20 @@ class SecurityTest extends PHPUnit_Framework_TestCase
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
      */
-    private $securityContext;
+    private $tokenStorage;
+
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject
+     */
+    private $authChecker;
 
     protected function setUp()
     {
         parent::setUp();
         $this->repository = $this->getMock( 'eZ\Publish\API\Repository\Repository' );
         $this->configResolver = $this->getMock( 'eZ\Publish\Core\MVC\ConfigResolverInterface' );
-        $this->securityContext = $this->getMock( 'Symfony\Component\Security\Core\SecurityContextInterface' );
+        $this->tokenStorage = $this->getMock( 'Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface' );
+        $this->authChecker = $this->getMock( 'Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface' );
     }
 
     public function testGetSubscribedEvents()
@@ -71,7 +77,7 @@ class SecurityTest extends PHPUnit_Framework_TestCase
             ->expects( $this->never() )
             ->method( 'runCallback' );
 
-        $listener = new Security( $this->repository, $this->configResolver, $this->securityContext );
+        $listener = new Security( $this->repository, $this->configResolver, $this->tokenStorage, $this->authChecker );
         $listener->onKernelBuilt( $event );
     }
 
@@ -96,7 +102,7 @@ class SecurityTest extends PHPUnit_Framework_TestCase
             ->expects( $this->never() )
             ->method( 'runCallback' );
 
-        $listener = new Security( $this->repository, $this->configResolver, $this->securityContext );
+        $listener = new Security( $this->repository, $this->configResolver, $this->tokenStorage, $this->authChecker );
         $listener->onKernelBuilt( $event );
     }
 
@@ -116,7 +122,7 @@ class SecurityTest extends PHPUnit_Framework_TestCase
             ->expects( $this->never() )
             ->method( 'runCallback' );
 
-        $listener = new Security( $this->repository, $this->configResolver, $this->securityContext );
+        $listener = new Security( $this->repository, $this->configResolver, $this->tokenStorage, $this->authChecker );
         $listener->setEnabled( false );
         $listener->onKernelBuilt( $event );
     }
@@ -135,7 +141,7 @@ class SecurityTest extends PHPUnit_Framework_TestCase
             ->method( 'getParameter' )
             ->with( 'legacy_mode' )
             ->will( $this->returnValue( false ) );
-        $this->securityContext
+        $this->tokenStorage
             ->expects( $this->once() )
             ->method( 'getToken' )
             ->will(
@@ -143,7 +149,7 @@ class SecurityTest extends PHPUnit_Framework_TestCase
                     $this->getMock( '\Symfony\Component\Security\Core\Authentication\Token\TokenInterface' )
                 )
             );
-        $this->securityContext
+        $this->authChecker
             ->expects( $this->once() )
             ->method( 'isGranted' )
             ->with( 'IS_AUTHENTICATED_REMEMBERED' )
@@ -155,7 +161,7 @@ class SecurityTest extends PHPUnit_Framework_TestCase
             ->expects( $this->never() )
             ->method( 'runCallback' );
 
-        $listener = new Security( $this->repository, $this->configResolver, $this->securityContext );
+        $listener = new Security( $this->repository, $this->configResolver, $this->tokenStorage, $this->authChecker );
         $listener->onKernelBuilt( $event );
     }
 
@@ -173,7 +179,7 @@ class SecurityTest extends PHPUnit_Framework_TestCase
             ->method( 'getParameter' )
             ->with( 'legacy_mode' )
             ->will( $this->returnValue( false ) );
-        $this->securityContext
+        $this->tokenStorage
             ->expects( $this->once() )
             ->method( 'getToken' )
             ->will(
@@ -181,7 +187,7 @@ class SecurityTest extends PHPUnit_Framework_TestCase
                     $this->getMock( '\Symfony\Component\Security\Core\Authentication\Token\TokenInterface' )
                 )
             );
-        $this->securityContext
+        $this->authChecker
             ->expects( $this->once() )
             ->method( 'isGranted' )
             ->with( 'IS_AUTHENTICATED_REMEMBERED' )
@@ -198,7 +204,7 @@ class SecurityTest extends PHPUnit_Framework_TestCase
             ->expects( $this->once() )
             ->method( 'runCallback' );
 
-        $listener = new Security( $this->repository, $this->configResolver, $this->securityContext );
+        $listener = new Security( $this->repository, $this->configResolver, $this->tokenStorage, $this->authChecker );
         $listener->onKernelBuilt( $event );
     }
 
@@ -233,7 +239,7 @@ class SecurityTest extends PHPUnit_Framework_TestCase
 
         $parameters = array( 'foo' => 'bar' );
         $event = new PreBuildKernelWebHandlerEvent( new ParameterBag( $parameters ), new Request );
-        $listener = new Security( $this->repository, $this->configResolver, $this->securityContext );
+        $listener = new Security( $this->repository, $this->configResolver, $this->tokenStorage, $this->authChecker );
         $listener->onLegacyKernelWebBuild( $event );
         $this->assertSame( $parameters, $event->getParameters()->all() );
     }
@@ -250,7 +256,7 @@ class SecurityTest extends PHPUnit_Framework_TestCase
             ->will( $this->returnValue( false ) );
 
         $event = new PreBuildKernelWebHandlerEvent( new ParameterBag( $previousSettings ), new Request );
-        $listener = new Security( $this->repository, $this->configResolver, $this->securityContext );
+        $listener = new Security( $this->repository, $this->configResolver, $this->tokenStorage, $this->authChecker );
         $listener->onLegacyKernelWebBuild( $event );
         $this->assertSame( $expected, $event->getParameters()->all() );
     }

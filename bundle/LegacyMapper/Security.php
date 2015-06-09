@@ -17,8 +17,9 @@ use eZ\Publish\Core\MVC\Legacy\LegacyEvents;
 use ezpWebBasedKernelHandler;
 use eZUser;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\SecurityContextInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
  * This listener injects current user into legacy kernel once built.
@@ -36,17 +37,23 @@ class Security implements EventSubscriberInterface
     private $configResolver;
 
     /**
-     * @var \Symfony\Component\Security\Core\SecurityContextInterface
+     * @var TokenStorageInterface
      */
-    private $securityContext;
+    private $tokenStorage;
+
+    /**
+     * @var AuthorizationCheckerInterface
+     */
+    private $authChecker;
 
     private $enabled = true;
 
-    public function __construct( Repository $repository, ConfigResolverInterface $configResolver, SecurityContextInterface $securityContext )
+    public function __construct( Repository $repository, ConfigResolverInterface $configResolver, TokenStorageInterface $tokenStorage, AuthorizationCheckerInterface $authChecker )
     {
         $this->repository = $repository;
         $this->configResolver = $configResolver;
-        $this->securityContext = $securityContext;
+        $this->tokenStorage = $tokenStorage;
+        $this->authChecker = $authChecker;
     }
 
     /**
@@ -106,8 +113,8 @@ class Security implements EventSubscriberInterface
         // User can be either authenticated by providing credentials during current session
         // or by "remember me" if available.
         return
-            $this->securityContext->getToken() instanceof TokenInterface
-            && $this->securityContext->isGranted( 'IS_AUTHENTICATED_REMEMBERED' );
+            $this->tokenStorage->getToken() instanceof TokenInterface
+            && $this->authChecker->isGranted( 'IS_AUTHENTICATED_REMEMBERED' );
     }
 
     /**

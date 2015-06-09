@@ -177,7 +177,7 @@ services:
             - @templating.engine.eztpl
             - @ezpublish.api.service.content
             - @ezpublish.api.service.location
-            - @security.context
+            - @security.authorization_checker
             - @ezpublish.content_preview_helper
             - @?form.csrf_provider
 
@@ -317,7 +317,7 @@ services:
 
     ezpublish_legacy.request_listener:
         class: %ezpublish_legacy.request_listener.class%
-        arguments: [@ezpublish.config.resolver, @ezpublish.api.repository, @security.context]
+        arguments: [@ezpublish.config.resolver, @ezpublish.api.repository, @security.token_storage]
         tags:
             - { name: kernel.event_subscriber }
 
