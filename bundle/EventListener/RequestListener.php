@@ -12,6 +12,7 @@ namespace eZ\Bundle\EzPublishLegacyBundle\EventListener;
 use eZ\Publish\API\Repository\Exceptions\NotFoundException;
 use eZ\Publish\API\Repository\Repository;
 use eZ\Publish\Core\MVC\ConfigResolverInterface;
+use eZ\Publish\Core\MVC\Legacy\Security\LegacyToken;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
@@ -80,6 +81,11 @@ class RequestListener implements EventSubscriberInterface
             if ( $token instanceof TokenInterface )
             {
                 $token->setUser( new User( $apiUser ) );
+                // Don't embed if we already have a LegacyToken, to avoid nested session storage.
+                if ( !$token instanceof LegacyToken )
+                {
+                    $this->tokenStorage->setToken( new LegacyToken( $token ) );
+                }
             }
         }
         catch ( NotFoundException $e )
