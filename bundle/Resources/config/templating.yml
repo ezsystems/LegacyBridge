@@ -13,6 +13,7 @@ parameters:
     templating.engine.eztpl.class: eZ\Publish\Core\MVC\Legacy\Templating\LegacyEngine
     assetic.eztpl_formula_loader.class: eZ\Publish\Core\MVC\Legacy\Templating\LegacyFormulaLoader
     twig.class: eZ\Publish\Core\MVC\Legacy\Templating\Twig\Environment
+    twig.loader.string.class: eZ\Publish\Core\MVC\Legacy\Templating\Twig\LoaderString
 
 services:
     ezpublish_legacy.twig.extension:
@@ -71,3 +72,8 @@ services:
         class: %assetic.eztpl_formula_loader.class%
         tags:
             - {name: assetic.formula_loader, alias: eztpl}
+
+    twig.loader.string:
+        class: %twig.loader.string.class%
+        tags:
+            - {name: twig.loader}
