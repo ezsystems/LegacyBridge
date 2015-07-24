@@ -146,6 +146,11 @@ class Loader extends ContainerAware
         $container = $this->container;
         $that = $this;
 
+        if ( PHP_SAPI == 'cli' )
+        {
+            return $this->buildLegacyKernelHandlerCLI();
+        }
+
         return function () use ( $legacyRootDir, $webrootDir, $container, $defaultLegacyOptions, $webHandlerClass, $uriHelper, $eventDispatcher, $that )
         {
             if ( !$that->getWebHandler() )
@@ -226,7 +231,7 @@ class Loader extends ContainerAware
                 $that->setCLIHandler(
                     new CLIHandler( $legacyParameters->all(), $container->get( 'ezpublish.siteaccess' ), $container )
                 );
-                chdir( $webrootDir );
+                chdir( $webrootDir ."/../" );
             }
 
             return $that->getCLIHandler();
