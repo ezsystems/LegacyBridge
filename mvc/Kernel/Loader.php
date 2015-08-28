@@ -215,6 +215,7 @@ class Loader extends ContainerAware
         {
             if ( !$that->getCLIHandler() )
             {
+                $currentDir = getcwd();
                 chdir( $legacyRootDir );
 
                 $legacyParameters = new ParameterBag( $container->getParameter( 'ezpublish_legacy.kernel_handler.cli.options' ) );
@@ -226,7 +227,8 @@ class Loader extends ContainerAware
                 $that->setCLIHandler(
                     new CLIHandler( $legacyParameters->all(), $container->get( 'ezpublish.siteaccess' ), $container )
                 );
-                chdir( $webrootDir );
+
+                chdir( $currentDir );
             }
 
             return $that->getCLIHandler();
