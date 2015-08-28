@@ -206,12 +206,11 @@ class Loader extends ContainerAware
     public function buildLegacyKernelHandlerCLI()
     {
         $legacyRootDir = $this->legacyRootDir;
-        $webrootDir = $this->webrootDir;
         $eventDispatcher = $this->eventDispatcher;
         $container = $this->container;
         $that = $this;
 
-        return function () use ( $legacyRootDir, $webrootDir, $container, $eventDispatcher, $that )
+        return function () use ( $legacyRootDir, $container, $eventDispatcher, $that )
         {
             if ( !$that->getCLIHandler() )
             {
