@@ -78,7 +78,7 @@ EOT
                 // We use a custom iterator to ignore VCS files
                 $currentDir = getcwd();
                 chdir(realpath($targetArg));
-                $filesystem->mirror($originDir, $targetDir, Finder::create()->in($originDir));
+                $filesystem->mirror($originDir, $folder, Finder::create()->in($originDir));
                 chdir($currentDir);
             }
         }
