@@ -334,6 +334,7 @@ services:
 
     ezpublish_legacy.legacy_kernel_listener:
         class: %ezpublish_legacy.legacy_kernel_listener.class%
+        arguments: [@event_dispatcher]
         calls:
             - [setContainer, [@service_container]]
         tags:

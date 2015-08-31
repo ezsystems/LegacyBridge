@@ -15,13 +15,28 @@ use eZINI;
 use Symfony\Component\Console\ConsoleEvents;
 use Symfony\Component\Console\Event\ConsoleCommandEvent;
 use Symfony\Component\DependencyInjection\ContainerAware;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use eZ\Publish\Core\MVC\Symfony\MVCEvents;
+use eZ\Publish\Core\MVC\Symfony\Event\ScopeChangeEvent;
 
 /**
  * Resets eZINI when the Legacy Kernel is reset.
+ * Resets legacy kernel handler when used in a command.
  */
 class LegacyKernelListener extends ContainerAware implements EventSubscriberInterface
 {
+    /**
+     * @var EventDispatcherInterface
+     */
+    private $eventDispatcher;
+
+    public function __construct( EventDispatcherInterface $eventDispatcher )
+    {
+        $this->eventDispatcher = $eventDispatcher;
+    }
+
+
     public static function getSubscribedEvents()
     {
         return [
@@ -41,7 +56,20 @@ class LegacyKernelListener extends ContainerAware implements EventSubscriberInte
         );
     }
 
+    public function onConfigScopeChange( ScopeChangeEvent $event )
+    {
+        $this->resetKernelHandler();
+    }
+
     public function onConsoleCommand( ConsoleCommandEvent $event )
+    {
+        $this->resetKernelHandler();
+
+        $this->eventDispatcher->addListener( MVCEvents::CONFIG_SCOPE_CHANGE, [ $this, 'onConfigScopeChange' ], -1 );
+        $this->eventDispatcher->addListener( MVCEvents::CONFIG_SCOPE_RESTORE, [ $this, 'onConfigScopeChange' ], -1 );
+    }
+
+    private function resetKernelHandler()
     {
         $legacyHandlerCLI = $this->container->get( 'ezpublish_legacy.kernel_handler.cli' );
         $this->container->set( 'ezpublish_legacy.kernel.lazy', null );
