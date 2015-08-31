@@ -6,7 +6,6 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Publish\Core\MVC\Legacy\Kernel;
 
 use Symfony\Component\HttpFoundation\Request;
@@ -23,17 +22,17 @@ class URIHelper
      *
      * @param Request $request
      */
-    public function updateLegacyURI( Request $request )
+    public function updateLegacyURI(Request $request)
     {
         $viewParametersString = rtrim(
             $request->attributes->get(
                 'semanticPathinfo',
                 $request->getPathinfo()
-            ) . $request->attributes->get( 'viewParametersString' ),
+            ) . $request->attributes->get('viewParametersString'),
             '/'
         );
 
         $uri = eZURI::instance();
-        $uri->setURIString( $viewParametersString );
+        $uri->setURIString($viewParametersString);
     }
 }

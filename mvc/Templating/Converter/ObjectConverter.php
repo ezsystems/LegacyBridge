@@ -6,7 +6,6 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Publish\Core\MVC\Legacy\Templating\Converter;
 
 /**
@@ -24,5 +23,5 @@ interface ObjectConverter
      *
      * @return mixed|\eZ\Publish\Core\MVC\Legacy\Templating\LegacyCompatible
      */
-    public function convert( $object );
+    public function convert($object);
 }

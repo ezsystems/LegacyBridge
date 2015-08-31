@@ -31,9 +31,9 @@ class AliasCleanerTest extends PHPUnit_Framework_TestCase
     protected function setUp()
     {
         parent::setUp();
-        $this->innerAliasCleaner = $this->getMock( 'eZ\Publish\Core\FieldType\Image\AliasCleanerInterface' );
-        $this->urlRedecorator = $this->getMock( 'eZ\Publish\Core\IO\UrlRedecoratorInterface' );
-        $this->aliasCleaner = new AliasCleaner( $this->innerAliasCleaner, $this->urlRedecorator );
+        $this->innerAliasCleaner = $this->getMock('eZ\Publish\Core\FieldType\Image\AliasCleanerInterface');
+        $this->urlRedecorator = $this->getMock('eZ\Publish\Core\IO\UrlRedecoratorInterface');
+        $this->aliasCleaner = new AliasCleaner($this->innerAliasCleaner, $this->urlRedecorator);
     }
 
     public function testRemoveAliases()
@@ -41,14 +41,14 @@ class AliasCleanerTest extends PHPUnit_Framework_TestCase
         $originalPath = 'foo/bar/test.jpg';
 
         $this->urlRedecorator
-            ->expects( $this->once() )
-            ->method( 'redecorateFromTarget' )
-            ->with( $originalPath );
+            ->expects($this->once())
+            ->method('redecorateFromTarget')
+            ->with($originalPath);
 
         $this->innerAliasCleaner
-            ->expects( $this->once() )
-            ->method( 'removeAliases' );
+            ->expects($this->once())
+            ->method('removeAliases');
 
-        $this->aliasCleaner->removeAliases( $originalPath );
+        $this->aliasCleaner->removeAliases($originalPath);
     }
 }

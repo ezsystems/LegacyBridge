@@ -6,7 +6,6 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Bundle\EzPublishLegacyBundle\Command;
 
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
@@ -25,10 +24,10 @@ class LegacyEmbedScriptCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setName( 'ezpublish:legacy:script' )
-            ->addArgument( 'script', InputArgument::REQUIRED, 'Path to legacy script you want to run. Path must be relative to the legacy root' )
-            ->addOption( 'legacy-help', null, InputOption::VALUE_NONE, 'Use this option if you want to display help for the legacy script' )
-            ->setDescription( 'Runs an eZ Publish legacy script.' )
+            ->setName('ezpublish:legacy:script')
+            ->addArgument('script', InputArgument::REQUIRED, 'Path to legacy script you want to run. Path must be relative to the legacy root')
+            ->addOption('legacy-help', null, InputOption::VALUE_NONE, 'Use this option if you want to display help for the legacy script')
+            ->setDescription('Runs an eZ Publish legacy script.')
             ->setHelp(
                 <<<EOT
 The command <info>%command.name%</info> runs a <info>legacy script</info>.
@@ -40,43 +39,41 @@ EOT
         $this->ignoreValidationErrors();
     }
 
-    protected function execute( InputInterface $input, OutputInterface $output )
+    protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->container = $this->getContainer();
-        $legacyScript = $input->getArgument( 'script' );
+        $legacyScript = $input->getArgument('script');
 
         // Cleanup the input arguments as the legacy kernel expects the script to run as first argument
-        foreach ( $_SERVER['argv'] as $rawArg )
-        {
-            if ( $rawArg === $legacyScript )
+        foreach ($_SERVER['argv'] as $rawArg) {
+            if ($rawArg === $legacyScript) {
                 break;
+            }
 
-            array_shift( $_SERVER['argv'] );
-            array_shift( $GLOBALS['argv'] );
+            array_shift($_SERVER['argv']);
+            array_shift($GLOBALS['argv']);
         }
 
-        if ( $input->getOption( 'legacy-help' ) )
-        {
+        if ($input->getOption('legacy-help')) {
             $_SERVER['argv'][] = '--help';
             $GLOBALS['argv'][] = '--help';
         }
 
-        $siteAccess = $input->getOption( 'siteaccess' );
-        if ( $siteAccess && !in_array( "--siteaccess=$siteAccess", $_SERVER['argv'] ) )
-        {
+        $siteAccess = $input->getOption('siteaccess');
+        if ($siteAccess && !in_array("--siteaccess=$siteAccess", $_SERVER['argv'])) {
             $_SERVER['argv'][] = "--siteaccess=$siteAccess";
             $GLOBALS['argv'][] = "--siteaccess=$siteAccess";
         }
 
-        $output->writeln( "<comment>Running script '$legacyScript' in eZ Publish legacy context</comment>" );
+        $output->writeln("<comment>Running script '$legacyScript' in eZ Publish legacy context</comment>");
 
         /** @var $legacyCLIHandlerClosure \Closure */
-        $legacyCLIHandlerClosure = $this->container->get( 'ezpublish_legacy.kernel_handler.cli' );
+        $legacyCLIHandlerClosure = $this->container->get('ezpublish_legacy.kernel_handler.cli');
         /** @var $legacyKernelClosure \Closure */
-        $legacyKernelClosure = $this->container->get( 'ezpublish_legacy.kernel' );
+        $legacyKernelClosure = $this->container->get('ezpublish_legacy.kernel');
 
         // CLIHandler is contained in $legacyKernel, but we need to inject the script to run separately.
-        $legacyCLIHandlerClosure()->setEmbeddedScriptPath( $legacyScript );
+        $legacyCLIHandlerClosure()->setEmbeddedScriptPath($legacyScript);
         $legacyKernelClosure()->run();
     }
 }

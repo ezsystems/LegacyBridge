@@ -6,7 +6,6 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Publish\Core\MVC\Legacy\Templating\Converter;
 
 use eZ\Publish\Core\MVC\Legacy\Templating\LegacyAdapter;
@@ -25,11 +24,12 @@ class GenericConverter implements ObjectConverter
      *
      * @return mixed|\eZ\Publish\Core\MVC\Legacy\Templating\LegacyCompatible
      */
-    public function convert( $object )
+    public function convert($object)
     {
-        if ( !is_object( $object ) )
-            throw new \InvalidArgumentException( 'Transferred object must be a real object. Got ' . gettype( $object ) );
+        if (!is_object($object)) {
+            throw new \InvalidArgumentException('Transferred object must be a real object. Got ' . gettype($object));
+        }
 
-        return new LegacyAdapter( $object );
+        return new LegacyAdapter($object);
     }
 }

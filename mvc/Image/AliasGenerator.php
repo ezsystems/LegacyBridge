@@ -6,7 +6,6 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Publish\Core\MVC\Legacy\Image;
 
 use eZ\Publish\SPI\Variation\VariationHandler;
@@ -38,7 +37,7 @@ class AliasGenerator implements VariationHandler
      */
     private $variations;
 
-    public function __construct( Closure $legacyKernelClosure )
+    public function __construct(Closure $legacyKernelClosure)
     {
         $this->kernelClosure = $legacyKernelClosure;
     }
@@ -49,6 +48,7 @@ class AliasGenerator implements VariationHandler
     protected function getLegacyKernel()
     {
         $kernelClosure = $this->kernelClosure;
+
         return $kernelClosure();
     }
 
@@ -65,45 +65,45 @@ class AliasGenerator implements VariationHandler
      *
      * @return \eZ\Publish\SPI\Variation\Values\ImageVariation
      */
-    public function getVariation( Field $field, VersionInfo $versionInfo, $variationName, array $parameters = array() )
+    public function getVariation(Field $field, VersionInfo $versionInfo, $variationName, array $parameters = array())
     {
         $variationIdentifier = "$field->id-$versionInfo->versionNo-$variationName";
-        if ( isset( $this->variations[$variationIdentifier] ) )
+        if (isset($this->variations[$variationIdentifier])) {
             return $this->variations[$variationIdentifier];
+        }
 
         // Assigning by reference to be able to modify those arrays within the closure (due to PHP 5.3 limitation with access to $this)
         $allAliasHandlers = &$this->aliasHandlers;
         $allVariations = &$this->variations;
 
         return $this->getLegacyKernel()->runCallback(
-            function () use ( $field, $versionInfo, $variationName, &$allAliasHandlers, &$allVariations, $variationIdentifier )
-            {
+            function () use ($field, $versionInfo, $variationName, &$allAliasHandlers, &$allVariations, $variationIdentifier) {
                 $aliasHandlerIdentifier = "$field->id-$versionInfo->versionNo";
-                if ( !isset( $allAliasHandlers[$aliasHandlerIdentifier] ) )
-                {
+                if (!isset($allAliasHandlers[$aliasHandlerIdentifier])) {
                     $allAliasHandlers[$aliasHandlerIdentifier] = new eZImageAliasHandler(
-                        eZContentObjectAttribute::fetch( $field->id, $versionInfo->versionNo )
+                        eZContentObjectAttribute::fetch($field->id, $versionInfo->versionNo)
                     );
                 }
 
                 /** @var $imageAliasHandler \eZImageAliasHandler */
                 $imageAliasHandler = $allAliasHandlers[$aliasHandlerIdentifier];
-                $aliasArray = $imageAliasHandler->imageAlias( $variationName );
-                if ( $aliasArray === null )
-                    throw new InvalidVariationException( $variationName, 'image' );
+                $aliasArray = $imageAliasHandler->imageAlias($variationName);
+                if ($aliasArray === null) {
+                    throw new InvalidVariationException($variationName, 'image');
+                }
 
                 $allVariations[$variationIdentifier] = new ImageVariation(
                     array(
-                        'name'         => $variationName,
-                        'fileName'     => $aliasArray['filename'],
-                        'dirPath'      => $aliasArray['dirpath'],
-                        'fileSize'     => isset( $aliasArray['filesize'] ) ? $aliasArray['filesize'] : 0,
-                        'mimeType'     => $aliasArray['mime_type'],
-                        'lastModified' => new \DateTime( '@' . $aliasArray['timestamp'] ),
-                        'uri'          => $aliasArray['url'],
-                        'width'        => $aliasArray['width'],
-                        'height'       => $aliasArray['height'],
-                        'imageId'      => sprintf( '%d-%d', $versionInfo->contentInfo->id, $field->id )
+                        'name' => $variationName,
+                        'fileName' => $aliasArray['filename'],
+                        'dirPath' => $aliasArray['dirpath'],
+                        'fileSize' => isset($aliasArray['filesize']) ? $aliasArray['filesize'] : 0,
+                        'mimeType' => $aliasArray['mime_type'],
+                        'lastModified' => new \DateTime('@' . $aliasArray['timestamp']),
+                        'uri' => $aliasArray['url'],
+                        'width' => $aliasArray['width'],
+                        'height' => $aliasArray['height'],
+                        'imageId' => sprintf('%d-%d', $versionInfo->contentInfo->id, $field->id),
                     )
                 );
 

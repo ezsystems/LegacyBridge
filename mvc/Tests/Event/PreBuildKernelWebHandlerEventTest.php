@@ -6,7 +6,6 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Publish\Core\MVC\Legacy\Tests\Event;
 
 use eZ\Publish\Core\MVC\Legacy\Event\PreBuildKernelWebHandlerEvent;
@@ -20,8 +19,8 @@ class PreBuildKernelWebHandlerEventTest extends PHPUnit_Framework_TestCase
     {
         $parameterBag = new ParameterBag();
         $request = new Request();
-        $event = new PreBuildKernelWebHandlerEvent( $parameterBag, $request );
-        $this->assertSame( $parameterBag, $event->getParameters() );
-        $this->assertSame( $request, $event->getRequest() );
+        $event = new PreBuildKernelWebHandlerEvent($parameterBag, $request);
+        $this->assertSame($parameterBag, $event->getParameters());
+        $this->assertSame($request, $event->getRequest());
     }
 }

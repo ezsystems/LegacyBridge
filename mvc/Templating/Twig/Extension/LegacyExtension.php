@@ -6,7 +6,6 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Publish\Core\MVC\Legacy\Templating\Twig\Extension;
 
 use eZ\Publish\Core\MVC\Legacy\Templating\LegacyHelper;
@@ -17,7 +16,7 @@ use Twig_SimpleFunction;
 use Twig_Environment;
 
 /**
- * Twig extension for eZ Publish legacy
+ * Twig extension for eZ Publish legacy.
  */
 class LegacyExtension extends Twig_Extension
 {
@@ -36,7 +35,7 @@ class LegacyExtension extends Twig_Extension
     private $cssTemplate;
 
     /**
-     * The Twig environment
+     * The Twig environment.
      *
      * @var \Twig_Environment
      */
@@ -47,8 +46,7 @@ class LegacyExtension extends Twig_Extension
         LegacyHelper $legacyHelper,
         $jsTemplate,
         $cssTemplate
-    )
-    {
+    ) {
         $this->legacyEngine = $legacyEngine;
         $this->legacyHelper = $legacyHelper;
         $this->jsTemplate = $jsTemplate;
@@ -66,15 +64,15 @@ class LegacyExtension extends Twig_Extension
      *
      * @deprecated since 5.1
      */
-    public function renderTemplate( $tplPath, array $params = array() )
+    public function renderTemplate($tplPath, array $params = array())
     {
-        return $this->legacyEngine->render( $tplPath, $params );
+        return $this->legacyEngine->render($tplPath, $params);
     }
 
     public function getTokenParsers()
     {
         return array(
-            new LegacyIncludeParser()
+            new LegacyIncludeParser(),
         );
     }
 
@@ -93,7 +91,7 @@ class LegacyExtension extends Twig_Extension
      *
      * @param \Twig_Environment $environment
      */
-    public function initRuntime( Twig_Environment $environment )
+    public function initRuntime(Twig_Environment $environment)
     {
         $this->environment = $environment;
     }
@@ -108,19 +106,19 @@ class LegacyExtension extends Twig_Extension
         return array(
             new Twig_SimpleFunction(
                 'ez_legacy_render_js',
-                array( $this, 'renderLegacyJs' ),
-                array( 'is_safe' => array( 'html' ) )
+                array($this, 'renderLegacyJs'),
+                array('is_safe' => array('html'))
             ),
             new Twig_SimpleFunction(
                 'ez_legacy_render_css',
-                array( $this, 'renderLegacyCss' ),
-                array( 'is_safe' => array( 'html' ) )
+                array($this, 'renderLegacyCss'),
+                array('is_safe' => array('html'))
             ),
         );
     }
 
     /**
-     * Generates style tags to be embedded in the page
+     * Generates style tags to be embedded in the page.
      *
      * @return string html script and style tags
      */
@@ -129,17 +127,12 @@ class LegacyExtension extends Twig_Extension
         $jsFiles = array();
         $jsCodeLines = array();
 
-        foreach ( $this->legacyHelper->get( 'js_files', array() ) as $jsItem )
-        {
+        foreach ($this->legacyHelper->get('js_files', array()) as $jsItem) {
             // List of items can contain empty elements, path to files or code
-            if ( !empty( $jsItem ) )
-            {
-                if ( isset( $jsItem[4] ) && $this->isFile( $jsItem, '.js' ) )
-                {
+            if (!empty($jsItem)) {
+                if (isset($jsItem[4]) && $this->isFile($jsItem, '.js')) {
                     $jsFiles[] = $jsItem;
-                }
-                else
-                {
+                } else {
                     $jsCodeLines[] = $jsItem;
                 }
             }
@@ -149,32 +142,27 @@ class LegacyExtension extends Twig_Extension
             $this->jsTemplate,
             array(
                 'js_files' => $jsFiles,
-                'js_code_lines' => $jsCodeLines
+                'js_code_lines' => $jsCodeLines,
             )
         );
     }
 
     /**
-     * Generates script tags to be embedded in the page
+     * Generates script tags to be embedded in the page.
      *
      * @return string html script and style tags
      */
-    public function renderLegacyCss( )
+    public function renderLegacyCss()
     {
         $cssFiles = array();
         $cssCodeLines = array();
 
-        foreach ( $this->legacyHelper->get( 'css_files', array() ) as $cssItem )
-        {
+        foreach ($this->legacyHelper->get('css_files', array()) as $cssItem) {
             // List of items can contain empty elements, path to files or code
-            if ( !empty( $cssItem ) )
-            {
-                if ( isset( $cssItem[5] ) && $this->isFile( $cssItem, '.css' ) )
-                {
+            if (!empty($cssItem)) {
+                if (isset($cssItem[5]) && $this->isFile($cssItem, '.css')) {
                     $cssFiles[] = $cssItem;
-                }
-                else
-                {
+                } else {
                     $cssCodeLines[] = $cssItem;
                 }
             }
@@ -184,25 +172,24 @@ class LegacyExtension extends Twig_Extension
             $this->cssTemplate,
             array(
                 'css_files' => $cssFiles,
-                'css_code_lines' => $cssCodeLines
+                'css_code_lines' => $cssCodeLines,
             )
         );
     }
 
     /**
-     * Is the provided item (path or link) a file or code. Based on legacy's rules (ezjscpacker.php)
+     * Is the provided item (path or link) a file or code. Based on legacy's rules (ezjscpacker.php).
      *
      * @param $item string to be tested
      * @param $extension string extension of the file
      *
      * @return bool true if item is a file
      */
-    private function isFile( $item, $extension )
+    private function isFile($item, $extension)
     {
         return
-            strpos( $item, 'http://' ) === 0
-            || strpos( $item, 'https://' ) === 0
-            || strripos( $item, $extension ) === ( strlen( $item ) - strlen( $extension ) );
+            strpos($item, 'http://') === 0
+            || strpos($item, 'https://') === 0
+            || strripos($item, $extension) === (strlen($item) - strlen($extension));
     }
-
 }

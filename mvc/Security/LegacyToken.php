@@ -6,7 +6,6 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Publish\Core\MVC\Legacy\Security;
 
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -24,19 +23,19 @@ class LegacyToken implements TokenInterface
      */
     private $innerToken;
 
-    public function __construct( TokenInterface $innerToken )
+    public function __construct(TokenInterface $innerToken)
     {
         $this->innerToken = $innerToken;
     }
 
     public function serialize()
     {
-        return serialize( array( $this->innerToken ) );
+        return serialize(array($this->innerToken));
     }
 
-    public function unserialize( $serialized )
+    public function unserialize($serialized)
     {
-        list( $this->innerToken ) = unserialize( $serialized );
+        list($this->innerToken) = unserialize($serialized);
     }
 
     public function __toString()
@@ -59,9 +58,9 @@ class LegacyToken implements TokenInterface
         return $this->innerToken->getUser();
     }
 
-    public function setUser( $user )
+    public function setUser($user)
     {
-        $this->innerToken->setUser( $user );
+        $this->innerToken->setUser($user);
     }
 
     public function getUsername()
@@ -74,9 +73,9 @@ class LegacyToken implements TokenInterface
         return true;
     }
 
-    public function setAuthenticated( $isAuthenticated )
+    public function setAuthenticated($isAuthenticated)
     {
-        $this->innerToken->setAuthenticated( $isAuthenticated );
+        $this->innerToken->setAuthenticated($isAuthenticated);
     }
 
     public function eraseCredentials()
@@ -89,23 +88,23 @@ class LegacyToken implements TokenInterface
         return $this->innerToken->getAttributes();
     }
 
-    public function setAttributes( array $attributes )
+    public function setAttributes(array $attributes)
     {
-        $this->innerToken->setAttributes( $attributes );
+        $this->innerToken->setAttributes($attributes);
     }
 
-    public function hasAttribute( $name )
+    public function hasAttribute($name)
     {
-        return $this->innerToken->hasAttribute( $name );
+        return $this->innerToken->hasAttribute($name);
     }
 
-    public function getAttribute( $name )
+    public function getAttribute($name)
     {
-        return $this->innerToken->getAttribute( $name );
+        return $this->innerToken->getAttribute($name);
     }
 
-    public function setAttribute( $name, $value )
+    public function setAttribute($name, $value)
     {
-        $this->innerToken->setAttribute( $name, $value );
+        $this->innerToken->setAttribute($name, $value);
     }
 }

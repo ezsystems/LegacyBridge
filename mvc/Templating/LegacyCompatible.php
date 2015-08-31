@@ -6,7 +6,6 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Publish\Core\MVC\Legacy\Templating;
 
 /**
@@ -15,13 +14,13 @@ namespace eZ\Publish\Core\MVC\Legacy\Templating;
 interface LegacyCompatible
 {
     /**
-     * Returns true if object supports attribute $name
+     * Returns true if object supports attribute $name.
      *
      * @param string $name
      *
-     * @return boolean
+     * @return bool
      */
-    public function hasAttribute( $name );
+    public function hasAttribute($name);
 
     /**
      * Returns the value of attribute $name.
@@ -32,7 +31,7 @@ interface LegacyCompatible
      *
      * @return mixed
      */
-    public function attribute( $name );
+    public function attribute($name);
 
     /**
      * Returns an array of supported attributes (only their names).

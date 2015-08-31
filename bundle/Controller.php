@@ -6,7 +6,6 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Bundle\EzPublishLegacyBundle;
 
 use eZ\Bundle\EzPublishCoreBundle\Controller as BaseController;
@@ -25,9 +24,8 @@ class Controller extends BaseController
      */
     final protected function getLegacyKernel()
     {
-        if ( !isset( $this->legacyKernelClosure ) )
-        {
-            $this->legacyKernelClosure = $this->get( 'ezpublish_legacy.kernel' );
+        if (!isset($this->legacyKernelClosure)) {
+            $this->legacyKernelClosure = $this->get('ezpublish_legacy.kernel');
         }
 
         $legacyKernelClosure = $this->legacyKernelClosure;

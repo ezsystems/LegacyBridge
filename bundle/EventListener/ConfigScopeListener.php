@@ -6,7 +6,6 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Bundle\EzPublishLegacyBundle\EventListener;
 
 use eZ\Publish\Core\MVC\Legacy\Kernel\Loader;
@@ -21,7 +20,7 @@ class ConfigScopeListener implements EventSubscriberInterface
      */
     private $kernelLoader;
 
-    public function __construct( Loader $kernelLoader )
+    public function __construct(Loader $kernelLoader)
     {
         $this->kernelLoader = $kernelLoader;
     }
@@ -34,7 +33,7 @@ class ConfigScopeListener implements EventSubscriberInterface
         );
     }
 
-    public function onConfigScopeChange( ScopeChangeEvent $event )
+    public function onConfigScopeChange(ScopeChangeEvent $event)
     {
         $this->kernelLoader->resetKernel();
     }

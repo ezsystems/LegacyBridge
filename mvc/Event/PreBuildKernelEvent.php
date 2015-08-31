@@ -6,7 +6,6 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Publish\Core\MVC\Legacy\Event;
 
 use Symfony\Component\EventDispatcher\Event;
@@ -20,13 +19,13 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 class PreBuildKernelEvent extends Event
 {
     /**
-     * Parameters that will be passed to the legacy kernel web handler
+     * Parameters that will be passed to the legacy kernel web handler.
      *
      * @var \Symfony\Component\HttpFoundation\ParameterBag
      */
     private $parameters;
 
-    public function __construct( ParameterBag $parameters )
+    public function __construct(ParameterBag $parameters)
     {
         $this->parameters = $parameters;
     }

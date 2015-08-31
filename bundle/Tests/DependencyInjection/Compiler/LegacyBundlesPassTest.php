@@ -6,7 +6,6 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Bundle\EzPublishLegacyBundle\Tests\DependencyInjection\Compiler;
 
 use eZ\Bundle\EzPublishLegacyBundle\DependencyInjection\Compiler\LegacyBundlesPass;
@@ -23,28 +22,28 @@ class AddFieldTypePassTest extends AbstractCompilerPassTestCase
 
     protected $locatorMock;
 
-    protected function registerCompilerPass( ContainerBuilder $container )
+    protected function registerCompilerPass(ContainerBuilder $container)
     {
-        $container->addCompilerPass( new LegacyBundlesPass( $this->getKernelMock() ) );
+        $container->addCompilerPass(new LegacyBundlesPass($this->getKernelMock()));
     }
 
     public function testCompilerPass()
     {
-        $bundle1 = $this->createBundleMock( 'Bundle1' );
-        $bundle2 = $this->createBundleMock( 'Bundle2' );
+        $bundle1 = $this->createBundleMock('Bundle1');
+        $bundle2 = $this->createBundleMock('Bundle2');
         $this->getKernelMock()
-            ->expects( $this->any() )
-            ->method( 'getBundles' )
-            ->will( $this->returnValue( array( $bundle1, $bundle2 ) ) );
+            ->expects($this->any())
+            ->method('getBundles')
+            ->will($this->returnValue(array($bundle1, $bundle2)));
 
         $this->getLocatorMock()
-            ->expects( $this->any() )
-            ->method( 'getExtensionNames' )
+            ->expects($this->any())
+            ->method('getExtensionNames')
             ->will(
                 $this->returnValueMap(
                     array(
-                        array( $bundle1, array( 'legacy_extension_a', 'legacy_extension_b' ) ),
-                        array( $bundle2, array( 'legacy_extension_b', 'legacy_extension_c' ) )
+                        array($bundle1, array('legacy_extension_a', 'legacy_extension_b')),
+                        array($bundle2, array('legacy_extension_b', 'legacy_extension_c')),
                     )
                 )
             );
@@ -56,7 +55,7 @@ class AddFieldTypePassTest extends AbstractCompilerPassTestCase
 
         $this->assertContainerBuilderHasParameter(
             'ezpublish_legacy.legacy_bundles_extensions',
-            array( 'legacy_extension_a', 'legacy_extension_b', 'legacy_extension_c' )
+            array('legacy_extension_a', 'legacy_extension_b', 'legacy_extension_c')
         );
     }
 
@@ -65,23 +64,24 @@ class AddFieldTypePassTest extends AbstractCompilerPassTestCase
      */
     protected function getKernelMock()
     {
-        if ( !isset( $this->kernelMock ) )
-        {
-            $this->kernelMock = $this->getMock( 'Symfony\Component\HttpKernel\KernelInterface' );
+        if (!isset($this->kernelMock)) {
+            $this->kernelMock = $this->getMock('Symfony\Component\HttpKernel\KernelInterface');
         }
+
         return $this->kernelMock;
     }
 
     /**
      * @return BundleInterface|PHPUnit_Framework_MockObject_MockObject
      */
-    protected function createBundleMock( $name )
+    protected function createBundleMock($name)
     {
-        $mock = $this->getMock( 'Symfony\Component\HttpKernel\Bundle\BundleInterface' );
+        $mock = $this->getMock('Symfony\Component\HttpKernel\Bundle\BundleInterface');
         $mock
-            ->expects( $this->any() )
-            ->method( 'getName' )
-            ->will( $this->returnValue( $name ) );
+            ->expects($this->any())
+            ->method('getName')
+            ->will($this->returnValue($name));
+
         return $mock;
     }
 
@@ -90,11 +90,10 @@ class AddFieldTypePassTest extends AbstractCompilerPassTestCase
      */
     protected function getLocatorMock()
     {
-        if ( !isset( $this->locatorMock ) )
-        {
-            $this->locatorMock = $this->getMock( 'eZ\Bundle\EzPublishLegacyBundle\LegacyBundles\LegacyExtensionsLocatorInterface' );
+        if (!isset($this->locatorMock)) {
+            $this->locatorMock = $this->getMock('eZ\Bundle\EzPublishLegacyBundle\LegacyBundles\LegacyExtensionsLocatorInterface');
         }
+
         return $this->locatorMock;
     }
-
 }

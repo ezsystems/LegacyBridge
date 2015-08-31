@@ -6,7 +6,6 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Bundle\EzPublishLegacyBundle\Controller;
 
 use eZ\Publish\Core\MVC\Symfony\Controller\Controller;
@@ -21,15 +20,13 @@ class LegacyRestController extends Controller
      */
     protected $restKernel;
 
-    public function __construct( \Closure $restKernelHandler, Loader $legacyKernelFactory, array $options = array() )
+    public function __construct(\Closure $restKernelHandler, Loader $legacyKernelFactory, array $options = array())
     {
-        $kernelClosure = $legacyKernelFactory->buildLegacyKernel( $restKernelHandler );
+        $kernelClosure = $legacyKernelFactory->buildLegacyKernel($restKernelHandler);
         $this->restKernel = $kernelClosure();
     }
 
     /**
-     *
-     *
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function restAction()
@@ -37,15 +34,14 @@ class LegacyRestController extends Controller
         $this->restKernel->run();
 
         $result = ezpKernelRest::getResponse();
-        if ( $result === null )
-        {
-            throw new Exception( "Rest Kernel run failed" );
+        if ($result === null) {
+            throw new Exception('Rest Kernel run failed');
         }
 
         return new Response(
             $result->getContent(),
-            $result->hasAttribute( 'statusCode' ) ? $result->getAttribute( 'statusCode' ) : 200,
-            $result->hasAttribute( 'headers' ) ? $result->getAttribute('headers') : array()
+            $result->hasAttribute('statusCode') ? $result->getAttribute('statusCode') : 200,
+            $result->hasAttribute('headers') ? $result->getAttribute('headers') : array()
         );
     }
 }

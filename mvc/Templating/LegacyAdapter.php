@@ -6,7 +6,6 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Publish\Core\MVC\Legacy\Templating;
 
 /**
@@ -39,26 +38,24 @@ class LegacyAdapter implements LegacyCompatible
     /**
      * @param mixed $transferredObject Object being passed to the legacy template.
      */
-    public function __construct( $transferredObject )
+    public function __construct($transferredObject)
     {
         $this->object = $transferredObject;
 
         // Registering available public properties
         $this->properties = array_map(
-            function ()
-            {
+            function () {
                 return true;
             },
-            get_object_vars( $transferredObject )
+            get_object_vars($transferredObject)
         );
 
         // Registering available getters
         $this->getters = array_fill_keys(
             array_filter(
-                get_class_methods( $transferredObject ),
-                function ( $method )
-                {
-                    return strpos( $method, 'get' ) === 0;
+                get_class_methods($transferredObject),
+                function ($method) {
+                    return strpos($method, 'get') === 0;
                 }
             ),
             true
@@ -66,15 +63,15 @@ class LegacyAdapter implements LegacyCompatible
     }
 
     /**
-     * Returns true if object supports attribute $name
+     * Returns true if object supports attribute $name.
      *
      * @param string $name
      *
-     * @return boolean
+     * @return bool
      */
-    public function hasAttribute( $name )
+    public function hasAttribute($name)
     {
-        return isset( $this->properties[$name] ) || isset( $this->getters['get' . ucfirst( $name )] );
+        return isset($this->properties[$name]) || isset($this->getters['get' . ucfirst($name)]);
     }
 
     /**
@@ -86,16 +83,18 @@ class LegacyAdapter implements LegacyCompatible
      *
      * @return mixed
      */
-    public function attribute( $name )
+    public function attribute($name)
     {
-        if ( isset( $this->properties[$name] ) )
+        if (isset($this->properties[$name])) {
             return $this->object->$name;
+        }
 
-        $getterName = 'get' . ucfirst( $name );
-        if ( isset( $this->getters[$getterName] ) )
+        $getterName = 'get' . ucfirst($name);
+        if (isset($this->getters[$getterName])) {
             return $this->object->$getterName();
+        }
 
-        throw new \InvalidArgumentException( "Unsupported attribute '$name' for " . get_class( $this->object ) );
+        throw new \InvalidArgumentException("Unsupported attribute '$name' for " . get_class($this->object));
     }
 
     /**
@@ -108,12 +107,11 @@ class LegacyAdapter implements LegacyCompatible
         $getters = $this->getters;
         array_walk(
             $getters,
-            function ( $methodName )
-            {
-                return lcfirst( substr( $methodName, 3 ) );
+            function ($methodName) {
+                return lcfirst(substr($methodName, 3));
             }
         );
 
-        return array_keys( $this->properties + $getters );
+        return array_keys($this->properties + $getters);
     }
 }

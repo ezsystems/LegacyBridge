@@ -6,7 +6,6 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Bundle\EzPublishLegacyBundle\Tests\Controller;
 
 use eZ\Bundle\EzPublishLegacyBundle\Controller\PreviewController;
@@ -25,7 +24,7 @@ class PreviewControllerTest extends BasePreviewControllerTest
     protected function setUp()
     {
         parent::setUp();
-        $this->configResolver = $this->getMock( 'eZ\Publish\Core\MVC\ConfigResolverInterface' );
+        $this->configResolver = $this->getMock('eZ\Publish\Core\MVC\ConfigResolverInterface');
     }
 
     /**
@@ -40,19 +39,19 @@ class PreviewControllerTest extends BasePreviewControllerTest
             $this->authorizationChecker,
             $this->locationProvider
         );
-        $controller->setConfigResolver( $this->configResolver );
+        $controller->setConfigResolver($this->configResolver);
 
         return $controller;
     }
 
-    protected function getDuplicatedRequest( Location $location, Content $content, SiteAccess $previewSiteAccess )
+    protected function getDuplicatedRequest(Location $location, Content $content, SiteAccess $previewSiteAccess)
     {
         $request = parent::getDuplicatedRequest(
             $location,
             $content,
             $previewSiteAccess
         );
-        $request->attributes->set( '_controller', 'ezpublish_legacy.controller:indexAction' );
+        $request->attributes->set('_controller', 'ezpublish_legacy.controller:indexAction');
 
         return $request;
     }
@@ -60,10 +59,10 @@ class PreviewControllerTest extends BasePreviewControllerTest
     public function testPreview()
     {
         $this->configResolver
-            ->expects( $this->any() )
-            ->method( 'getParameter' )
-            ->with( 'legacy_mode' )
-            ->will( $this->returnValue( true ) );
+            ->expects($this->any())
+            ->method('getParameter')
+            ->with('legacy_mode')
+            ->will($this->returnValue(true));
         parent::testPreview();
     }
 }

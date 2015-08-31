@@ -6,7 +6,6 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Bundle\EzPublishLegacyBundle\FieldType\Page;
 
 use eZ\Bundle\EzPublishCoreBundle\FieldType\Page\PageService as CorePageService;
@@ -21,11 +20,10 @@ class PageService extends CorePageService
      * @param string $layoutIdentifier
      * @return string
      */
-    public function getLayoutTemplate( $layoutIdentifier )
+    public function getLayoutTemplate($layoutIdentifier)
     {
-        $template = parent::getLayoutTemplate( $layoutIdentifier );
-        if ( strpos( $template, '.tpl' ) !== false && strpos( $template, 'design:' ) === false )
-        {
+        $template = parent::getLayoutTemplate($layoutIdentifier);
+        if (strpos($template, '.tpl') !== false && strpos($template, 'design:') === false) {
             $template = "design:zone/$template";
         }
 

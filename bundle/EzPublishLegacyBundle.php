@@ -6,7 +6,6 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Bundle\EzPublishLegacyBundle;
 
 use eZ\Bundle\EzPublishLegacyBundle\DependencyInjection\Compiler\RememberMeListenerPass;
@@ -27,36 +26,38 @@ class EzPublishLegacyBundle extends Bundle
     /** @var KernelInterface */
     private $kernel;
 
-    public function __construct( KernelInterface $kernel )
+    public function __construct(KernelInterface $kernel)
     {
         $this->kernel = $kernel;
     }
 
     public function boot()
     {
-        if ( !$this->container->getParameter( 'ezpublish_legacy.enabled' ) )
+        if (!$this->container->getParameter('ezpublish_legacy.enabled')) {
             return;
+        }
 
         // Deactivate eZComponents loading from legacy autoload.php as they are already loaded
-        if ( !defined( 'EZCBASE_ENABLED' ) )
-            define( 'EZCBASE_ENABLED', false );
+        if (!defined('EZCBASE_ENABLED')) {
+            define('EZCBASE_ENABLED', false);
+        }
 
-        require_once $this->container->getParameter( 'ezpublish_legacy.root_dir' ) . "/autoload.php";
+        require_once $this->container->getParameter('ezpublish_legacy.root_dir') . '/autoload.php';
     }
 
-    public function build( ContainerBuilder $container )
+    public function build(ContainerBuilder $container)
     {
-        parent::build( $container );
-        $container->addCompilerPass( new RelatedSiteAccessesCleanupPass(), PassConfig::TYPE_OPTIMIZE );
-        $container->addCompilerPass( new LegacyPass() );
-        $container->addCompilerPass( new TwigPass() );
-        $container->addCompilerPass( new LegacyBundlesPass( $this->kernel ) );
-        $container->addCompilerPass( new RoutingPass() );
-        $container->addCompilerPass( new LegacySessionPass() );
-        $container->addCompilerPass( new RememberMeListenerPass() );
+        parent::build($container);
+        $container->addCompilerPass(new RelatedSiteAccessesCleanupPass(), PassConfig::TYPE_OPTIMIZE);
+        $container->addCompilerPass(new LegacyPass());
+        $container->addCompilerPass(new TwigPass());
+        $container->addCompilerPass(new LegacyBundlesPass($this->kernel));
+        $container->addCompilerPass(new RoutingPass());
+        $container->addCompilerPass(new LegacySessionPass());
+        $container->addCompilerPass(new RememberMeListenerPass());
 
         /** @var \Symfony\Bundle\SecurityBundle\DependencyInjection\SecurityExtension $securityExtension */
-        $securityExtension = $container->getExtension( 'security' );
-        $securityExtension->addSecurityListenerFactory( new SSOFactory() );
+        $securityExtension = $container->getExtension('security');
+        $securityExtension->addSecurityListenerFactory(new SSOFactory());
     }
 }

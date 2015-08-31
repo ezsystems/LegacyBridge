@@ -13,12 +13,12 @@ use Sensio\Bundle\DistributionBundle\Configurator\Step\DoctrineStep;
 use Sensio\Bundle\DistributionBundle\Configurator\Step\SecretStep;
 
 /**
- * Factory for DistributionBundle\Configurator\Configurator with 'secret' step
+ * Factory for DistributionBundle\Configurator\Configurator with 'secret' step.
  */
 class ConfiguratorFactory
 {
     /**
-     * Factory for DistributionBundle\Configurator\Configurator with 'secret' step
+     * Factory for DistributionBundle\Configurator\Configurator with 'secret' step.
      *
      * This is kept similar to SensioDistributionBundle::boot() for compatibility
      *
@@ -26,11 +26,12 @@ class ConfiguratorFactory
      *
      * @return \Sensio\Bundle\DistributionBundle\Configurator\Configurator
      */
-    public function buildWebConfigurator( $kernelDir )
+    public function buildWebConfigurator($kernelDir)
     {
-        $configurator = new Configurator( $kernelDir );
-        $configurator->addStep( new DoctrineStep( $configurator->getParameters() ) );
-        $configurator->addStep( new SecretStep( $configurator->getParameters() ) );
+        $configurator = new Configurator($kernelDir);
+        $configurator->addStep(new DoctrineStep($configurator->getParameters()));
+        $configurator->addStep(new SecretStep($configurator->getParameters()));
+
         return $configurator;
     }
 }

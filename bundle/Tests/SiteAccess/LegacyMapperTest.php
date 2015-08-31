@@ -6,7 +6,6 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Bundle\EzPublishLegacyBundle\Tests\SiteAccess;
 
 use eZ\Publish\Core\MVC\Legacy\Tests\LegacyBasedTestCase;
@@ -19,24 +18,24 @@ class LegacyMapperTest extends LegacyBasedTestCase
     /**
      * @dataProvider siteAccessMatchProvider
      */
-    public function testOnSiteAccessMatch( $pathinfo, $semanticPathinfo, SiteAccess $siteaccess, $expectedAccess )
+    public function testOnSiteAccessMatch($pathinfo, $semanticPathinfo, SiteAccess $siteaccess, $expectedAccess)
     {
         $container = $this->getContainerMock();
         $container
-            ->expects( $this->exactly( 1 ) )
-            ->method( 'get' )
-            ->with( 'ezpublish.siteaccess' )
-            ->will( $this->returnValue( $siteaccess ) );
+            ->expects($this->exactly(1))
+            ->method('get')
+            ->with('ezpublish.siteaccess')
+            ->will($this->returnValue($siteaccess));
 
         $request = $this->getRequestMock();
         $request
-            ->expects( $this->any() )
-            ->method( 'getPathInfo' )
-            ->will( $this->returnValue( $pathinfo ) );
-        $request->attributes->set( 'semanticPathinfo', $semanticPathinfo );
+            ->expects($this->any())
+            ->method('getPathInfo')
+            ->will($this->returnValue($pathinfo));
+        $request->attributes->set('semanticPathinfo', $semanticPathinfo);
 
         $mapper = new LegacyMapper();
-        $mapper->setContainer( $container );
+        $mapper->setContainer($container);
         $bag = new \Symfony\Component\HttpFoundation\ParameterBag();
         $mapper->onBuildKernelWebHandler(
             new PreBuildKernelWebHandlerEvent(
@@ -44,7 +43,7 @@ class LegacyMapperTest extends LegacyBasedTestCase
                 $request
             )
         );
-        self::assertSame( $expectedAccess, $bag->get( 'siteaccess' ) );
+        self::assertSame($expectedAccess, $bag->get('siteaccess'));
     }
 
     public function siteAccessMatchProvider()
@@ -53,152 +52,152 @@ class LegacyMapperTest extends LegacyBasedTestCase
             array(
                 '/some/pathinfo',
                 '/some/pathinfo',
-                new SiteAccess( 'foo', 'default' ),
+                new SiteAccess('foo', 'default'),
                 array(
-                    'name'      => 'foo',
-                    'type'      => 1,
-                    'uri_part'  => array()
-                )
+                    'name' => 'foo',
+                    'type' => 1,
+                    'uri_part' => array(),
+                ),
             ),
             array(
                 '/env/matching',
                 '/env/matching',
-                new SiteAccess( 'foo', 'env' ),
+                new SiteAccess('foo', 'env'),
                 array(
-                    'name'      => 'foo',
-                    'type'      => 7,
-                    'uri_part'  => array()
-                )
+                    'name' => 'foo',
+                    'type' => 7,
+                    'uri_part' => array(),
+                ),
             ),
             array(
                 '/urimap/matching',
                 '/urimap/matching',
-                new SiteAccess( 'foo', 'uri:map' ),
+                new SiteAccess('foo', 'uri:map'),
                 array(
-                    'name'      => 'foo',
-                    'type'      => 2,
-                    'uri_part'  => array()
-                )
+                    'name' => 'foo',
+                    'type' => 2,
+                    'uri_part' => array(),
+                ),
             ),
             array(
                 '/foo/urimap/matching',
                 '/urimap/matching',
-                new SiteAccess( 'foo', 'uri:map' ),
+                new SiteAccess('foo', 'uri:map'),
                 array(
-                    'name'      => 'foo',
-                    'type'      => 2,
-                    'uri_part'  => array( 'foo' )
-                )
+                    'name' => 'foo',
+                    'type' => 2,
+                    'uri_part' => array('foo'),
+                ),
             ),
             array(
                 '/urielement/matching',
                 '/urielement/matching',
-                new SiteAccess( 'foo', 'uri:element' ),
+                new SiteAccess('foo', 'uri:element'),
                 array(
-                    'name'      => 'foo',
-                    'type'      => 2,
-                    'uri_part'  => array()
-                )
+                    'name' => 'foo',
+                    'type' => 2,
+                    'uri_part' => array(),
+                ),
             ),
             array(
                 '/foo/bar/urielement/matching',
                 '/urielement/matching',
-                new SiteAccess( 'foo', 'uri:element' ),
+                new SiteAccess('foo', 'uri:element'),
                 array(
-                    'name'      => 'foo',
-                    'type'      => 2,
-                    'uri_part'  => array( 'foo', 'bar' )
-                )
+                    'name' => 'foo',
+                    'type' => 2,
+                    'uri_part' => array('foo', 'bar'),
+                ),
             ),
             array(
                 '/foo/bar/baz/urielement/matching',
                 '/urielement/matching',
-                new SiteAccess( 'foo', 'uri:element' ),
+                new SiteAccess('foo', 'uri:element'),
                 array(
-                    'name'      => 'foo',
-                    'type'      => 2,
-                    'uri_part'  => array( 'foo', 'bar', 'baz' )
-                )
+                    'name' => 'foo',
+                    'type' => 2,
+                    'uri_part' => array('foo', 'bar', 'baz'),
+                ),
             ),
             array(
                 '/uritext/matching',
                 '/uritext/matching',
-                new SiteAccess( 'foo', 'uri:text' ),
+                new SiteAccess('foo', 'uri:text'),
                 array(
-                    'name'      => 'foo',
-                    'type'      => 2,
-                    'uri_part'  => array()
-                )
+                    'name' => 'foo',
+                    'type' => 2,
+                    'uri_part' => array(),
+                ),
             ),
             array(
                 '/uriregex/matching',
                 '/uriregex/matching',
-                new SiteAccess( 'foo', 'uri:regexp' ),
+                new SiteAccess('foo', 'uri:regexp'),
                 array(
-                    'name'      => 'foo',
-                    'type'      => 2,
-                    'uri_part'  => array()
-                )
+                    'name' => 'foo',
+                    'type' => 2,
+                    'uri_part' => array(),
+                ),
             ),
             array(
                 '/hostmap/matching',
                 '/hostmap/matching',
-                new SiteAccess( 'foo', 'host:map' ),
+                new SiteAccess('foo', 'host:map'),
                 array(
-                    'name'      => 'foo',
-                    'type'      => 4,
-                    'uri_part'  => array()
-                )
+                    'name' => 'foo',
+                    'type' => 4,
+                    'uri_part' => array(),
+                ),
             ),
             array(
                 '/hostelement/matching',
                 '/hostelement/matching',
-                new SiteAccess( 'foo', 'host:element' ),
+                new SiteAccess('foo', 'host:element'),
                 array(
-                    'name'      => 'foo',
-                    'type'      => 4,
-                    'uri_part'  => array()
-                )
+                    'name' => 'foo',
+                    'type' => 4,
+                    'uri_part' => array(),
+                ),
             ),
             array(
                 '/hosttext/matching',
                 '/hosttext/matching',
-                new SiteAccess( 'foo', 'host:text' ),
+                new SiteAccess('foo', 'host:text'),
                 array(
-                    'name'      => 'foo',
-                    'type'      => 4,
-                    'uri_part'  => array()
-                )
+                    'name' => 'foo',
+                    'type' => 4,
+                    'uri_part' => array(),
+                ),
             ),
             array(
                 '/hostregex/matching',
                 '/hostregex/matching',
-                new SiteAccess( 'foo', 'host:regexp' ),
+                new SiteAccess('foo', 'host:regexp'),
                 array(
-                    'name'      => 'foo',
-                    'type'      => 4,
-                    'uri_part'  => array()
-                )
+                    'name' => 'foo',
+                    'type' => 4,
+                    'uri_part' => array(),
+                ),
             ),
             array(
                 '/port/matching',
                 '/port/matching',
-                new SiteAccess( 'foo', 'port' ),
+                new SiteAccess('foo', 'port'),
                 array(
-                    'name'      => 'foo',
-                    'type'      => 3,
-                    'uri_part'  => array()
-                )
+                    'name' => 'foo',
+                    'type' => 3,
+                    'uri_part' => array(),
+                ),
             ),
             array(
                 '/custom/matching',
                 '/custom/matching',
-                new SiteAccess( 'foo', 'custom_match' ),
+                new SiteAccess('foo', 'custom_match'),
                 array(
-                    'name'      => 'foo',
-                    'type'      => 10,
-                    'uri_part'  => array()
-                )
+                    'name' => 'foo',
+                    'type' => 10,
+                    'uri_part' => array(),
+                ),
             ),
         );
     }
@@ -208,11 +207,11 @@ class LegacyMapperTest extends LegacyBasedTestCase
      *
      * @return \PHPUnit_Framework_MockObject_MockObject|\Symfony\Component\HttpFoundation\Request
      */
-    private function getRequestMock( array $methodsToMock = array() )
+    private function getRequestMock(array $methodsToMock = array())
     {
         return $this
-            ->getMockBuilder( 'Symfony\\Component\\HttpFoundation\\Request' )
-            ->setMethods( array_merge( array( 'getPathInfo' ), $methodsToMock ) )
+            ->getMockBuilder('Symfony\\Component\\HttpFoundation\\Request')
+            ->setMethods(array_merge(array('getPathInfo'), $methodsToMock))
             ->getMock();
     }
 
@@ -221,11 +220,11 @@ class LegacyMapperTest extends LegacyBasedTestCase
      *
      * @return \PHPUnit_Framework_MockObject_MockObject|\Symfony\Component\DependencyInjection\ContainerInterface
      */
-    private function getContainerMock( array $methodsToMock = array() )
+    private function getContainerMock(array $methodsToMock = array())
     {
         return $this
-            ->getMockBuilder( 'Symfony\\Component\\DependencyInjection\\ContainerInterface' )
-            ->setMethods( $methodsToMock )
+            ->getMockBuilder('Symfony\\Component\\DependencyInjection\\ContainerInterface')
+            ->setMethods($methodsToMock)
             ->getMock();
     }
 }

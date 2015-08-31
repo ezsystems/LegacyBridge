@@ -6,7 +6,6 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Bundle\EzPublishLegacyBundle\LegacyMapper;
 
 use eZ\Publish\Core\MVC\Legacy\LegacyEvents;
@@ -15,7 +14,7 @@ use eZ\Publish\Core\MVC\ConfigResolverInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
- * Enables extensions from LegacyBundle in the Legacy Kernel
+ * Enables extensions from LegacyBundle in the Legacy Kernel.
  */
 class LegacyBundles implements EventSubscriberInterface
 {
@@ -30,7 +29,7 @@ class LegacyBundles implements EventSubscriberInterface
     private $options;
 
     /**
-     * Disables the feature when set using setEnabled()
+     * Disables the feature when set using setEnabled().
      *
      * @var bool
      */
@@ -39,18 +38,17 @@ class LegacyBundles implements EventSubscriberInterface
     public function __construct(
         ConfigResolverInterface $configResolver,
         array $options = array()
-    )
-    {
+    ) {
         $this->configResolver = $configResolver;
         $this->options = $options;
     }
 
     /**
-     * Toggles the feature
+     * Toggles the feature.
      *
      * @param bool $isEnabled
      */
-    public function setEnabled( $isEnabled )
+    public function setEnabled($isEnabled)
     {
         $this->enabled = (bool)$isEnabled;
     }
@@ -58,34 +56,32 @@ class LegacyBundles implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return array(
-            LegacyEvents::PRE_BUILD_LEGACY_KERNEL => array( "onBuildKernel", 128 )
+            LegacyEvents::PRE_BUILD_LEGACY_KERNEL => array('onBuildKernel', 128),
         );
     }
 
     /**
-     * Adds settings to the parameters that will be injected into the legacy kernel
+     * Adds settings to the parameters that will be injected into the legacy kernel.
      *
      * @param \eZ\Publish\Core\MVC\Legacy\Event\PreBuildKernelEvent $event
      *
      * @todo Cache computed settings somehow
      */
-    public function onBuildKernel( PreBuildKernelEvent $event )
+    public function onBuildKernel(PreBuildKernelEvent $event)
     {
-        if ( !$this->enabled )
-        {
+        if (!$this->enabled) {
             return;
         }
 
-        if ( !isset( $this->options['extensions'] ) )
-        {
+        if (!isset($this->options['extensions'])) {
             return;
         }
 
-        $settings = array( "site.ini/ExtensionSettings/ActiveExtensions" => $this->options['extensions'] );
+        $settings = array('site.ini/ExtensionSettings/ActiveExtensions' => $this->options['extensions']);
 
         $event->getParameters()->set(
-            "injected-merge-settings",
-            $settings + (array)$event->getParameters()->get( "injected-merge-settings" )
+            'injected-merge-settings',
+            $settings + (array)$event->getParameters()->get('injected-merge-settings')
         );
     }
 }

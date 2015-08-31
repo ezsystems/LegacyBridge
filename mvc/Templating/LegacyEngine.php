@@ -6,14 +6,12 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Publish\Core\MVC\Legacy\Templating;
 
 use Symfony\Component\Templating\EngineInterface;
 use eZ\Publish\Core\MVC\Legacy\Templating\Converter\MultipleObjectConverter;
 use eZTemplate;
 use ezpEvent;
-use Symfony\Component\Templating\TemplateReference;
 
 class LegacyEngine implements EngineInterface
 {
@@ -31,7 +29,7 @@ class LegacyEngine implements EngineInterface
 
     private $supportedTemplates;
 
-    public function __construct( \Closure $legacyKernelClosure, MultipleObjectConverter $objectConverter )
+    public function __construct(\Closure $legacyKernelClosure, MultipleObjectConverter $objectConverter)
     {
         $this->legacyKernelClosure = $legacyKernelClosure;
         $this->objectConverter = $objectConverter;
@@ -44,6 +42,7 @@ class LegacyEngine implements EngineInterface
     protected function getLegacyKernel()
     {
         $closure = $this->legacyKernelClosure;
+
         return $closure();
     }
 
@@ -59,50 +58,40 @@ class LegacyEngine implements EngineInterface
      *
      * @api
      */
-    public function render( $name, array $parameters = array() )
+    public function render($name, array $parameters = array())
     {
         $objectConverter = $this->objectConverter;
         $legacyVars = array();
-        foreach ( $parameters as $varName => $param )
-        {
+        foreach ($parameters as $varName => $param) {
             // If $param is an array, we recursively convert all objects contained in it (if any).
             // Scalar parameters are passed as is
-            if ( is_array( $param ) )
-            {
+            if (is_array($param)) {
                 array_walk_recursive(
                     $param,
-                    function ( &$element ) use ( $objectConverter )
-                    {
-                        if ( is_object( $element ) && !( $element instanceof LegacyCompatible ) )
-                        {
-                            $element = $objectConverter->convert( $element );
+                    function (&$element) use ($objectConverter) {
+                        if (is_object($element) && !($element instanceof LegacyCompatible)) {
+                            $element = $objectConverter->convert($element);
                         }
                     }
                 );
                 $legacyVars[$varName] = $param;
-            }
-            else if ( !is_object( $param ) || $param instanceof LegacyCompatible )
-            {
+            } elseif (!is_object($param) || $param instanceof LegacyCompatible) {
                 $legacyVars[$varName] = $param;
-            }
-            else
-            {
-                $objectConverter->register( $param, $varName );
+            } else {
+                $objectConverter->register($param, $varName);
             }
         }
         $legacyVars += $objectConverter->convertAll();
 
         return $this->getLegacyKernel()->runCallback(
-            function () use ( $name, $legacyVars )
-            {
+            function () use ($name, $legacyVars) {
                 $tpl = eZTemplate::factory();
 
-                foreach ( $legacyVars as $varName => $value )
-                {
-                    $tpl->setVariable( $varName, $value );
+                foreach ($legacyVars as $varName => $value) {
+                    $tpl->setVariable($varName, $value);
                 }
 
-                return ezpEvent::getInstance()->filter( 'response/output', $tpl->fetch( $name ) );
+                return ezpEvent::getInstance()->filter('response/output', $tpl->fetch($name));
             },
             false
         );
@@ -115,13 +104,13 @@ class LegacyEngine implements EngineInterface
      *
      * @return bool true if the template exists, false otherwise
      */
-    public function exists( $name )
+    public function exists($name)
     {
         return $this->getLegacyKernel()->runCallback(
-            function () use ( $name )
-            {
-                $legacyTemplate = eZTemplate::factory()->loadURIRoot( $name, false, $extraParameters );
-                return !empty( $legacyTemplate );
+            function () use ($name) {
+                $legacyTemplate = eZTemplate::factory()->loadURIRoot($name, false, $extraParameters);
+
+                return !empty($legacyTemplate);
             }
         );
     }
@@ -133,22 +122,21 @@ class LegacyEngine implements EngineInterface
      *
      * @return bool true if this class supports the given template, false otherwise
      */
-    public function supports( $name )
+    public function supports($name)
     {
         $name = (string)$name;
 
-        if ( isset( $this->supportedTemplates[$name] ) )
-        {
+        if (isset($this->supportedTemplates[$name])) {
             return $this->supportedTemplates[$name];
         }
 
         // Template URI must begin by "design:" or "file:" and have a .tpl suffix
         $this->supportedTemplates[$name] =
             (
-                strpos( $name, 'design:' ) === 0 ||
-                strpos( $name, 'file:' ) === 0
+                strpos($name, 'design:') === 0 ||
+                strpos($name, 'file:') === 0
             ) &&
-            ( substr( $name, -strlen( self::SUPPORTED_SUFFIX ) ) === self::SUPPORTED_SUFFIX );
+            (substr($name, -strlen(self::SUPPORTED_SUFFIX)) === self::SUPPORTED_SUFFIX);
 
         return $this->supportedTemplates[$name];
     }

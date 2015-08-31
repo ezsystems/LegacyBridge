@@ -6,7 +6,6 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Publish\Core\MVC\Legacy\Templating\Twig;
 
 use Twig_Environment;
@@ -30,7 +29,7 @@ class Template implements Twig_TemplateInterface
      */
     private $legacyEngine;
 
-    public function __construct( $templateName, Twig_Environment $env, LegacyEngine $legacyEngine )
+    public function __construct($templateName, Twig_Environment $env, LegacyEngine $legacyEngine)
     {
         $this->templateName = $templateName;
         $this->env = $env;
@@ -44,9 +43,9 @@ class Template implements Twig_TemplateInterface
      *
      * @return string The rendered template
      */
-    public function render( array $context )
+    public function render(array $context)
     {
-        return $this->legacyEngine->render( $this->templateName, $context );
+        return $this->legacyEngine->render($this->templateName, $context);
     }
 
     /**
@@ -55,9 +54,9 @@ class Template implements Twig_TemplateInterface
      * @param array $context An array of parameters to pass to the template
      * @param array $blocks  An array of blocks to pass to the template
      */
-    public function display( array $context, array $blocks = array() )
+    public function display(array $context, array $blocks = array())
     {
-        echo $this->render( $context );
+        echo $this->render($context);
     }
 
     /**

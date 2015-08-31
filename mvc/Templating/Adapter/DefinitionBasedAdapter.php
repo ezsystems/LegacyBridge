@@ -6,7 +6,6 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Publish\Core\MVC\Legacy\Templating\Adapter;
 
 use eZ\Publish\API\Repository\Values\ValueObject;
@@ -14,11 +13,11 @@ use eZ\Publish\API\Repository\Values\ValueObject;
 abstract class DefinitionBasedAdapter extends ValueObjectAdapter
 {
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
-    public function __construct( ValueObject $valueObject )
+    public function __construct(ValueObject $valueObject)
     {
-        parent::__construct( $valueObject, $this->definition() );
+        parent::__construct($valueObject, $this->definition());
     }
 
     /**

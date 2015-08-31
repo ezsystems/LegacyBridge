@@ -6,7 +6,6 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Bundle\EzPublishLegacyBundle\Controller;
 
 use eZ\Publish\API\Repository\Values\Content\Content;
@@ -26,18 +25,17 @@ class PreviewController extends BasePreviewController
     /**
      * @param \eZ\Publish\Core\MVC\ConfigResolverInterface $configResolver
      */
-    public function setConfigResolver( ConfigResolverInterface $configResolver )
+    public function setConfigResolver(ConfigResolverInterface $configResolver)
     {
         $this->configResolver = $configResolver;
     }
 
-    protected function getForwardRequest( Location $location, Content $content, SiteAccess $previewSiteAccess, Request $request )
+    protected function getForwardRequest(Location $location, Content $content, SiteAccess $previewSiteAccess, Request $request)
     {
-        $request = parent::getForwardRequest( $location, $content, $previewSiteAccess, $request );
+        $request = parent::getForwardRequest($location, $content, $previewSiteAccess, $request);
         // If the preview siteaccess is configured in legacy_mode, we forward to the LegacyKernelController.
-        if ( $this->configResolver->getParameter( 'legacy_mode', 'ezsettings', $previewSiteAccess->name ) )
-        {
-            $request->attributes->set( '_controller', 'ezpublish_legacy.controller:indexAction' );
+        if ($this->configResolver->getParameter('legacy_mode', 'ezsettings', $previewSiteAccess->name)) {
+            $request->attributes->set('_controller', 'ezpublish_legacy.controller:indexAction');
         }
 
         return $request;

@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of the EzPublishLegacyBridge package
+ * This file is part of the EzPublishLegacyBridge package.
  *
  * @copyright Copyright (C) eZ Systems AS. All rights reserved.
  * @license For full copyright and license information view LICENSE file distributed with this source code.
@@ -19,38 +19,35 @@ class SwitchableHttpCachePurger implements GatewayCachePurger
     /** @var \eZ\Publish\Core\MVC\Symfony\Cache\GatewayCachePurger */
     private $gatewayCachePurger;
 
-    public function __construct( GatewayCachePurger $gatewayCachePurger )
+    public function __construct(GatewayCachePurger $gatewayCachePurger)
     {
         $this->gatewayCachePurger = $gatewayCachePurger;
     }
 
-    public function purge( $cacheElements )
+    public function purge($cacheElements)
     {
-        if ( $this->isSwitchedOff() )
-        {
+        if ($this->isSwitchedOff()) {
             return $cacheElements;
         }
 
-        return $this->gatewayCachePurger->purge( $cacheElements );
+        return $this->gatewayCachePurger->purge($cacheElements);
     }
 
     public function purgeAll()
     {
-        if ( $this->isSwitchedOff() )
-        {
+        if ($this->isSwitchedOff()) {
             return;
         }
 
         $this->gatewayCachePurger->purgeAll();
     }
 
-    public function purgeForContent( $contentId )
+    public function purgeForContent($contentId)
     {
-        if ( $this->isSwitchedOff() )
-        {
+        if ($this->isSwitchedOff()) {
             return;
         }
 
-        $this->gatewayCachePurger->purgeForContent( $contentId );
+        $this->gatewayCachePurger->purgeForContent($contentId);
     }
 }

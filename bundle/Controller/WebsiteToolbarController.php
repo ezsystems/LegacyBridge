@@ -46,8 +46,7 @@ class WebsiteToolbarController extends Controller
         AuthorizationCheckerInterface $authChecker,
         ContentPreviewHelper $previewHelper,
         CsrfProviderInterface $csrfProvider = null
-    )
-    {
+    ) {
         $this->legacyTemplateEngine = $engine;
         $this->contentService = $contentService;
         $this->locationService = $locationService;
@@ -66,17 +65,15 @@ class WebsiteToolbarController extends Controller
      *
      * @return Response
      */
-    public function websiteToolbarAction( $locationId, Request $request )
+    public function websiteToolbarAction($locationId, Request $request)
     {
         $response = new Response();
 
-        if ( isset( $this->csrfProvider ) )
-        {
-            $parameters['form_token'] = $this->csrfProvider->generateCsrfToken( 'legacy' );
+        if (isset($this->csrfProvider)) {
+            $parameters['form_token'] = $this->csrfProvider->generateCsrfToken('legacy');
         }
 
-        if ( $this->previewHelper->isPreviewActive() )
-        {
+        if ($this->previewHelper->isPreviewActive()) {
             $template = 'design:parts/website_toolbar_versionview.tpl';
             $previewedContent = $authValueObject = $this->previewHelper->getPreviewedContent();
             $previewedVersionInfo = $previewedContent->versionInfo;
@@ -84,35 +81,30 @@ class WebsiteToolbarController extends Controller
                 'object' => $previewedContent,
                 'version' => $previewedVersionInfo,
                 'language' => $previewedVersionInfo->initialLanguageCode,
-                'is_creator' => $previewedVersionInfo->creatorId === $this->getRepository()->getCurrentUser()->id
+                'is_creator' => $previewedVersionInfo->creatorId === $this->getRepository()->getCurrentUser()->id,
             );
-        }
-        else if ( $locationId === null )
-        {
+        } elseif ($locationId === null) {
             return $response;
-        }
-        else
-        {
-            $authValueObject = $this->loadContentByLocationId( $locationId );
+        } else {
+            $authValueObject = $this->loadContentByLocationId($locationId);
             $template = 'design:parts/website_toolbar.tpl';
             $parameters = array(
                 'current_node_id' => $locationId,
-                'redirect_uri' => $request->attributes->get( 'semanticPathinfo' )
+                'redirect_uri' => $request->attributes->get('semanticPathinfo'),
             );
         }
 
         $authorizationAttribute = new AuthorizationAttribute(
             'websitetoolbar',
             'use',
-            array( 'valueObject' => $authValueObject )
+            array('valueObject' => $authValueObject)
         );
 
-        if ( !$this->authChecker->isGranted( $authorizationAttribute ) )
-        {
+        if (!$this->authChecker->isGranted($authorizationAttribute)) {
             return $response;
         }
 
-        $response->setContent( $this->legacyTemplateEngine->render( $template, $parameters ) );
+        $response->setContent($this->legacyTemplateEngine->render($template, $parameters));
 
         return $response;
     }
@@ -120,11 +112,10 @@ class WebsiteToolbarController extends Controller
     /**
      * @return \eZ\Publish\API\Repository\Values\Content\Content
      */
-    protected function loadContentByLocationId( $locationId )
+    protected function loadContentByLocationId($locationId)
     {
         return $this->contentService->loadContent(
-            $this->locationService->loadLocation( $locationId )->contentId
+            $this->locationService->loadLocation($locationId)->contentId
         );
     }
 }
-

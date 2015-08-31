@@ -6,7 +6,6 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Publish\Core\MVC\Legacy\Templating\Tests;
 
 use eZ\Publish\Core\MVC\Legacy\Templating\LegacyEngine;
@@ -23,10 +22,9 @@ class LegacyEngineTest extends PHPUnit_Framework_TestCase
     {
         parent::setUp();
         $this->engine = new LegacyEngine(
-            function ()
-            {
+            function () {
             },
-            $this->getMock( 'eZ\\Publish\\Core\\MVC\\Legacy\\Templating\\Converter\\MultipleObjectConverter' )
+            $this->getMock('eZ\\Publish\\Core\\MVC\\Legacy\\Templating\\Converter\\MultipleObjectConverter')
         );
     }
 
@@ -38,21 +36,21 @@ class LegacyEngineTest extends PHPUnit_Framework_TestCase
      *
      * @dataProvider supportTestProvider
      */
-    public function testSupports( $tplName, $expected )
+    public function testSupports($tplName, $expected)
     {
-        $this->assertSame( $expected, $this->engine->supports( $tplName ) );
+        $this->assertSame($expected, $this->engine->supports($tplName));
     }
 
     public function supportTestProvider()
     {
         return array(
-            array( 'design:foo/bar.tpl', true ),
-            array( 'file:some/path.tpl', true ),
-            array( 'unsupported.php', false ),
-            array( 'unsupported.tpl', false ),
-            array( 'design:unsupported.php', false ),
-            array( 'design:foo/bar.php', false ),
-            array( 'file:some/path.php', false )
+            array('design:foo/bar.tpl', true),
+            array('file:some/path.tpl', true),
+            array('unsupported.php', false),
+            array('unsupported.tpl', false),
+            array('design:unsupported.php', false),
+            array('design:foo/bar.php', false),
+            array('file:some/path.php', false),
         );
     }
 }

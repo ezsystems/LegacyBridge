@@ -6,7 +6,6 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Bundle\EzPublishLegacyBundle\LegacyMapper;
 
 use eZ\Publish\Core\FieldType\Image\AliasCleanerInterface;
@@ -24,7 +23,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use RuntimeException;
 
 /**
- * Maps configuration parameters to the legacy parameters
+ * Maps configuration parameters to the legacy parameters.
  */
 class Configuration extends ContainerAware implements EventSubscriberInterface
 {
@@ -59,7 +58,7 @@ class Configuration extends ContainerAware implements EventSubscriberInterface
     private $options;
 
     /**
-     * Disables the feature when set using setEnabled()
+     * Disables the feature when set using setEnabled().
      *
      * @var bool
      */
@@ -78,8 +77,7 @@ class Configuration extends ContainerAware implements EventSubscriberInterface
         DatabaseHandler $legacyDbHandler,
         AliasCleanerInterface $aliasCleaner,
         array $options = array()
-    )
-    {
+    ) {
         $this->configResolver = $configResolver;
         $this->gatewayCachePurger = $gatewayCachePurger;
         $this->persistenceCachePurger = $persistenceCachePurger;
@@ -90,11 +88,11 @@ class Configuration extends ContainerAware implements EventSubscriberInterface
     }
 
     /**
-     * Toggles the feature
+     * Toggles the feature.
      *
      * @param bool $isEnabled
      */
-    public function setEnabled( $isEnabled )
+    public function setEnabled($isEnabled)
     {
         $this->enabled = (bool)$isEnabled;
     }
@@ -102,19 +100,18 @@ class Configuration extends ContainerAware implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return array(
-            LegacyEvents::PRE_BUILD_LEGACY_KERNEL => array( "onBuildKernel", 128 )
+            LegacyEvents::PRE_BUILD_LEGACY_KERNEL => array('onBuildKernel', 128),
         );
     }
 
     /**
-     * Adds settings to the parameters that will be injected into the legacy kernel
+     * Adds settings to the parameters that will be injected into the legacy kernel.
      *
      * @param \eZ\Publish\Core\MVC\Legacy\Event\PreBuildKernelEvent $event
      */
-    public function onBuildKernel( PreBuildKernelEvent $event )
+    public function onBuildKernel(PreBuildKernelEvent $event)
     {
-        if ( !$this->enabled )
-        {
+        if (!$this->enabled) {
             return;
         }
 
@@ -122,33 +119,29 @@ class Configuration extends ContainerAware implements EventSubscriberInterface
         $settings = array();
         foreach (
             array(
-                "host" => "Server",
-                "port" => "Port",
-                "user" => "User",
-                "password" => "Password",
-                "dbname" => "Database",
-                "unix_socket" => "Socket",
-                "driver" => "DatabaseImplementation"
+                'host' => 'Server',
+                'port' => 'Port',
+                'user' => 'User',
+                'password' => 'Password',
+                'dbname' => 'Database',
+                'unix_socket' => 'Socket',
+                'driver' => 'DatabaseImplementation',
             ) as $key => $iniKey
-        )
-        {
-            if ( isset( $databaseSettings[$key] ) )
-            {
+        ) {
+            if (isset($databaseSettings[$key])) {
                 $iniValue = $databaseSettings[$key];
 
-                switch ( $key )
-                {
-                    case "driver":
+                switch ($key) {
+                    case 'driver':
                         $driverMap = array(
                             'pdo_mysql' => 'ezmysqli',
                             'pdo_pgsql' => 'ezpostgresql',
-                            'oci8' => 'ezoracle'
+                            'oci8' => 'ezoracle',
                         );
-                        if ( !isset( $driverMap[$iniValue] ) )
-                        {
+                        if (!isset($driverMap[$iniValue])) {
                             throw new RuntimeException(
                                 "Could not map database driver to Legacy Stack database implementation.\n" .
-                                "Expected one of '" . implode( "', '", array_keys( $driverMap ) ) . "', got '" .
+                                "Expected one of '" . implode("', '", array_keys($driverMap)) . "', got '" .
                                 $iniValue . "'."
                             );
                         }
@@ -159,12 +152,10 @@ class Configuration extends ContainerAware implements EventSubscriberInterface
                 $settings["site.ini/DatabaseSettings/$iniKey"] = $iniValue;
             }
             // Some settings need specific values when not present.
-            else
-            {
-                switch ( $key )
-                {
-                    case "unix_socket":
-                        $settings["site.ini/DatabaseSettings/$iniKey"] = "disabled";
+            else {
+                switch ($key) {
+                    case 'unix_socket':
+                        $settings["site.ini/DatabaseSettings/$iniKey"] = 'disabled';
                         break;
                 }
             }
@@ -174,102 +165,96 @@ class Configuration extends ContainerAware implements EventSubscriberInterface
         $settings += $this->getImageSettings();
         // File settings
         $settings += array(
-            'site.ini/FileSettings/VarDir'      => $this->configResolver->getParameter( 'var_dir' ),
-            'site.ini/FileSettings/StorageDir'  => $this->configResolver->getParameter( 'storage_dir' )
+            'site.ini/FileSettings/VarDir' => $this->configResolver->getParameter('var_dir'),
+            'site.ini/FileSettings/StorageDir' => $this->configResolver->getParameter('storage_dir'),
         );
         // Multisite settings (PathPrefix and co)
         $settings += $this->getMultiSiteSettings();
 
         // User settings
-        $settings["site.ini/UserSettings/AnonymousUserID"] = $this->configResolver->getParameter( "anonymous_user_id" );
+        $settings['site.ini/UserSettings/AnonymousUserID'] = $this->configResolver->getParameter('anonymous_user_id');
 
         // Cache settings
         // Enforce ViewCaching to be enabled in order to persistence/http cache to be purged correctly.
         $settings['site.ini/ContentSettings/ViewCaching'] = 'enabled';
 
         $event->getParameters()->set(
-            "injected-settings",
-            $settings + (array)$event->getParameters()->get( "injected-settings" )
+            'injected-settings',
+            $settings + (array)$event->getParameters()->get('injected-settings')
         );
 
-        if ( class_exists( 'ezxFormToken' ) )
-        {
+        if (class_exists('ezxFormToken')) {
             // Inject csrf protection settings to make sure legacy & symfony stack work together
             if (
-                $this->container->hasParameter( 'form.type_extension.csrf.enabled' ) &&
-                $this->container->getParameter( 'form.type_extension.csrf.enabled' )
-            )
-            {
-                ezxFormToken::setSecret( $this->container->getParameter( 'kernel.secret' ) );
-                ezxFormToken::setFormField( $this->container->getParameter( 'form.type_extension.csrf.field_name' ) );
+                $this->container->hasParameter('form.type_extension.csrf.enabled') &&
+                $this->container->getParameter('form.type_extension.csrf.enabled')
+            ) {
+                ezxFormToken::setSecret($this->container->getParameter('kernel.secret'));
+                ezxFormToken::setFormField($this->container->getParameter('form.type_extension.csrf.field_name'));
             }
             // csrf protection is disabled, disable it in legacy extension as well.
-            else
-            {
-                ezxFormToken::setIsEnabled( false );
+            else {
+                ezxFormToken::setIsEnabled(false);
             }
         }
 
         // Register http cache content/cache event listener
         $ezpEvent = ezpEvent::getInstance();
-        $ezpEvent->attach( 'content/cache', array( $this->gatewayCachePurger, 'purge' ) );
-        $ezpEvent->attach( 'content/cache/all', array( $this->gatewayCachePurger, 'purgeAll' ) );
+        $ezpEvent->attach('content/cache', array($this->gatewayCachePurger, 'purge'));
+        $ezpEvent->attach('content/cache/all', array($this->gatewayCachePurger, 'purgeAll'));
 
         // Register persistence cache event listeners
-        $ezpEvent->attach( 'content/cache', array( $this->persistenceCachePurger, 'content' ) );
-        $ezpEvent->attach( 'content/cache/all', array( $this->persistenceCachePurger, 'all' ) );
-        $ezpEvent->attach( 'content/cache/version', array( $this->persistenceCachePurger, 'contentVersion' ) );
-        $ezpEvent->attach( 'content/class/cache/all', array( $this->persistenceCachePurger, 'contentType' ) );
-        $ezpEvent->attach( 'content/class/cache', array( $this->persistenceCachePurger, 'contentType' ) );
-        $ezpEvent->attach( 'content/class/group/cache', array( $this->persistenceCachePurger, 'contentTypeGroup' ) );
-        $ezpEvent->attach( 'content/section/cache', array( $this->persistenceCachePurger, 'section' ) );
-        $ezpEvent->attach( 'user/cache/all', array( $this->persistenceCachePurger, 'user' ) );
-        $ezpEvent->attach( 'content/translations/cache', array( $this->persistenceCachePurger, 'languages' ) );
+        $ezpEvent->attach('content/cache', array($this->persistenceCachePurger, 'content'));
+        $ezpEvent->attach('content/cache/all', array($this->persistenceCachePurger, 'all'));
+        $ezpEvent->attach('content/cache/version', array($this->persistenceCachePurger, 'contentVersion'));
+        $ezpEvent->attach('content/class/cache/all', array($this->persistenceCachePurger, 'contentType'));
+        $ezpEvent->attach('content/class/cache', array($this->persistenceCachePurger, 'contentType'));
+        $ezpEvent->attach('content/class/group/cache', array($this->persistenceCachePurger, 'contentTypeGroup'));
+        $ezpEvent->attach('content/section/cache', array($this->persistenceCachePurger, 'section'));
+        $ezpEvent->attach('user/cache/all', array($this->persistenceCachePurger, 'user'));
+        $ezpEvent->attach('content/translations/cache', array($this->persistenceCachePurger, 'languages'));
 
         // Register image alias removal listeners
-        $ezpEvent->attach( 'image/removeAliases', array( $this->aliasCleaner, 'removeAliases' ) );
-        $ezpEvent->attach( 'image/trashAliases', array( $this->aliasCleaner, 'removeAliases' ) );
-        $ezpEvent->attach( 'image/purgeAliases', array( $this->aliasCleaner, 'removeAliases' ) );
+        $ezpEvent->attach('image/removeAliases', array($this->aliasCleaner, 'removeAliases'));
+        $ezpEvent->attach('image/trashAliases', array($this->aliasCleaner, 'removeAliases'));
+        $ezpEvent->attach('image/purgeAliases', array($this->aliasCleaner, 'removeAliases'));
     }
 
     private function getImageSettings()
     {
         $imageSettings = array(
             // Basic settings
-            'image.ini/FileSettings/TemporaryDir'       => $this->configResolver->getParameter( 'image.temporary_dir' ),
-            'image.ini/FileSettings/PublishedImages'    => $this->configResolver->getParameter( 'image.published_images_dir' ),
-            'image.ini/FileSettings/VersionedImages'    => $this->configResolver->getParameter( 'image.versioned_images_dir' ),
-            'image.ini/AliasSettings/AliasList'         => array(),
+            'image.ini/FileSettings/TemporaryDir' => $this->configResolver->getParameter('image.temporary_dir'),
+            'image.ini/FileSettings/PublishedImages' => $this->configResolver->getParameter('image.published_images_dir'),
+            'image.ini/FileSettings/VersionedImages' => $this->configResolver->getParameter('image.versioned_images_dir'),
+            'image.ini/AliasSettings/AliasList' => array(),
             // ImageMagick configuration
-            'image.ini/ImageMagick/IsEnabled'           => $this->options['imagemagick_enabled'] ? 'true' : 'false',
-            'image.ini/ImageMagick/ExecutablePath'      => $this->options['imagemagick_executable_path'],
-            'image.ini/ImageMagick/Executable'          => $this->options['imagemagick_executable'],
-            'image.ini/ImageMagick/PreParameters'       => $this->configResolver->getParameter( 'imagemagick.pre_parameters' ),
-            'image.ini/ImageMagick/PostParameters'      => $this->configResolver->getParameter( 'imagemagick.post_parameters' ),
-            'image.ini/ImageMagick/Filters'             => array()
+            'image.ini/ImageMagick/IsEnabled' => $this->options['imagemagick_enabled'] ? 'true' : 'false',
+            'image.ini/ImageMagick/ExecutablePath' => $this->options['imagemagick_executable_path'],
+            'image.ini/ImageMagick/Executable' => $this->options['imagemagick_executable'],
+            'image.ini/ImageMagick/PreParameters' => $this->configResolver->getParameter('imagemagick.pre_parameters'),
+            'image.ini/ImageMagick/PostParameters' => $this->configResolver->getParameter('imagemagick.post_parameters'),
+            'image.ini/ImageMagick/Filters' => array(),
         );
 
         // Aliases configuration
-        $imageVariations = $this->configResolver->getParameter( 'image_variations' );
-        foreach ( $imageVariations as $aliasName => $aliasSettings )
-        {
+        $imageVariations = $this->configResolver->getParameter('image_variations');
+        foreach ($imageVariations as $aliasName => $aliasSettings) {
             $imageSettings['image.ini/AliasSettings/AliasList'][] = $aliasName;
-            if ( isset( $aliasSettings['reference'] ) )
+            if (isset($aliasSettings['reference'])) {
                 $imageSettings["image.ini/$aliasName/Reference"] = $aliasSettings['reference'];
+            }
 
-            foreach ( $aliasSettings['filters'] as $filterName => $filter )
-            {
-                if ( !isset( $this->options['imagemagick_filters'][$filterName] ) )
-                {
+            foreach ($aliasSettings['filters'] as $filterName => $filter) {
+                if (!isset($this->options['imagemagick_filters'][$filterName])) {
                     continue;
                 }
-                $imageSettings["image.ini/$aliasName/Filters"][] = $filterName . '=' . implode( ';', $filter );
+                $imageSettings["image.ini/$aliasName/Filters"][] = $filterName . '=' . implode(';', $filter);
             }
         }
 
-        foreach ( $this->options['imagemagick_filters'] as $filterName => $filter )
-        {
-            $imageSettings['image.ini/ImageMagick/Filters'][] = "$filterName=" . strtr( $filter, array( '{' => '%', '}' => '' ) );
+        foreach ($this->options['imagemagick_filters'] as $filterName => $filter) {
+            $imageSettings['image.ini/ImageMagick/Filters'][] = "$filterName=" . strtr($filter, array('{' => '%', '}' => ''));
         }
 
         return $imageSettings;
@@ -277,39 +262,36 @@ class Configuration extends ContainerAware implements EventSubscriberInterface
 
     private function getMultiSiteSettings()
     {
-        $rootLocationId = $this->configResolver->getParameter( 'content.tree_root.location_id' );
-        $indexPage = $this->configResolver->getParameter( 'index_page' );
-        $defaultPage = $this->configResolver->getParameter( 'default_page' );
-        if ( $rootLocationId === null )
-        {
+        $rootLocationId = $this->configResolver->getParameter('content.tree_root.location_id');
+        $indexPage = $this->configResolver->getParameter('index_page');
+        $defaultPage = $this->configResolver->getParameter('default_page');
+        if ($rootLocationId === null) {
             // return SiteSettings if there is no MultiSite (rootLocation is not defined)
             $result = array();
-            if ( $indexPage !== null )
-            {
+            if ($indexPage !== null) {
                 $result['site.ini/SiteSettings/IndexPage'] = $indexPage;
             }
-            if ( $defaultPage !== null )
-            {
+            if ($defaultPage !== null) {
                 $result['site.ini/SiteSettings/DefaultPage'] = $defaultPage;
             }
+
             return $result;
         }
 
-        $pathPrefix = trim( $this->urlAliasGenerator->getPathPrefixByRootLocationId( $rootLocationId ), '/' );
+        $pathPrefix = trim($this->urlAliasGenerator->getPathPrefixByRootLocationId($rootLocationId), '/');
         $pathPrefixExcludeItems = array_map(
-            function ( $value )
-            {
-                return trim( $value, '/' );
+            function ($value) {
+                return trim($value, '/');
             },
-            $this->configResolver->getParameter( 'content.tree_root.excluded_uri_prefixes' )
+            $this->configResolver->getParameter('content.tree_root.excluded_uri_prefixes')
         );
 
         return array(
-            'site.ini/SiteAccessSettings/PathPrefix'        => $pathPrefix,
+            'site.ini/SiteAccessSettings/PathPrefix' => $pathPrefix,
             'site.ini/SiteAccessSettings/PathPrefixExclude' => $pathPrefixExcludeItems,
-            'logfile.ini/AccessLogFileSettings/PathPrefix'  => $pathPrefix,
-            'site.ini/SiteSettings/IndexPage'               => $indexPage !== null ? $indexPage : "/content/view/full/$rootLocationId/",
-            'site.ini/SiteSettings/DefaultPage'             => $defaultPage !== null ? $defaultPage : "/content/view/full/$rootLocationId/",
+            'logfile.ini/AccessLogFileSettings/PathPrefix' => $pathPrefix,
+            'site.ini/SiteSettings/IndexPage' => $indexPage !== null ? $indexPage : "/content/view/full/$rootLocationId/",
+            'site.ini/SiteSettings/DefaultPage' => $defaultPage !== null ? $defaultPage : "/content/view/full/$rootLocationId/",
         );
     }
 }

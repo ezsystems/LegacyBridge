@@ -6,7 +6,6 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Bundle\EzPublishLegacyBundle\Tests\FieldType\Page;
 
 use eZ\Publish\Core\FieldType\Tests\Page\PageServiceTest as BaseTest;
@@ -18,23 +17,23 @@ class PageServiceTest extends BaseTest
     protected function getZoneDefinition()
     {
         return parent::getZoneDefinition() + array(
-            'layoutLegacy1'      => array(
-                'zoneTypeName'          => 'Layout legacy 1',
-                'zones'                 => array(
-                    'main'  => array( 'name' => 'Global zone' )
+            'layoutLegacy1' => array(
+                'zoneTypeName' => 'Layout legacy 1',
+                'zones' => array(
+                    'main' => array('name' => 'Global zone'),
                 ),
-                'zoneThumbnail'         => 'globalzone_layout.gif',
-                'template'              => 'legacytemplate.tpl',
-                'availableForClasses'   => array( 'frontpage' )
+                'zoneThumbnail' => 'globalzone_layout.gif',
+                'template' => 'legacytemplate.tpl',
+                'availableForClasses' => array('frontpage'),
             ),
-            'layoutLegacy2'      => array(
-                'zoneTypeName'          => 'Layout legacy 2',
-                'zones'                 => array(
-                    'main'  => array( 'name' => 'Global zone' )
+            'layoutLegacy2' => array(
+                'zoneTypeName' => 'Layout legacy 2',
+                'zones' => array(
+                    'main' => array('name' => 'Global zone'),
                 ),
-                'zoneThumbnail'         => 'globalzone_layout.gif',
-                'template'              => 'design:foo/legacytemplate.tpl',
-                'availableForClasses'   => array( 'frontpage' )
+                'zoneThumbnail' => 'globalzone_layout.gif',
+                'template' => 'design:foo/legacytemplate.tpl',
+                'availableForClasses' => array('frontpage'),
             ),
         );
     }
@@ -42,8 +41,8 @@ class PageServiceTest extends BaseTest
     public function getLayoutTemplateProvider()
     {
         return parent::getLayoutTemplateProvider() + array(
-            array( 'layoutLegacy1', 'design:zone/legacytemplate.tpl' ),
-            array( 'layoutLegacy2', 'design:zone/foo/legacytemplate.tpl' ),
+            array('layoutLegacy1', 'design:zone/legacytemplate.tpl'),
+            array('layoutLegacy2', 'design:zone/foo/legacytemplate.tpl'),
         );
     }
 }

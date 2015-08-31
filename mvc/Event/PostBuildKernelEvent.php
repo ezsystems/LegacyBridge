@@ -6,7 +6,6 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Publish\Core\MVC\Legacy\Event;
 
 use Symfony\Component\EventDispatcher\Event;
@@ -28,7 +27,7 @@ class PostBuildKernelEvent extends Event
      */
     private $kernelHandler;
 
-    public function __construct( LegacyKernel $legacyKernel, ezpKernelHandler $handler )
+    public function __construct(LegacyKernel $legacyKernel, ezpKernelHandler $handler)
     {
         $this->legacyKernel = $legacyKernel;
         $this->kernelHandler = $handler;

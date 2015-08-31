@@ -1,12 +1,11 @@
 <?php
 /**
- * File containing the Legacy\AbstractLegacyObjectStateSlot class
+ * File containing the Legacy\AbstractLegacyObjectStateSlot class.
  *
  * @copyright Copyright (C) eZ Systems AS. All rights reserved.
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Publish\Core\MVC\Legacy\SignalSlot;
 
 use eZ\Publish\Core\SignalSlot\Signal;
@@ -24,13 +23,12 @@ abstract class AbstractLegacyObjectStateSlot extends AbstractLegacySlot
      *
      * @param \eZ\Publish\Core\SignalSlot\Signal $signal
      */
-    public function receive( Signal $signal )
+    public function receive(Signal $signal)
     {
         $this->runLegacyKernelCallback(
-            function ()
-            {
+            function () {
                 // Passing null as $cacheItem parameter is not used by this method
-                eZCache::clearStateLimitations( null );
+                eZCache::clearStateLimitations(null);
             }
         );
     }

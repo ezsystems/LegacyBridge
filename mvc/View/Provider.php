@@ -6,7 +6,6 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Publish\Core\MVC\Legacy\View;
 
 use eZ\Publish\Core\MVC\Legacy\Templating\LegacyHelper;
@@ -35,7 +34,7 @@ abstract class Provider
      */
     protected $legacyHelper;
 
-    public function __construct( Closure $legacyKernelClosure, TwigContentViewLayoutDecorator $decorator, LegacyHelper $legacyHelper, LoggerInterface $logger = null )
+    public function __construct(Closure $legacyKernelClosure, TwigContentViewLayoutDecorator $decorator, LegacyHelper $legacyHelper, LoggerInterface $logger = null)
     {
         $this->legacyKernelClosure = $legacyKernelClosure;
         $this->decorator = $decorator;
@@ -49,6 +48,7 @@ abstract class Provider
     protected function getLegacyKernel()
     {
         $legacyKernelClosure = $this->legacyKernelClosure;
+
         return $legacyKernelClosure();
     }
 }

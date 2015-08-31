@@ -6,7 +6,6 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Publish\Core\MVC\Legacy\Security\Firewall;
 
 use eZ\Publish\API\Repository\UserService;
@@ -34,7 +33,7 @@ class SSOListener extends AbstractPreAuthenticatedListener
     /**
      * @param \Closure $legacyKernelClosure
      */
-    public function setLegacyKernelClosure( \Closure $legacyKernelClosure )
+    public function setLegacyKernelClosure(\Closure $legacyKernelClosure)
     {
         $this->legacyKernelClosure = $legacyKernelClosure;
     }
@@ -42,7 +41,7 @@ class SSOListener extends AbstractPreAuthenticatedListener
     /**
      * @param mixed $userService
      */
-    public function setUserService( UserService $userService )
+    public function setUserService(UserService $userService)
     {
         $this->userService = $userService;
     }
@@ -54,7 +53,7 @@ class SSOListener extends AbstractPreAuthenticatedListener
      *
      * @return array An array composed of the user and the credentials
      */
-    protected function getPreAuthenticatedData( Request $request )
+    protected function getPreAuthenticatedData(Request $request)
     {
         $kernelClosure = $this->legacyKernelClosure;
         /** @var \ezpKernelHandler $legacyKernel */
@@ -62,28 +61,24 @@ class SSOListener extends AbstractPreAuthenticatedListener
         $logger = $this->logger;
 
         $legacyUser = $legacyKernel->runCallback(
-            function () use ( $logger )
-            {
-                foreach ( eZINI::instance()->variable( 'UserSettings', 'SingleSignOnHandlerArray' ) as $ssoHandlerName )
-                {
+            function () use ($logger) {
+                foreach (eZINI::instance()->variable('UserSettings', 'SingleSignOnHandlerArray') as $ssoHandlerName) {
                     $className = 'eZ' . $ssoHandlerName . 'SSOHandler';
-                    if ( !class_exists( $className ) )
-                    {
-                        if ( $logger )
-                        {
-                            $logger->error( "Undefined legacy SSOHandler class: $className" );
+                    if (!class_exists($className)) {
+                        if ($logger) {
+                            $logger->error("Undefined legacy SSOHandler class: $className");
                         }
                         continue;
                     }
 
                     $ssoHandler = new $className();
                     $ssoUser = $ssoHandler->handleSSOLogin();
-                    if ( !$ssoUser instanceof eZUser )
-                    {
+                    if (!$ssoUser instanceof eZUser) {
                         continue;
                     }
 
-                    $logger->info( "Matched user using eZ legacy SSO Handler: $className" );
+                    $logger->info("Matched user using eZ legacy SSO Handler: $className");
+
                     return $ssoUser;
                 }
             },
@@ -92,15 +87,15 @@ class SSOListener extends AbstractPreAuthenticatedListener
         );
 
         // No matched user with legacy.
-        if ( !$legacyUser instanceof eZUser )
-        {
-            return array( '', '' );
+        if (!$legacyUser instanceof eZUser) {
+            return array('', '');
         }
 
         $user = new User(
-            $this->userService->loadUser( $legacyUser->attribute( 'contentobject_id' ) ),
-            array( 'ROLE_USER' )
+            $this->userService->loadUser($legacyUser->attribute('contentobject_id')),
+            array('ROLE_USER')
         );
-        return array( $user, $user->getPassword() );
+
+        return array($user, $user->getPassword());
     }
 }

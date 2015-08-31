@@ -6,7 +6,6 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Bundle\EzPublishLegacyBundle\EventListener;
 
 use eZ\Bundle\EzPublishCoreBundle\EventListener\IndexRequestListener as CoreIndexListener;
@@ -20,12 +19,11 @@ class IndexRequestListener extends CoreIndexListener
      *
      * @param GetResponseEvent $event
      */
-    public function onKernelRequestIndex( GetResponseEvent $event )
+    public function onKernelRequestIndex(GetResponseEvent $event)
     {
-        if ( $this->configResolver->getParameter( 'legacy_mode' ) )
-        {
+        if ($this->configResolver->getParameter('legacy_mode')) {
             return;
         }
-        parent::onKernelRequestIndex( $event );
+        parent::onKernelRequestIndex($event);
     }
 }

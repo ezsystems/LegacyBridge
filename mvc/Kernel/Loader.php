@@ -6,10 +6,8 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Publish\Core\MVC\Legacy\Kernel;
 
-use eZ\Bundle\EzPublishLegacyBundle\Rest\ResponseWriter;
 use eZ\Publish\Core\MVC\Legacy\Event\PostBuildKernelEvent;
 use eZ\Publish\Core\MVC\Legacy\Event\PreResetLegacyKernelEvent;
 use eZ\Publish\Core\MVC\Legacy\Kernel as LegacyKernel;
@@ -24,7 +22,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
- * Legacy kernel loader
+ * Legacy kernel loader.
  */
 class Loader extends ContainerAware
 {
@@ -67,7 +65,7 @@ class Loader extends ContainerAware
     /** @var ezpKernelHandler */
     private $restHandler;
 
-    public function __construct( $legacyRootDir, $webrootDir, EventDispatcherInterface $eventDispatcher, URIHelper $uriHelper, LoggerInterface $logger = null )
+    public function __construct($legacyRootDir, $webrootDir, EventDispatcherInterface $eventDispatcher, URIHelper $uriHelper, LoggerInterface $logger = null)
     {
         $this->legacyRootDir = $legacyRootDir;
         $this->webrootDir = $webrootDir;
@@ -79,7 +77,7 @@ class Loader extends ContainerAware
     /**
      * @param bool $enabled
      */
-    public function setBuildEventsEnabled( $enabled = true )
+    public function setBuildEventsEnabled($enabled = true)
     {
         $this->buildEventsEnabled = (bool)$enabled;
     }
@@ -99,29 +97,28 @@ class Loader extends ContainerAware
      *
      * @return \Closure
      */
-    public function buildLegacyKernel( $legacyKernelHandler )
+    public function buildLegacyKernel($legacyKernelHandler)
     {
         $legacyRootDir = $this->legacyRootDir;
         $webrootDir = $this->webrootDir;
         $eventDispatcher = $this->eventDispatcher;
         $logger = $this->logger;
         $that = $this;
-        return function () use ( $legacyKernelHandler, $legacyRootDir, $webrootDir, $eventDispatcher, $logger, $that )
-        {
-            if ( LegacyKernel::hasInstance() )
-            {
+
+        return function () use ($legacyKernelHandler, $legacyRootDir, $webrootDir, $eventDispatcher, $logger, $that) {
+            if (LegacyKernel::hasInstance()) {
                 return LegacyKernel::instance();
             }
 
-            if ( $legacyKernelHandler instanceof \Closure )
+            if ($legacyKernelHandler instanceof \Closure) {
                 $legacyKernelHandler = $legacyKernelHandler();
-            $legacyKernel = new LegacyKernel( $legacyKernelHandler, $legacyRootDir, $webrootDir, $logger );
+            }
+            $legacyKernel = new LegacyKernel($legacyKernelHandler, $legacyRootDir, $webrootDir, $logger);
 
-            if ( $that->getBuildEventsEnabled() )
-            {
+            if ($that->getBuildEventsEnabled()) {
                 $eventDispatcher->dispatch(
                     LegacyEvents::POST_BUILD_LEGACY_KERNEL,
-                    new PostBuildKernelEvent( $legacyKernel, $legacyKernelHandler )
+                    new PostBuildKernelEvent($legacyKernel, $legacyKernelHandler)
                 );
             }
 
@@ -137,7 +134,7 @@ class Loader extends ContainerAware
      *
      * @return \Closure
      */
-    public function buildLegacyKernelHandlerWeb( $webHandlerClass, array $defaultLegacyOptions = array() )
+    public function buildLegacyKernelHandlerWeb($webHandlerClass, array $defaultLegacyOptions = array())
     {
         $legacyRootDir = $this->legacyRootDir;
         $webrootDir = $this->webrootDir;
@@ -146,36 +143,34 @@ class Loader extends ContainerAware
         $container = $this->container;
         $that = $this;
 
-        return function () use ( $legacyRootDir, $webrootDir, $container, $defaultLegacyOptions, $webHandlerClass, $uriHelper, $eventDispatcher, $that )
-        {
-            if ( !$that->getWebHandler() )
-            {
-                chdir( $legacyRootDir );
+        return function () use ($legacyRootDir, $webrootDir, $container, $defaultLegacyOptions, $webHandlerClass, $uriHelper, $eventDispatcher, $that) {
+            if (!$that->getWebHandler()) {
+                chdir($legacyRootDir);
 
-                $legacyParameters = new ParameterBag( $defaultLegacyOptions );
-                $legacyParameters->set( 'service-container', $container );
-                $request = $container->get( 'request' );
+                $legacyParameters = new ParameterBag($defaultLegacyOptions);
+                $legacyParameters->set('service-container', $container);
+                $request = $container->get('request');
 
-                if ( $that->getBuildEventsEnabled() )
-                {
+                if ($that->getBuildEventsEnabled()) {
                     // PRE_BUILD_LEGACY_KERNEL for non request related stuff
-                    $eventDispatcher->dispatch( LegacyEvents::PRE_BUILD_LEGACY_KERNEL, new PreBuildKernelEvent( $legacyParameters ) );
+                    $eventDispatcher->dispatch(LegacyEvents::PRE_BUILD_LEGACY_KERNEL, new PreBuildKernelEvent($legacyParameters));
 
                     // Pure web stuff
                     $eventDispatcher->dispatch(
                         LegacyEvents::PRE_BUILD_LEGACY_KERNEL_WEB,
-                        new PreBuildKernelWebHandlerEvent( $legacyParameters, $request )
+                        new PreBuildKernelWebHandlerEvent($legacyParameters, $request)
                     );
                 }
 
-                $interfaces = class_implements( $webHandlerClass );
-                if ( !isset( $interfaces['ezpKernelHandler'] ) )
-                    throw new \InvalidArgumentException( 'A legacy kernel handler must be an instance of ezpKernelHandler.' );
+                $interfaces = class_implements($webHandlerClass);
+                if (!isset($interfaces['ezpKernelHandler'])) {
+                    throw new \InvalidArgumentException('A legacy kernel handler must be an instance of ezpKernelHandler.');
+                }
 
-                $that->setWebHandler( new $webHandlerClass( $legacyParameters->all() ) );
+                $that->setWebHandler(new $webHandlerClass($legacyParameters->all()));
                 // Fix up legacy URI for global use cases (i.e. using runCallback()).
-                $uriHelper->updateLegacyURI( $request );
-                chdir( $webrootDir );
+                $uriHelper->updateLegacyURI($request);
+                chdir($webrootDir);
             }
 
             return $that->getWebHandler();
@@ -185,7 +180,7 @@ class Loader extends ContainerAware
     /**
      * @param $handler
      */
-    public function setWebHandler( ezpKernelHandler $handler )
+    public function setWebHandler(ezpKernelHandler $handler)
     {
         $this->webHandler = $handler;
     }
@@ -199,7 +194,7 @@ class Loader extends ContainerAware
     }
 
     /**
-     * Builds legacy kernel handler CLI
+     * Builds legacy kernel handler CLI.
      *
      * @return CLIHandler
      */
@@ -210,24 +205,21 @@ class Loader extends ContainerAware
         $container = $this->container;
         $that = $this;
 
-        return function () use ( $legacyRootDir, $container, $eventDispatcher, $that )
-        {
-            if ( !$that->getCLIHandler() )
-            {
+        return function () use ($legacyRootDir, $container, $eventDispatcher, $that) {
+            if (!$that->getCLIHandler()) {
                 $currentDir = getcwd();
-                chdir( $legacyRootDir );
+                chdir($legacyRootDir);
 
-                $legacyParameters = new ParameterBag( $container->getParameter( 'ezpublish_legacy.kernel_handler.cli.options' ) );
-                if ( $that->getBuildEventsEnabled() )
-                {
-                    $eventDispatcher->dispatch( LegacyEvents::PRE_BUILD_LEGACY_KERNEL, new PreBuildKernelEvent( $legacyParameters ) );
+                $legacyParameters = new ParameterBag($container->getParameter('ezpublish_legacy.kernel_handler.cli.options'));
+                if ($that->getBuildEventsEnabled()) {
+                    $eventDispatcher->dispatch(LegacyEvents::PRE_BUILD_LEGACY_KERNEL, new PreBuildKernelEvent($legacyParameters));
                 }
 
                 $that->setCLIHandler(
-                    new CLIHandler( $legacyParameters->all(), $container->get( 'ezpublish.siteaccess' ), $container )
+                    new CLIHandler($legacyParameters->all(), $container->get('ezpublish.siteaccess'), $container)
                 );
 
-                chdir( $currentDir );
+                chdir($currentDir);
             }
 
             return $that->getCLIHandler();
@@ -242,7 +234,7 @@ class Loader extends ContainerAware
         return $this->cliHandler;
     }
 
-    public function setCLIHandler( ezpKernelHandler $kernelHandler )
+    public function setCLIHandler(ezpKernelHandler $kernelHandler)
     {
         $this->cliHandler = $kernelHandler;
     }
@@ -255,10 +247,10 @@ class Loader extends ContainerAware
     public function buildLegacyKernelHandlerTreeMenu()
     {
         return $this->buildLegacyKernelHandlerWeb(
-            $this->container->getParameter( 'ezpublish_legacy.kernel_handler.treemenu.class' ),
+            $this->container->getParameter('ezpublish_legacy.kernel_handler.treemenu.class'),
             array(
-                'use-cache-headers'    => false,
-                'use-exceptions'       => true
+                'use-cache-headers' => false,
+                'use-exceptions' => true,
             )
         );
     }
@@ -268,7 +260,7 @@ class Loader extends ContainerAware
      *
      * @return \Closure A closure returning an \ezpKernelTreeMenu instance.
      */
-    public function buildLegacyKernelHandlerRest( $mvcConfiguration )
+    public function buildLegacyKernelHandlerRest($mvcConfiguration)
     {
         $legacyRootDir = $this->legacyRootDir;
         $webrootDir = $this->webrootDir;
@@ -277,29 +269,26 @@ class Loader extends ContainerAware
         $container = $this->container;
         $that = $this;
 
-        return function () use ( $legacyRootDir, $webrootDir, $container, $uriHelper, $eventDispatcher, $that )
-        {
-            if ( !$that->getRestHandler() )
-            {
-                chdir( $legacyRootDir );
+        return function () use ($legacyRootDir, $webrootDir, $container, $uriHelper, $eventDispatcher, $that) {
+            if (!$that->getRestHandler()) {
+                chdir($legacyRootDir);
 
                 $legacyParameters = new ParameterBag();
-                $request = $container->get( 'request' );
+                $request = $container->get('request');
 
-                if ( $that->getBuildEventsEnabled() )
-                {
+                if ($that->getBuildEventsEnabled()) {
                     // PRE_BUILD_LEGACY_KERNEL for non request related stuff
-                    $eventDispatcher->dispatch( LegacyEvents::PRE_BUILD_LEGACY_KERNEL, new PreBuildKernelEvent( $legacyParameters ) );
+                    $eventDispatcher->dispatch(LegacyEvents::PRE_BUILD_LEGACY_KERNEL, new PreBuildKernelEvent($legacyParameters));
 
                     // Pure web stuff
                     $eventDispatcher->dispatch(
                         LegacyEvents::PRE_BUILD_LEGACY_KERNEL_WEB,
-                        new PreBuildKernelWebHandlerEvent( $legacyParameters, $request )
+                        new PreBuildKernelWebHandlerEvent($legacyParameters, $request)
                     );
                 }
 
-                $that->setRestHandler( new ezpKernelRest( $legacyParameters->all(), 'eZ\Bundle\EzPublishLegacyBundle\Rest\ResponseWriter' ) );
-                chdir( $webrootDir );
+                $that->setRestHandler(new ezpKernelRest($legacyParameters->all(), 'eZ\Bundle\EzPublishLegacyBundle\Rest\ResponseWriter'));
+                chdir($webrootDir);
             }
 
             return $that->getRestHandler();
@@ -314,23 +303,21 @@ class Loader extends ContainerAware
         return $this->restHandler;
     }
 
-    public function setRestHandler( ezpKernelHandler $handler )
+    public function setRestHandler(ezpKernelHandler $handler)
     {
         $this->restHandler = $handler;
     }
 
     /**
-     * Resets the legacy kernel instances from the container
-     *
-     * @return void
+     * Resets the legacy kernel instances from the container.
      */
     public function resetKernel()
     {
         /** @var \Closure $kernelClosure */
-        $kernelClosure = $this->container->get( 'ezpublish_legacy.kernel' );
+        $kernelClosure = $this->container->get('ezpublish_legacy.kernel');
         $this->eventDispatcher->dispatch(
             LegacyEvents::PRE_RESET_LEGACY_KERNEL,
-            new PreResetLegacyKernelEvent( $kernelClosure() )
+            new PreResetLegacyKernelEvent($kernelClosure())
         );
 
         LegacyKernel::resetInstance();
@@ -338,10 +325,10 @@ class Loader extends ContainerAware
         $this->cliHandler = null;
         $this->restHandler = null;
 
-        $this->container->set( 'ezpublish_legacy.kernel', null );
-        $this->container->set( 'ezpublish_legacy.kernel.lazy', null );
-        $this->container->set( 'ezpublish_legacy.kernel_handler.web', null );
-        $this->container->set( 'ezpublish_legacy.kernel_handler.cli', null );
-        $this->container->set( 'ezpublish_legacy.kernel_handler.rest', null );
+        $this->container->set('ezpublish_legacy.kernel', null);
+        $this->container->set('ezpublish_legacy.kernel.lazy', null);
+        $this->container->set('ezpublish_legacy.kernel_handler.web', null);
+        $this->container->set('ezpublish_legacy.kernel_handler.cli', null);
+        $this->container->set('ezpublish_legacy.kernel_handler.rest', null);
     }
 }

@@ -6,17 +6,15 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Bundle\EzPublishLegacyBundle;
 
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Class LegacyResponse
+ * Class LegacyResponse.
  *
  * An extend of the Symfony Response class with an extra module result attribute.
  * It can be useful if you need to access module result information in an event listener.
- *
  */
 class LegacyResponse extends Response
 {
@@ -32,7 +30,7 @@ class LegacyResponse extends Response
      *
      * @param array $moduleResult
      */
-    public function setModuleResult( $moduleResult )
+    public function setModuleResult($moduleResult)
     {
         $this->moduleResult = $moduleResult;
     }
@@ -46,5 +44,4 @@ class LegacyResponse extends Response
     {
         return $this->moduleResult;
     }
-
 }

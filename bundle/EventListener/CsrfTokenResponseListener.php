@@ -6,7 +6,6 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Bundle\EzPublishLegacyBundle\EventListener;
 
 use eZ\Bundle\EzPublishLegacyBundle\LegacyResponse;
@@ -30,23 +29,22 @@ class CsrfTokenResponseListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return array(
-            KernelEvents::RESPONSE => 'onKernelResponse'
+            KernelEvents::RESPONSE => 'onKernelResponse',
         );
     }
 
     /**
      * @param \Symfony\Component\HttpKernel\Event\FilterResponseEvent $event
      */
-    public function onKernelResponse( FilterResponseEvent $event )
+    public function onKernelResponse(FilterResponseEvent $event)
     {
         $response = $event->getResponse();
-        if ( !$this->isLegacyResponse( $response ) )
-        {
+        if (!$this->isLegacyResponse($response)) {
             return;
         }
 
         // Filter out once again to add meta tags containing CSRF token (i.e. for legacy javascripts).
-        $response->setContent( ezxFormToken::output( $response->getContent(), false ) );
+        $response->setContent(ezxFormToken::output($response->getContent(), false));
     }
 
     /**
@@ -59,7 +57,7 @@ class CsrfTokenResponseListener implements EventSubscriberInterface
      *
      * @return bool
      */
-    private function isLegacyResponse( Response $response )
+    private function isLegacyResponse(Response $response)
     {
         return $response instanceof LegacyResponse && $response->getModuleResult();
     }

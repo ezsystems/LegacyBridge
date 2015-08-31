@@ -13,45 +13,41 @@ use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 
 class LegacyExtensionsLocator implements LegacyExtensionsLocatorInterface
 {
-    public function getExtensionDirectories( $bundlePath )
+    public function getExtensionDirectories($bundlePath)
     {
-        $bundlePath = rtrim( $bundlePath, '/\\' );
+        $bundlePath = rtrim($bundlePath, '/\\');
         $legacyPath = "$bundlePath/ezpublish_legacy/";
 
-        if ( !is_dir( $legacyPath ) )
-        {
+        if (!is_dir($legacyPath)) {
             return array();
         }
 
         $return = array();
         /** @var $item DirectoryIterator */
-        foreach ( new DirectoryIterator( $legacyPath ) as $item )
-        {
-            if ( !$item->isDir() || $item->isDot() )
-            {
+        foreach (new DirectoryIterator($legacyPath) as $item) {
+            if (!$item->isDir() || $item->isDot()) {
                 continue;
             }
 
-            if ( file_exists( $item->getPathname() . '/extension.xml' ) )
-            {
+            if (file_exists($item->getPathname() . '/extension.xml')) {
                 $return[] = $item->getPathname();
             }
         }
+
         return $return;
     }
 
-    public function getExtensionNames( BundleInterface $bundle )
+    public function getExtensionNames(BundleInterface $bundle)
     {
-        $extensions = $this->getExtensionDirectories( $bundle->getPath() );
+        $extensions = $this->getExtensionDirectories($bundle->getPath());
         array_walk(
             $extensions,
-            function( &$path ) {
-                $path = basename( $path );
+            function (&$path) {
+                $path = basename($path);
             }
         );
 
-        if ( $bundle instanceof LegacyBundleInterface )
-        {
+        if ($bundle instanceof LegacyBundleInterface) {
             $extensions = array_merge(
                 $extensions,
                 $bundle->getLegacyExtensionsNames()

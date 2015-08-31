@@ -6,7 +6,6 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Publish\Core\MVC\Legacy\Templating\Twig;
 
 use Twig_Loader_String;
@@ -25,10 +24,10 @@ class LoaderString extends Twig_Loader_String
      *
      * @return bool
      */
-    public function exists( $name )
+    public function exists($name)
     {
         $suffix = '.twig';
-        $endsWithSuffix = strtolower( substr( $name, -strlen( $suffix ) ) ) === $suffix;
+        $endsWithSuffix = strtolower(substr($name, -strlen($suffix))) === $suffix;
 
         return !$endsWithSuffix;
     }

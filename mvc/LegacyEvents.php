@@ -6,7 +6,6 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Publish\Core\MVC\Legacy;
 
 final class LegacyEvents
@@ -41,7 +40,7 @@ final class LegacyEvents
     const POST_BUILD_LEGACY_KERNEL = 'ezpublish_legacy.post_build_kernel';
 
     /**
-     * The PRE_RESET_LEGACY_KERNEL event occurs before the legacy kernel is reset (unset from the container)
+     * The PRE_RESET_LEGACY_KERNEL event occurs before the legacy kernel is reset (unset from the container).
      *
      * Event listeners receive a PreResetKernelEvent object that gives access to the legacy kernel.
      */

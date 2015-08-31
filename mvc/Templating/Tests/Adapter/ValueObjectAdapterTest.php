@@ -6,7 +6,6 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Publish\Core\MVC\Legacy\Templating\Tests\Adapter;
 
 use eZ\Publish\Core\MVC\Legacy\Templating\Adapter\ValueObjectAdapter;
@@ -38,33 +37,31 @@ class ValueObjectAdapterTest extends PHPUnit_Framework_TestCase
     protected function setUp()
     {
         parent::setUp();
-        $block = new \stdClass;
+        $block = new \stdClass();
         $block->id = 123456;
         $this->validProperties = array(
-            'id'            => 123,
-            'identifier'    => 'some_identifier',
-            'action'        => 'some_action',
-            'blocks'        => array( $block ),
+            'id' => 123,
+            'identifier' => 'some_identifier',
+            'action' => 'some_action',
+            'blocks' => array($block),
         );
         $this->map = array(
-            'id'                => 'id',
-            'zone_identifier'   => 'identifier',
-            'all_blocks'        => 'blocks',
-            'dynamic_prop'      =>
-                function ( ValueObject $valueObject )
-                {
+            'id' => 'id',
+            'zone_identifier' => 'identifier',
+            'all_blocks' => 'blocks',
+            'dynamic_prop' => function (ValueObject $valueObject) {
                     return $valueObject;
-                }
+                },
         );
         $this->valueObject = $this
-            ->getMockBuilder( 'eZ\\Publish\\Core\\FieldType\\Page\\Parts\\Zone' )
+            ->getMockBuilder('eZ\\Publish\\Core\\FieldType\\Page\\Parts\\Zone')
             ->setConstructorArgs(
                 array(
-                    $this->validProperties
+                    $this->validProperties,
                 )
             )
             ->getMockForAbstractClass();
-        $this->adapter = $this->getAdapter( $this->valueObject, $this->map );
+        $this->adapter = $this->getAdapter($this->valueObject, $this->map);
     }
 
     /**
@@ -75,9 +72,9 @@ class ValueObjectAdapterTest extends PHPUnit_Framework_TestCase
      *
      * @return \eZ\Publish\Core\MVC\Legacy\Templating\Adapter\ValueObjectAdapter
      */
-    protected function getAdapter( ValueObject $valueObject, array $map )
+    protected function getAdapter(ValueObject $valueObject, array $map)
     {
-        return new ValueObjectAdapter( $valueObject, $map );
+        return new ValueObjectAdapter($valueObject, $map);
     }
 
     /**
@@ -87,20 +84,20 @@ class ValueObjectAdapterTest extends PHPUnit_Framework_TestCase
      * @param string$attributeName
      * @param bool $isset
      */
-    public function testHasAttribute( $attributeName, $isset )
+    public function testHasAttribute($attributeName, $isset)
     {
-        $this->assertSame( $isset, $this->adapter->hasAttribute( $attributeName ) );
+        $this->assertSame($isset, $this->adapter->hasAttribute($attributeName));
     }
 
     public function hasAttributeProvider()
     {
         return array(
-            array( 'id', true ),
-            array( 'action', false ),
-            array( 'zone_identifier', true ),
-            array( 'all_blocks', true ),
-            array( 'dynamic_prop', true ),
-            array( 'non_existent', false ),
+            array('id', true),
+            array('action', false),
+            array('zone_identifier', true),
+            array('all_blocks', true),
+            array('dynamic_prop', true),
+            array('non_existent', false),
         );
     }
 
@@ -109,7 +106,7 @@ class ValueObjectAdapterTest extends PHPUnit_Framework_TestCase
      */
     public function testAttributes()
     {
-        $this->assertSame( array_keys( $this->map ), $this->adapter->attributes() );
+        $this->assertSame(array_keys($this->map), $this->adapter->attributes());
     }
 
     /**
@@ -117,15 +114,13 @@ class ValueObjectAdapterTest extends PHPUnit_Framework_TestCase
      */
     public function testGetAttribute()
     {
-        foreach ( $this->map as $attributeName => $propName )
-        {
-            switch ( $attributeName )
-            {
+        foreach ($this->map as $attributeName => $propName) {
+            switch ($attributeName) {
                 case 'dynamic_prop':
-                    $this->assertSame( $this->valueObject, $this->adapter->attribute( $attributeName ) );
+                    $this->assertSame($this->valueObject, $this->adapter->attribute($attributeName));
                     break;
                 default:
-                    $this->assertSame( $this->validProperties[$propName], $this->adapter->attribute( $attributeName ) );
+                    $this->assertSame($this->validProperties[$propName], $this->adapter->attribute($attributeName));
             }
         }
     }
@@ -133,12 +128,12 @@ class ValueObjectAdapterTest extends PHPUnit_Framework_TestCase
     public function getAttributeProvider()
     {
         return array(
-            array( 'id', $this->validProperties['id'] ),
-            array( 'action', null ),
-            array( 'zone_identifier', $this->validProperties['identifier'] ),
-            array( 'all_blocks', $this->validProperties['blocks'] ),
-            array( 'dynamic_prop', $this->valueObject ),
-            array( 'non_existent', null ),
+            array('id', $this->validProperties['id']),
+            array('action', null),
+            array('zone_identifier', $this->validProperties['identifier']),
+            array('all_blocks', $this->validProperties['blocks']),
+            array('dynamic_prop', $this->valueObject),
+            array('non_existent', null),
         );
     }
 
@@ -147,6 +142,6 @@ class ValueObjectAdapterTest extends PHPUnit_Framework_TestCase
      */
     public function testGetValueObject()
     {
-        $this->assertSame( $this->valueObject, $this->adapter->getValueObject() );
+        $this->assertSame($this->valueObject, $this->adapter->getValueObject());
     }
 }

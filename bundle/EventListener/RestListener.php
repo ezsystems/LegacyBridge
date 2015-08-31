@@ -6,7 +6,6 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Bundle\EzPublishLegacyBundle\EventListener;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -28,7 +27,7 @@ class RestListener implements EventSubscriberInterface
     /**
      * @param string $csrfTokenIntention
      */
-    public function __construct( $csrfTokenIntention )
+    public function __construct($csrfTokenIntention)
     {
         $this->csrfTokenIntention = $csrfTokenIntention;
     }
@@ -39,7 +38,7 @@ class RestListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return array(
-            RestEvents::REST_CSRF_TOKEN_VALIDATED => 'setCsrfIntention'
+            RestEvents::REST_CSRF_TOKEN_VALIDATED => 'setCsrfIntention',
         );
     }
 
@@ -49,6 +48,6 @@ class RestListener implements EventSubscriberInterface
      */
     public function setCsrfIntention()
     {
-        ezxFormToken::setIntention( $this->csrfTokenIntention );
+        ezxFormToken::setIntention($this->csrfTokenIntention);
     }
 }

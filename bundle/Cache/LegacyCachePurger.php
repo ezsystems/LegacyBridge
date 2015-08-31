@@ -6,7 +6,6 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Bundle\EzPublishLegacyBundle\Cache;
 
 use eZ\Bundle\EzPublishLegacyBundle\LegacyMapper\Configuration;
@@ -35,15 +34,13 @@ class LegacyCachePurger implements CacheClearerInterface
         Filesystem $fs,
         $legacyRootDir,
         SiteAccess $siteAccess
-    )
-    {
+    ) {
         $this->legacyKernelClosure = $legacyKernelClosure;
 
         // If ezp_extension.php doesn't exist or siteaccess name is "setup", it means that eZ Publish is not yet installed.
         // Hence we deactivate configuration mapper to avoid potential issues (e.g. ezxFormToken which cannot be loaded).
-        if ( !$fs->exists( "$legacyRootDir/var/autoload/ezp_extension.php" ) || $siteAccess->name === 'setup' )
-        {
-            $configurationMapper->setEnabled( false );
+        if (!$fs->exists("$legacyRootDir/var/autoload/ezp_extension.php") || $siteAccess->name === 'setup') {
+            $configurationMapper->setEnabled(false);
         }
     }
 
@@ -53,6 +50,7 @@ class LegacyCachePurger implements CacheClearerInterface
     private function getLegacyKernel()
     {
         $closure = $this->legacyKernelClosure;
+
         return $closure();
     }
 
@@ -61,23 +59,22 @@ class LegacyCachePurger implements CacheClearerInterface
      *
      * @param string $cacheDir The cache directory.
      */
-    public function clear( $cacheDir )
+    public function clear($cacheDir)
     {
         $this->getLegacyKernel()->runCallback(
-            function ()
-            {
+            function () {
                 $helper = new eZCacheHelper(
                     $cli = eZCLI::instance(),
                     $script = eZScript::instance(
                         array(
-                            'description' => "eZ Publish Cache Handler",
+                            'description' => 'eZ Publish Cache Handler',
                             'use-session' => false,
                             'use-modules' => false,
-                            'use-extensions' => true
+                            'use-extensions' => true,
                         )
                     )
                 );
-                $helper->clearItems( eZCache::fetchByTag( "template,ini,i18n" ), "Legacy file cache (Template, ini and i18n)" );
+                $helper->clearItems(eZCache::fetchByTag('template,ini,i18n'), 'Legacy file cache (Template, ini and i18n)');
             },
             false,
             false

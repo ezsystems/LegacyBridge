@@ -6,7 +6,6 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Bundle\EzPublishLegacyBundle\SetupWizard;
 
 use Sensio\Bundle\DistributionBundle\Configurator\Configurator;
@@ -27,14 +26,14 @@ class ConfigurationDumper implements ConfigDumperInterface
     protected $sensioConfigurator;
 
     /**
-     * Path to root dir (kernel.root_dir)
+     * Path to root dir (kernel.root_dir).
      *
      * @var string
      */
     protected $rootDir;
 
     /**
-     * Path to cache dir (kernel.cache_dir)
+     * Path to cache dir (kernel.cache_dir).
      *
      * @var string
      */
@@ -48,12 +47,12 @@ class ConfigurationDumper implements ConfigDumperInterface
      */
     protected $envs;
 
-    public function __construct( Filesystem $fs, array $envs, $rootDir, $cacheDir, Configurator $sensioConfigurator )
+    public function __construct(Filesystem $fs, array $envs, $rootDir, $cacheDir, Configurator $sensioConfigurator)
     {
         $this->fs = $fs;
         $this->rootDir = $rootDir;
         $this->cacheDir = $cacheDir;
-        $this->envs = array_fill_keys( $envs, true );
+        $this->envs = array_fill_keys($envs, true);
         $this->sensioConfigurator = $sensioConfigurator;
     }
 
@@ -62,53 +61,48 @@ class ConfigurationDumper implements ConfigDumperInterface
      *
      * @param string $env
      */
-    public function addEnvironment( $env )
+    public function addEnvironment($env)
     {
         $this->envs[$env] = true;
     }
 
     /**
-     * Dumps settings contained in $configArray in ezpublish.yml
+     * Dumps settings contained in $configArray in ezpublish.yml.
      *
      * @param array $configArray Hash of settings.
      * @param int $options A binary combination of options. See class OPT_* class constants in {@link \eZ\Publish\Core\MVC\Symfony\ConfigDumperInterface}
-     *
-     * @return void
      */
-    public function dump( array $configArray, $options = ConfigDumperInterface::OPT_DEFAULT )
+    public function dump(array $configArray, $options = ConfigDumperInterface::OPT_DEFAULT)
     {
         $configPath = "$this->rootDir/config";
         $mainConfigFile = "$configPath/ezpublish.yml";
-        if ( $this->fs->exists( $mainConfigFile ) && $options & static::OPT_BACKUP_CONFIG )
-        {
-            $this->backupConfigFile( $mainConfigFile );
+        if ($this->fs->exists($mainConfigFile) && $options & static::OPT_BACKUP_CONFIG) {
+            $this->backupConfigFile($mainConfigFile);
         }
 
-        file_put_contents( $mainConfigFile, Yaml::dump( $configArray, 7 ) );
+        file_put_contents($mainConfigFile, Yaml::dump($configArray, 7));
 
         // Now generates environment config files
-        foreach ( array_keys( $this->envs ) as $env )
-        {
+        foreach (array_keys($this->envs) as $env) {
             $configFile = "$configPath/ezpublish_{$env}.yml";
             // Add the import statement for the root YAML file
             $envConfigArray = array(
-                'imports' => array( array( 'resource' => 'ezpublish.yml' ) )
+                'imports' => array(array('resource' => 'ezpublish.yml')),
             );
 
             // File already exists, handle possible options
-            if ( $this->fs->exists( $configFile ) && $options & static::OPT_BACKUP_CONFIG )
-            {
-                $this->backupConfigFile( $configFile );
+            if ($this->fs->exists($configFile) && $options & static::OPT_BACKUP_CONFIG) {
+                $this->backupConfigFile($configFile);
             }
 
-            file_put_contents( $configFile, Yaml::dump( $envConfigArray, 7 ) );
+            file_put_contents($configFile, Yaml::dump($envConfigArray, 7));
         }
 
         // Handling %secret%
         $this->sensioConfigurator->mergeParameters(
             array(
                 // Step #1 is SecretStep
-                'secret' => $this->sensioConfigurator->getStep( 1 )->secret
+                'secret' => $this->sensioConfigurator->getStep(1)->secret,
             )
         );
         $this->sensioConfigurator->write();
@@ -120,13 +114,12 @@ class ConfigurationDumper implements ConfigDumperInterface
      * Makes a backup copy of $configFile.
      *
      * @param string $configFile
-     *
-     * @return void
      */
-    protected function backupConfigFile( $configFile )
+    protected function backupConfigFile($configFile)
     {
-        if ( $this->fs->exists( $configFile ) )
-            $this->fs->copy( $configFile, $configFile . '-' . date( 'Y-m-d_H-i-s' ) );
+        if ($this->fs->exists($configFile)) {
+            $this->fs->copy($configFile, $configFile . '-' . date('Y-m-d_H-i-s'));
+        }
     }
 
     /**
@@ -135,7 +128,7 @@ class ConfigurationDumper implements ConfigDumperInterface
     protected function clearCache()
     {
         $oldCacheDirName = "{$this->cacheDir}_old";
-        $this->fs->rename( $this->cacheDir, $oldCacheDirName );
-        $this->fs->remove( $oldCacheDirName );
+        $this->fs->rename($this->cacheDir, $oldCacheDirName);
+        $this->fs->remove($oldCacheDirName);
     }
 }
