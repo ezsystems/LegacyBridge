@@ -16,7 +16,7 @@ use Stash\Driver\FileSystem as FileSystemDriver;
 
 /**
  * Handles conversionlegacy eZ Publish 4 parameters from a set of settings to a configuration array
- * suitable for yml dumping
+ * suitable for yml dumping.
  */
 class ConfigurationConverter
 {
@@ -35,15 +35,15 @@ class ConfigurationConverter
      */
     protected $supportedPackages;
 
-    public function __construct( LegacyConfigResolver $legacyResolver, \Closure $legacyKernel, array $supportedPackages )
+    public function __construct(LegacyConfigResolver $legacyResolver, \Closure $legacyKernel, array $supportedPackages)
     {
         $this->legacyResolver = $legacyResolver;
         $this->legacyKernel = $legacyKernel();
-        $this->supportedPackages = array_fill_keys( $supportedPackages, true );
+        $this->supportedPackages = array_fill_keys($supportedPackages, true);
     }
 
     /**
-     * Converts from legacy settings to an array dumpable to ezpublish.yml
+     * Converts from legacy settings to an array dumpable to ezpublish.yml.
      * @param string $sitePackage Name of the chosen install package
      * @param string $adminSiteaccess Name of the admin siteaccess
      *
@@ -51,21 +51,23 @@ class ConfigurationConverter
      *
      * @return array
      */
-    public function fromLegacy( $sitePackage, $adminSiteaccess )
+    public function fromLegacy($sitePackage, $adminSiteaccess)
     {
         $settings = [
             'ezpublish' => ['siteaccess' => []],
-            'ez_publish_legacy' => ['enabled' => true]
+            'ez_publish_legacy' => ['enabled' => true],
         ];
-        $defaultSiteaccess = $this->getParameter( 'SiteSettings', 'DefaultAccess' );
+        $defaultSiteaccess = $this->getParameter('SiteSettings', 'DefaultAccess');
         $settings['ezpublish']['siteaccess']['default_siteaccess'] = $defaultSiteaccess;
-        $siteList = $this->getParameter( 'SiteAccessSettings', 'AvailableSiteAccessList' );
+        $siteList = $this->getParameter('SiteAccessSettings', 'AvailableSiteAccessList');
 
-        if ( !is_array( $siteList ) || empty( $siteList ) )
-            throw new InvalidArgumentException( 'siteList', 'can not be empty' );
+        if (!is_array($siteList) || empty($siteList)) {
+            throw new InvalidArgumentException('siteList', 'can not be empty');
+        }
 
-        if ( !in_array( $adminSiteaccess, $siteList ) )
-            throw new InvalidArgumentException( "adminSiteaccess", "Siteaccess $adminSiteaccess wasn't found in SiteAccessSettings.AvailableSiteAccessList" );
+        if (!in_array($adminSiteaccess, $siteList)) {
+            throw new InvalidArgumentException('adminSiteaccess', "Siteaccess $adminSiteaccess wasn't found in SiteAccessSettings.AvailableSiteAccessList");
+        }
 
         $settings['ezpublish']['siteaccess']['list'] = $siteList;
         $settings['ezpublish']['siteaccess']['groups'] = array();
@@ -79,92 +81,81 @@ class ConfigurationConverter
         $settings['ezpublish']['system'][$adminSiteaccess] = array();
 
         // Database settings
-        $databaseSettings = $this->getGroup( 'DatabaseSettings', 'site.ini', $defaultSiteaccess );
+        $databaseSettings = $this->getGroup('DatabaseSettings', 'site.ini', $defaultSiteaccess);
         $repositoryName = "{$defaultSiteaccess}_repository";
         $settings['doctrine'] = array(
             'dbal' => array(
                 'connections' => array(
-                    "{$repositoryName}_connection" => $this->getDoctrineSettings( $databaseSettings )
-                )
-            )
+                    "{$repositoryName}_connection" => $this->getDoctrineSettings($databaseSettings),
+                ),
+            ),
         );
         $settings['ezpublish']['repositories'] = array(
-            $repositoryName => array( 'engine' => 'legacy', 'connection' => "{$repositoryName}_connection" )
+            $repositoryName => array('engine' => 'legacy', 'connection' => "{$repositoryName}_connection"),
         );
         $settings['ezpublish']['system'][$groupName]['repository'] = $repositoryName;
 
         // If package is not supported, all siteaccesses will have individually legacy_mode to true, forcing legacy fallback
-        if ( !isset( $this->supportedPackages[$sitePackage] ) )
-        {
-            foreach ( $siteList as $siteaccess )
-            {
+        if (!isset($this->supportedPackages[$sitePackage])) {
+            foreach ($siteList as $siteaccess) {
                 $settings['ez_publish_legacy']['system'][$siteaccess] = ['legacy_mode' => true];
             }
-        }
-        else
-        {
-            if ( !isset( $settings['ez_publish_legacy']['system'][$adminSiteaccess] ) )
-            {
+        } else {
+            if (!isset($settings['ez_publish_legacy']['system'][$adminSiteaccess])) {
                 $settings['ez_publish_legacy']['system'][$adminSiteaccess] = [];
             }
             $settings['ez_publish_legacy']['system'][$adminSiteaccess] += ['legacy_mode' => true];
         }
 
-        $languages = $this->getLanguages( $siteList, $groupName );
-        foreach ( $languages as $siteaccess => $langSettings )
-        {
+        $languages = $this->getLanguages($siteList, $groupName);
+        foreach ($languages as $siteaccess => $langSettings) {
             $settings['ezpublish']['system'][$siteaccess]['languages'] = $langSettings;
         }
 
         // FileSettings
         $settings['ezpublish']['system'][$groupName]['var_dir'] =
-            $this->getParameter( 'FileSettings', 'VarDir', 'site.ini', $defaultSiteaccess );
+            $this->getParameter('FileSettings', 'VarDir', 'site.ini', $defaultSiteaccess);
 
         // we don't map the default FileSettings.StorageDir value
-        $storageDir = $this->getParameter( 'FileSettings', 'StorageDir', 'site.ini', $defaultSiteaccess );
-        if ( $storageDir !== 'storage' )
+        $storageDir = $this->getParameter('FileSettings', 'StorageDir', 'site.ini', $defaultSiteaccess);
+        if ($storageDir !== 'storage') {
             $settings['ezpublish']['system'][$groupName]['storage_dir'] = $storageDir;
+        }
 
         // ImageMagick settings
-        $imageMagickEnabled = $this->getParameter( 'ImageMagick', 'IsEnabled', 'image.ini', $defaultSiteaccess );
-        if ( $imageMagickEnabled == 'true' )
-        {
+        $imageMagickEnabled = $this->getParameter('ImageMagick', 'IsEnabled', 'image.ini', $defaultSiteaccess);
+        if ($imageMagickEnabled == 'true') {
             $settings['ezpublish']['imagemagick']['enabled'] = true;
-            $imageMagickExecutablePath = $this->getParameter( 'ImageMagick', 'ExecutablePath', 'image.ini', $defaultSiteaccess );
-            $imageMagickExecutable = $this->getParameter( 'ImageMagick', 'Executable', 'image.ini', $defaultSiteaccess );
-            $settings['ezpublish']['imagemagick']['path'] = rtrim( $imageMagickExecutablePath, '/\\' ) . '/' . $imageMagickExecutable;
-        }
-        else
-        {
+            $imageMagickExecutablePath = $this->getParameter('ImageMagick', 'ExecutablePath', 'image.ini', $defaultSiteaccess);
+            $imageMagickExecutable = $this->getParameter('ImageMagick', 'Executable', 'image.ini', $defaultSiteaccess);
+            $settings['ezpublish']['imagemagick']['path'] = rtrim($imageMagickExecutablePath, '/\\') . '/' . $imageMagickExecutable;
+        } else {
             $settings['ezpublish']['imagemagick']['enabled'] = false;
         }
 
         // Dump image variations for unsupported packages only (i.e. not ezdemo)
         // Image variations for ezdemo are defined in DemoBundle
-        if ( !isset( $this->supportedPackages[$sitePackage] ) )
-        {
-            $variations = $this->getImageVariations( $siteList, $groupName );
-            foreach ( $variations as $siteaccess => $imgSettings )
-            {
+        if (!isset($this->supportedPackages[$sitePackage])) {
+            $variations = $this->getImageVariations($siteList, $groupName);
+            foreach ($variations as $siteaccess => $imgSettings) {
                 $settings['ezpublish']['system'][$siteaccess]['image_variations'] = $imgSettings;
             }
         }
 
-        foreach ( $siteList as $siteaccess )
-        {
+        foreach ($siteList as $siteaccess) {
             if (
-                $this->getParameter( "Session", "SessionNameHandler", "site.ini", $siteaccess ) === "custom" &&
-                $this->getParameter( "Session", "SessionNamePerSiteAccess", "site.ini", $siteaccess ) !== "enabled"
-            )
-            {
-                $settings['ezpublish']['system'][$siteaccess]['session'] = array( 'name' => $this->getParameter( "Session", "SessionNamePrefix", "site.ini" ) );
+                $this->getParameter('Session', 'SessionNameHandler', 'site.ini', $siteaccess) === 'custom' &&
+                $this->getParameter('Session', 'SessionNamePerSiteAccess', 'site.ini', $siteaccess) !== 'enabled'
+            ) {
+                $settings['ezpublish']['system'][$siteaccess]['session'] = array('name' => $this->getParameter('Session', 'SessionNamePrefix', 'site.ini'));
             }
         }
 
         $settings['stash'] = $this->getStashCacheSettings();
 
-        ksort( $settings );
-        ksort( $settings['ezpublish'] );
+        ksort($settings);
+        ksort($settings['ezpublish']);
+
         return $settings;
     }
 
@@ -175,7 +166,7 @@ class ConfigurationConverter
      *
      * @return array
      */
-    protected function getDoctrineSettings( array $databaseSettings )
+    protected function getDoctrineSettings(array $databaseSettings)
     {
         $databaseMapping = array(
             'ezmysqli' => 'pdo_mysql',
@@ -187,12 +178,13 @@ class ConfigurationConverter
             'postgresql' => 'pdo_pgsql',
             'pgsql' => 'pdo_pgsql',
             'oracle' => 'oci8',
-            'ezoracle' => 'oci8'
+            'ezoracle' => 'oci8',
         );
 
         $databaseType = $databaseSettings['DatabaseImplementation'];
-        if ( isset( $databaseMapping[$databaseType] ) )
+        if (isset($databaseMapping[$databaseType])) {
             $databaseType = $databaseMapping[$databaseType];
+        }
 
         $databasePassword = $databaseSettings['Password'] != '' ? $databaseSettings['Password'] : null;
         $doctrineSettings = array(
@@ -201,18 +193,20 @@ class ConfigurationConverter
             'user' => $databaseSettings['User'],
             'password' => $databasePassword,
             'dbname' => $databaseSettings['Database'],
-            'charset' => 'UTF8'
+            'charset' => 'UTF8',
         );
-        if ( isset( $databaseSettings['Port'] ) && !empty( $databaseSettings['Port'] ) )
+        if (isset($databaseSettings['Port']) && !empty($databaseSettings['Port'])) {
             $doctrineSettings['port'] = $databaseSettings['Port'];
-        if ( isset( $databaseSettings['Socket'] ) && $databaseSettings['Socket'] !== 'disabled' )
+        }
+        if (isset($databaseSettings['Socket']) && $databaseSettings['Socket'] !== 'disabled') {
             $doctrineSettings['unix_socket'] = $databaseSettings['Socket'];
+        }
 
         return $doctrineSettings;
     }
 
     /**
-     * Returns cache settings based on which cache functionality is available on the current server
+     * Returns cache settings based on which cache functionality is available on the current server.
      *
      * Order of preference:
      * - FileSystem
@@ -229,20 +223,16 @@ class ConfigurationConverter
         $handlers = array();
         $inMemory = false;
         $handlerSetting = array();
-        if ( FileSystemDriver::isAvailable() )
-        {
+        if (FileSystemDriver::isAvailable()) {
             $handlers[] = 'FileSystem';
             $inMemory = true;
             // If running on Windows, use "crc32" keyHashFunction
-            if ( stripos( php_uname(), 'win' ) === 0 )
-            {
+            if (stripos(php_uname(), 'win') === 0) {
                 $handlerSetting['FileSystem'] = array(
-                    'keyHashFunction' => 'crc32'
+                    'keyHashFunction' => 'crc32',
                 );
             }
-        }
-        else
-        {
+        } else {
             // '/dev/null' fallback driver, no cache at all
             $handlers[] = 'BlackHole';
             $inMemory = true;
@@ -254,9 +244,9 @@ class ConfigurationConverter
                     'drivers' => $handlers,
                     // inMemory will enable/disable "Ephemeral", not allowed as separate handler in stash-bundle
                     'inMemory' => $inMemory,
-                    'registerDoctrineAdapter' => false
-                ) + $handlerSetting
-            )
+                    'registerDoctrineAdapter' => false,
+                ) + $handlerSetting,
+            ),
         );
     }
 
@@ -269,105 +259,94 @@ class ConfigurationConverter
      *
      * @return array
      */
-    protected function getLanguages( array $siteList, $groupName )
+    protected function getLanguages(array $siteList, $groupName)
     {
         $result = array();
         $allSame = true;
         $previousSA = null;
-        foreach ( $siteList as $siteaccess )
-        {
+        foreach ($siteList as $siteaccess) {
             $result[$siteaccess] = $this->getParameter(
                 'RegionalSettings', 'SiteLanguageList', 'site.ini', $siteaccess
             );
-            if ( $allSame && $previousSA !== null )
-            {
-                $allSame = ( $result[$previousSA] === $result[$siteaccess] );
+            if ($allSame && $previousSA !== null) {
+                $allSame = ($result[$previousSA] === $result[$siteaccess]);
             }
             $previousSA = $siteaccess;
         }
-        if ( $allSame )
-        {
-            return array( $groupName => $result[$previousSA] );
+        if ($allSame) {
+            return array($groupName => $result[$previousSA]);
         }
+
         return $result;
     }
 
     /**
      * Returns the image variations settings for all siteaccess unless it's the
      * same for each one, in this case, it returns the variations settings for
-     * the group. This avoids to duplicate the image variations settings
+     * the group. This avoids to duplicate the image variations settings.
      *
      * @param array $siteList
      * @param string $groupName
      *
      * @return array
      */
-    protected function getImageVariations( array $siteList, $groupName )
+    protected function getImageVariations(array $siteList, $groupName)
     {
         $result = array();
         $allSame = true;
         $previousSA = null;
-        foreach ( $siteList as $siteaccess )
-        {
-            $result[$siteaccess] = $this->getImageVariationsForSiteaccess( $siteaccess );
-            if ( $allSame && $previousSA !== null )
-            {
-                $allSame = ( $result[$previousSA] === $result[$siteaccess] );
+        foreach ($siteList as $siteaccess) {
+            $result[$siteaccess] = $this->getImageVariationsForSiteaccess($siteaccess);
+            if ($allSame && $previousSA !== null) {
+                $allSame = ($result[$previousSA] === $result[$siteaccess]);
             }
             $previousSA = $siteaccess;
         }
-        if ( $allSame )
-        {
-            return array( $groupName => $result[$previousSA] );
+        if ($allSame) {
+            return array($groupName => $result[$previousSA]);
         }
+
         return $result;
     }
 
     /**
-     * Returns the image variation settings for the siteaccess
+     * Returns the image variation settings for the siteaccess.
      *
      * @param string $siteaccess
      *
      * @return array
      */
-    protected function getImageVariationsForSiteaccess( $siteaccess )
+    protected function getImageVariationsForSiteaccess($siteaccess)
     {
         $variations = array();
-        $imageAliasesList = $this->getGroup( 'AliasSettings', 'image.ini', $siteaccess );
-        foreach ( $imageAliasesList['AliasList'] as $imageAliasIdentifier )
-        {
-            $variationSettings = array( 'reference' => null, 'filters' => array() );
-            $aliasSettings = $this->getGroup( $imageAliasIdentifier, 'image.ini', $siteaccess );
-            if ( isset( $aliasSettings['Reference'] ) && $aliasSettings['Reference'] != '' )
-            {
+        $imageAliasesList = $this->getGroup('AliasSettings', 'image.ini', $siteaccess);
+        foreach ($imageAliasesList['AliasList'] as $imageAliasIdentifier) {
+            $variationSettings = array('reference' => null, 'filters' => array());
+            $aliasSettings = $this->getGroup($imageAliasIdentifier, 'image.ini', $siteaccess);
+            if (isset($aliasSettings['Reference']) && $aliasSettings['Reference'] != '') {
                 $variationSettings['reference'] = $aliasSettings['Reference'];
             }
-            if ( isset( $aliasSettings['Filters'] ) && is_array( $aliasSettings['Filters'] ) )
-            {
+            if (isset($aliasSettings['Filters']) && is_array($aliasSettings['Filters'])) {
                 // parse filters. Format: filtername=param1;param2...paramN
-                foreach ( $aliasSettings['Filters'] as $filterString )
-                {
+                foreach ($aliasSettings['Filters'] as $filterString) {
                     $filteringSettings = array();
 
-                    if ( strstr( $filterString, '=' ) !== false )
-                    {
-                        list( $filteringSettings['name'], $filterParams) = explode( '=', $filterString );
-                        $filterParams = explode( ';', $filterParams );
+                    if (strstr($filterString, '=') !== false) {
+                        list($filteringSettings['name'], $filterParams) = explode('=', $filterString);
+                        $filterParams = explode(';', $filterParams);
 
                         // make sure integers are actually integers, not strings
                         array_walk(
                             $filterParams,
-                            function ( &$value )
-                            {
-                                if ( preg_match( '/^[0-9]+$/', $value ) )
+                            function (&$value) {
+                                if (preg_match('/^[0-9]+$/', $value)) {
                                     $value = (int)$value;
+                                }
                             }
                         );
 
                         $filteringSettings['params'] = $filterParams;
-                    }
-                    else
-                    {
+                    } else {
                         $filteringSettings['name'] = $filterString;
                     }
 
@@ -376,6 +355,7 @@ class ConfigurationConverter
             }
             $variations[$imageAliasIdentifier] = $variationSettings;
         }
+
         return $variations;
     }
 
@@ -389,21 +369,21 @@ class ConfigurationConverter
      *
      * @return array
      */
-    public function getGroup( $groupName, $file = null, $siteaccess = null )
+    public function getGroup($groupName, $file = null, $siteaccess = null)
     {
-        if ( $file === null && $siteaccess === null )
-        {
+        if ($file === null && $siteaccess === null) {
             // in this case we want the "global" value, no need to use the
             // legacy kernel, the legacy resolver is enough
-            return $this->legacyResolver->getGroup( $groupName );
+            return $this->legacyResolver->getGroup($groupName);
         }
+
         return $this->legacyKernel->runCallback(
-            function () use ( $file, $groupName, $siteaccess )
-            {
+            function () use ($file, $groupName, $siteaccess) {
                 // @todo: do reset injected settings everytime
                 // and make sure to restore the previous injected settings
-                eZINI::injectSettings( array() );
-                return eZSiteAccess::getIni( $siteaccess, $file )->group( $groupName );
+                eZINI::injectSettings(array());
+
+                return eZSiteAccess::getIni($siteaccess, $file)->group($groupName);
             },
             false,
             false
@@ -422,22 +402,22 @@ class ConfigurationConverter
      *
      * @return array
      */
-    public function getParameter( $groupName, $parameterName, $file = null, $siteaccess = null )
+    public function getParameter($groupName, $parameterName, $file = null, $siteaccess = null)
     {
-        if ( $file === null && $siteaccess === null )
-        {
+        if ($file === null && $siteaccess === null) {
             // in this case we want the "global" value, no need to use the
             // legacy kernel, the legacy resolver is enough
-            return $this->legacyResolver->getParameter( "$groupName.$parameterName" );
+            return $this->legacyResolver->getParameter("$groupName.$parameterName");
         }
+
         return $this->legacyKernel->runCallback(
-            function () use ( $file, $groupName, $parameterName, $siteaccess )
-            {
+            function () use ($file, $groupName, $parameterName, $siteaccess) {
                 // @todo: do reset injected settings everytime
                 // and make sure to restore the previous injected settings
-                eZINI::injectSettings( array() );
-                return eZSiteAccess::getIni( $siteaccess, $file )
-                    ->variable( $groupName, $parameterName );
+                eZINI::injectSettings(array());
+
+                return eZSiteAccess::getIni($siteaccess, $file)
+                    ->variable($groupName, $parameterName);
             },
             false,
             false
@@ -446,105 +426,103 @@ class ConfigurationConverter
 
     protected function resolveMatching()
     {
-        $siteaccessSettings = $this->getGroup( 'SiteAccessSettings' );
+        $siteaccessSettings = $this->getGroup('SiteAccessSettings');
 
-        $matching = array(); $match = false;
-        foreach ( explode( ';', $siteaccessSettings['MatchOrder'] ) as $matchMethod )
-        {
-            switch ( $matchMethod )
-            {
+        $matching = array();
+        $match = false;
+        foreach (explode(';', $siteaccessSettings['MatchOrder']) as $matchMethod) {
+            switch ($matchMethod) {
                 case 'uri':
-                    $match = $this->resolveURIMatching( $siteaccessSettings );
+                    $match = $this->resolveURIMatching($siteaccessSettings);
                     break;
                 case 'host':
-                    $match = $this->resolveHostMatching( $siteaccessSettings );
+                    $match = $this->resolveHostMatching($siteaccessSettings);
                     break;
                 case 'host_uri':
                     $match = false;
                     break;
                 case 'port':
-                    $match = array( 'Map\Port' => $this->getGroup( 'PortAccessSettings' ) );
+                    $match = array('Map\Port' => $this->getGroup('PortAccessSettings'));
                     break;
             }
-            if ( $match !== false )
-            {
+            if ($match !== false) {
                 $matching = $match + $matching;
             }
         }
+
         return $matching;
     }
 
-    protected function resolveUriMatching( $siteaccessSettings )
+    protected function resolveUriMatching($siteaccessSettings)
     {
-        switch ( $siteaccessSettings['URIMatchType'] )
-        {
+        switch ($siteaccessSettings['URIMatchType']) {
             case 'disabled':
                 return false;
 
             case 'map':
-                return array( "Map\\URI" => $this->resolveMapMatch( $siteaccessSettings['URIMatchMapItems'] ) );
+                return array('Map\\URI' => $this->resolveMapMatch($siteaccessSettings['URIMatchMapItems']));
 
             case 'element':
-                return array( "URIElement" => $siteaccessSettings['URIMatchElement'] );
+                return array('URIElement' => $siteaccessSettings['URIMatchElement']);
 
             case 'text':
-                return array( "URIText" => $this->resolveTextMatch( $siteaccessSettings, 'URIMatchSubtextPre', 'URIMatchSubtextPost' ) );
+                return array('URIText' => $this->resolveTextMatch($siteaccessSettings, 'URIMatchSubtextPre', 'URIMatchSubtextPost'));
 
             case 'regexp':
-                return array( "Regex\\URI" => array( $siteaccessSettings['URIMatchRegexp'], $siteaccessSettings['URIMatchRegexpItem'] ) );
+                return array('Regex\\URI' => array($siteaccessSettings['URIMatchRegexp'], $siteaccessSettings['URIMatchRegexpItem']));
         }
     }
 
     /**
-     * Parses Legacy HostMatching settings to a matching array
+     * Parses Legacy HostMatching settings to a matching array.
      * @param mixed[] $siteaccessSettings
      *
      * @throws \eZ\Publish\Core\Base\Exceptions\InvalidArgumentException
      *
      * @return array|bool
      */
-    protected function resolveHostMatching( $siteaccessSettings )
+    protected function resolveHostMatching($siteaccessSettings)
     {
-        switch ( $siteaccessSettings['HostMatchType'] )
-        {
+        switch ($siteaccessSettings['HostMatchType']) {
             case 'disabled':
                 return false;
 
             case 'map':
-                return array( "Map\\Host" => $this->resolveMapMatch( $siteaccessSettings['HostMatchMapItems'] ) );
+                return array('Map\\Host' => $this->resolveMapMatch($siteaccessSettings['HostMatchMapItems']));
 
             case 'element':
-                return array( "HostElement" => $siteaccessSettings['HostMatchElement'] );
+                return array('HostElement' => $siteaccessSettings['HostMatchElement']);
 
             case 'text':
-                return array( "HostText" => $this->resolveTextMatch( $siteaccessSettings, 'HostMatchSubtextPre', 'HostMatchSubtextPost' ) );
+                return array('HostText' => $this->resolveTextMatch($siteaccessSettings, 'HostMatchSubtextPre', 'HostMatchSubtextPost'));
 
             case 'regexp':
-                return array( "Regex\\Host" => array( $siteaccessSettings['HostMatchRegexp'], $siteaccessSettings['HostMatchRegexpItem'] ) );
+                return array('Regex\\Host' => array($siteaccessSettings['HostMatchRegexp'], $siteaccessSettings['HostMatchRegexpItem']));
 
             default:
-                throw new InvalidArgumentException( "HostMatchType", "Invalid value for legacy setting site.ini '{$siteaccessSettings['HostMatchType']}'" );
+                throw new InvalidArgumentException('HostMatchType', "Invalid value for legacy setting site.ini '{$siteaccessSettings['HostMatchType']}'");
         }
     }
 
-    protected function resolveTextMatch( $siteaccessSettings, $prefixKey, $suffixKey )
+    protected function resolveTextMatch($siteaccessSettings, $prefixKey, $suffixKey)
     {
         $settings = array();
-        if ( isset( $siteaccessSettings[$prefixKey] ) )
+        if (isset($siteaccessSettings[$prefixKey])) {
             $settings['prefix'] = $siteaccessSettings[$prefixKey];
-        if ( isset( $siteaccessSettings[$suffixKey] ) )
+        }
+        if (isset($siteaccessSettings[$suffixKey])) {
             $settings['suffix'] = $siteaccessSettings[$suffixKey];
+        }
 
         return $settings;
     }
 
-    protected function resolveMapMatch( $mapArray )
+    protected function resolveMapMatch($mapArray)
     {
         $map = array();
-        foreach ( $mapArray as $mapItem )
-        {
-            $elements = explode( ';', $mapItem );
-            $map[$elements[0]] = count( $elements ) > 2 ? array_slice( $elements, 1 ) : $elements[1];
+        foreach ($mapArray as $mapItem) {
+            $elements = explode(';', $mapItem);
+            $map[$elements[0]] = count($elements) > 2 ? array_slice($elements, 1) : $elements[1];
         }
 
         return $map;

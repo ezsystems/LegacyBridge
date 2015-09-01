@@ -6,7 +6,6 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Publish\Core\MVC\Legacy\Session;
 
 use Symfony\Component\HttpFoundation\Session\SessionBagInterface;
@@ -38,7 +37,7 @@ class LegacySessionStorage extends NativeSessionStorage
      */
     private $legacyKernelClosure;
 
-    public function __construct( Closure $legacyKernelClosure, SessionStorageInterface $innerSessionStorage )
+    public function __construct(Closure $legacyKernelClosure, SessionStorageInterface $innerSessionStorage)
     {
         $this->innerSessionStorage = $innerSessionStorage;
         $this->legacyKernelClosure = $legacyKernelClosure;
@@ -59,9 +58,9 @@ class LegacySessionStorage extends NativeSessionStorage
         return $this->innerSessionStorage->getId();
     }
 
-    public function setId( $id )
+    public function setId($id)
     {
-        $this->innerSessionStorage->setId( $id );
+        $this->innerSessionStorage->setId($id);
     }
 
     public function getName()
@@ -69,9 +68,9 @@ class LegacySessionStorage extends NativeSessionStorage
         return $this->innerSessionStorage->getName();
     }
 
-    public function setName( $name )
+    public function setName($name)
     {
-        $this->innerSessionStorage->setName( $name );
+        $this->innerSessionStorage->setName($name);
     }
 
     /**
@@ -79,25 +78,23 @@ class LegacySessionStorage extends NativeSessionStorage
      *
      * {@inheritdoc}
      */
-    public function regenerate( $destroy = false, $lifetime = null )
+    public function regenerate($destroy = false, $lifetime = null)
     {
         $oldSessionId = $this->getId();
-        $success = $this->innerSessionStorage->regenerate( $destroy, $lifetime );
+        $success = $this->innerSessionStorage->regenerate($destroy, $lifetime);
         $newSessionId = $this->getId();
 
-        if ( $success )
-        {
+        if ($success) {
             $kernelClosure = $this->legacyKernelClosure;
             $kernelClosure()->runCallback(
-                function () use ( $oldSessionId, $newSessionId )
-                {
-                    ezpEvent::getInstance()->notify( 'session/regenerate', array( $oldSessionId, $newSessionId ) );
+                function () use ($oldSessionId, $newSessionId) {
+                    ezpEvent::getInstance()->notify('session/regenerate', array($oldSessionId, $newSessionId));
                     $db = eZDB::instance();
-                    $escOldKey = $db->escapeString( $oldSessionId );
-                    $escNewKey = $db->escapeString( $newSessionId );
-                    $escUserID = $db->escapeString( eZSession::userID() );
-                    eZSession::triggerCallback( 'regenerate_pre', array( $db, $escNewKey, $escOldKey, $escUserID ) );
-                    eZSession::triggerCallback( 'regenerate_post', array( $db, $escNewKey, $escOldKey, $escUserID ) );
+                    $escOldKey = $db->escapeString($oldSessionId);
+                    $escNewKey = $db->escapeString($newSessionId);
+                    $escUserID = $db->escapeString(eZSession::userID());
+                    eZSession::triggerCallback('regenerate_pre', array($db, $escNewKey, $escOldKey, $escUserID));
+                    eZSession::triggerCallback('regenerate_post', array($db, $escNewKey, $escOldKey, $escUserID));
                 },
                 false,
                 false
@@ -120,14 +117,14 @@ class LegacySessionStorage extends NativeSessionStorage
         $this->innerSessionStorage->clear();
     }
 
-    public function getBag( $name )
+    public function getBag($name)
     {
-        return $this->innerSessionStorage->getBag( $name );
+        return $this->innerSessionStorage->getBag($name);
     }
 
-    public function registerBag( SessionBagInterface $bag )
+    public function registerBag(SessionBagInterface $bag)
     {
-        $this->innerSessionStorage->registerBag( $bag );
+        $this->innerSessionStorage->registerBag($bag);
     }
 
     public function getMetadataBag()
@@ -137,35 +134,31 @@ class LegacySessionStorage extends NativeSessionStorage
 
     // Below reimplementation of public methods from NativeSessionStorage.
 
-    public function setMetadataBag( MetadataBag $metaBag = null )
+    public function setMetadataBag(MetadataBag $metaBag = null)
     {
-        if ( $this->innerSessionStorage instanceof NativeSessionStorage )
-        {
-            $this->innerSessionStorage->setMetadataBag( $metaBag );
+        if ($this->innerSessionStorage instanceof NativeSessionStorage) {
+            $this->innerSessionStorage->setMetadataBag($metaBag);
         }
     }
 
     public function getSaveHandler()
     {
-        if ( $this->innerSessionStorage instanceof NativeSessionStorage )
-        {
+        if ($this->innerSessionStorage instanceof NativeSessionStorage) {
             return $this->innerSessionStorage->getSaveHandler();
         }
     }
 
-    public function setSaveHandler( $saveHandler = null )
+    public function setSaveHandler($saveHandler = null)
     {
-        if ( $this->innerSessionStorage instanceof NativeSessionStorage )
-        {
-            $this->innerSessionStorage->setSaveHandler( $saveHandler );
+        if ($this->innerSessionStorage instanceof NativeSessionStorage) {
+            $this->innerSessionStorage->setSaveHandler($saveHandler);
         }
     }
 
-    public function setOptions( array $options )
+    public function setOptions(array $options)
     {
-        if ( $this->innerSessionStorage instanceof NativeSessionStorage )
-        {
-            $this->innerSessionStorage->setOptions( $options );
+        if ($this->innerSessionStorage instanceof NativeSessionStorage) {
+            $this->innerSessionStorage->setOptions($options);
         }
     }
 }

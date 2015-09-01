@@ -20,14 +20,14 @@ use eZCache;
 class LegacySetupController extends ContainerAware
 {
     /**
-     * The legacy kernel instance (eZ Publish 4)
+     * The legacy kernel instance (eZ Publish 4).
      *
      * @var \Closure
      */
     private $legacyKernelClosure;
 
     /**
-     * The legacy config resolver
+     * The legacy config resolver.
      *
      * @var \eZ\Bundle\EzPublishLegacyBundle\DependencyInjection\Configuration\LegacyConfigResolver
      */
@@ -59,8 +59,7 @@ class LegacySetupController extends ContainerAware
         LegacyConfigResolver $legacyConfigResolver,
         PersistenceCachePurger $persistenceCachePurger,
         Loader $kernelFactory
-    )
-    {
+    ) {
         $this->legacyKernelClosure = $kernelClosure;
         $this->legacyConfigResolver = $legacyConfigResolver;
         $this->persistenceCachePurger = $persistenceCachePurger;
@@ -73,6 +72,7 @@ class LegacySetupController extends ContainerAware
     protected function getLegacyKernel()
     {
         $legacyKernelClosure = $this->legacyKernelClosure;
+
         return $legacyKernelClosure();
     }
 
@@ -83,28 +83,26 @@ class LegacySetupController extends ContainerAware
         $this->persistenceCachePurger->switchOff();
 
         // we disable injection of settings to Legacy Kernel during setup
-        $this->kernelFactory->setBuildEventsEnabled( false );
+        $this->kernelFactory->setBuildEventsEnabled(false);
 
         /** @var $request \Symfony\Component\HttpFoundation\ParameterBag */
-        $request = $this->container->get( 'request' )->request;
+        $request = $this->container->get('request')->request;
 
         // inject the extra ezpublish-community folders we want permissions checked for
-        switch ( $request->get( 'eZSetup_current_step' ) )
-        {
-            case "Welcome":
-            case "SystemCheck":
+        switch ($request->get('eZSetup_current_step')) {
+            case 'Welcome':
+            case 'SystemCheck':
                 $this->getLegacyKernel()->runCallback(
-                    function ()
-                    {
+                    function () {
                         eZINI::injectSettings(
                             array(
-                                "setup.ini" => array(
+                                'setup.ini' => array(
                                     // checked folders are relative to the ezpublish_legacy folder
-                                    "directory_permissions" => array(
-                                        "CheckList" => "../ezpublish/logs;../ezpublish/cache;../ezpublish/config;" .
-                                        eZINI::instance( 'setup.ini' )->variable( 'directory_permissions', 'CheckList' )
-                                    )
-                                )
+                                    'directory_permissions' => array(
+                                        'CheckList' => '../ezpublish/logs;../ezpublish/cache;../ezpublish/config;' .
+                                        eZINI::instance('setup.ini')->variable('directory_permissions', 'CheckList'),
+                                    ),
+                                ),
                             )
                         );
                     }
@@ -121,43 +119,39 @@ class LegacySetupController extends ContainerAware
 
         // Clear INI cache since setup has written new files
         $this->getLegacyKernel()->runCallback(
-            function ()
-            {
-                eZINI::injectSettings( array() );
-                eZCache::clearByTag( 'ini' );
+            function () {
+                eZINI::injectSettings(array());
+                eZCache::clearByTag('ini');
                 eZINI::resetAllInstances();
             }
         );
 
         // Check that eZ Publish Legacy was actually installed, since one step can run several steps
-        if ( $this->legacyConfigResolver->getParameter( 'SiteAccessSettings.CheckValidity' ) == 'false' )
-        {
+        if ($this->legacyConfigResolver->getParameter('SiteAccessSettings.CheckValidity') == 'false') {
             // If using kickstart.ini, legacy wizard will artificially create entries in $_POST
             // and in this case Symfony Request is not aware of them.
             // We then add them manually to the ParameterBag.
-            if ( !$request->has( 'P_chosen_site_package-0' ) )
-            {
-                $request->add( $_POST );
+            if (!$request->has('P_chosen_site_package-0')) {
+                $request->add($_POST);
             }
-            $chosenSitePackage = $request->get( 'P_chosen_site_package-0' );
+            $chosenSitePackage = $request->get('P_chosen_site_package-0');
 
             // match mode (host, url or port)
-            switch ( $request->get( 'P_site_extra_data_access_type-' . $chosenSitePackage ) )
-            {
-                case "hostname":
-                case "port":
+            switch ($request->get('P_site_extra_data_access_type-' . $chosenSitePackage)) {
+                case 'hostname':
+                case 'port':
                     $adminSiteaccess = $chosenSitePackage . '_admin';
                     break;
-                case "url":
-                    $adminSiteaccess = $request->get( 'P_site_extra_data_admin_access_type_value-' . $chosenSitePackage );
+                case 'url':
+                    $adminSiteaccess = $request->get('P_site_extra_data_admin_access_type_value-' . $chosenSitePackage);
             }
 
             /** @var $configurationDumper \eZ\Bundle\EzpublishLegacyBundle\SetupWizard\ConfigurationDumper */
-            $configurationDumper = $this->container->get( 'ezpublish_legacy.setup_wizard.configuration_dumper' );
-            $configurationDumper->addEnvironment( $this->container->get( 'kernel' )->getEnvironment() );
+            $configurationDumper = $this->container->get('ezpublish_legacy.setup_wizard.configuration_dumper');
+            $configurationDumper->addEnvironment($this->container->get('kernel')->getEnvironment());
             $configurationDumper->dump(
-                $this->container->get( 'ezpublish_legacy.setup_wizard.configuration_converter' )
-                    ->fromLegacy( $chosenSitePackage, $adminSiteaccess ),
+                $this->container->get('ezpublish_legacy.setup_wizard.configuration_converter')
+                    ->fromLegacy($chosenSitePackage, $adminSiteaccess),
                 ConfigDumperInterface::OPT_BACKUP_CONFIG
             );
         }

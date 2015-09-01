@@ -6,7 +6,6 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Publish\Core\MVC\Legacy\Templating\Tests\Twig;
 
 use eZ\Publish\Core\MVC\Legacy\Templating\Twig\Template;
@@ -34,15 +33,15 @@ class TemplateTest extends PHPUnit_Framework_TestCase
     protected function setUp()
     {
         parent::setUp();
-        $this->legacyEngine = $this->getMockBuilder( 'eZ\\Publish\\Core\\MVC\\Legacy\\Templating\\LegacyEngine' )
+        $this->legacyEngine = $this->getMockBuilder('eZ\\Publish\\Core\\MVC\\Legacy\\Templating\\LegacyEngine')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->twigEnv = $this->getMockBuilder( 'eZ\\Publish\\Core\\MVC\\Legacy\\Templating\\Twig\\Environment' )
+        $this->twigEnv = $this->getMockBuilder('eZ\\Publish\\Core\\MVC\\Legacy\\Templating\\Twig\\Environment')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->template = new Template( self::TEMPLATE_NAME, $this->twigEnv, $this->legacyEngine );
+        $this->template = new Template(self::TEMPLATE_NAME, $this->twigEnv, $this->legacyEngine);
     }
 
     /**
@@ -50,14 +49,14 @@ class TemplateTest extends PHPUnit_Framework_TestCase
      */
     public function testGetEnvironment()
     {
-        $this->assertSame( $this->twigEnv, $this->template->getEnvironment() );
+        $this->assertSame($this->twigEnv, $this->template->getEnvironment());
     }
     /**
      * @covers \eZ\Publish\Core\MVC\Legacy\Templating\Twig\Template::getTemplateName
      */
     public function testGetName()
     {
-        $this->assertSame( self::TEMPLATE_NAME, $this->template->getTemplateName() );
+        $this->assertSame(self::TEMPLATE_NAME, $this->template->getTemplateName());
     }
 
     /**
@@ -65,11 +64,11 @@ class TemplateTest extends PHPUnit_Framework_TestCase
      */
     public function testRender()
     {
-        $tplParams = array( 'foo' => 'bar', 'truc' => 'muche' );
+        $tplParams = array('foo' => 'bar', 'truc' => 'muche');
         $this->legacyEngine
-            ->expects( $this->once() )
-            ->method( 'render' )
-            ->with( self::TEMPLATE_NAME, $tplParams );
-        $this->template->render( $tplParams );
+            ->expects($this->once())
+            ->method('render')
+            ->with(self::TEMPLATE_NAME, $tplParams);
+        $this->template->render($tplParams);
     }
 }

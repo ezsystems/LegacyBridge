@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of the eZ Publish Kernel package
+ * This file is part of the eZ Publish Kernel package.
  *
  * @copyright Copyright (C) eZ Systems AS. All rights reserved.
  * @license For full copyright and license information view LICENSE file distributed with this source code.
@@ -20,47 +20,47 @@ class SwitchableHttpCachePurgerTest extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->gatewayCachePurgerMock = $this->getMock( 'eZ\Publish\Core\MVC\Symfony\Cache\GatewayCachePurger' );
-        $this->httpCachePurger = new SwitchableHttpCachePurger( $this->gatewayCachePurgerMock );
+        $this->gatewayCachePurgerMock = $this->getMock('eZ\Publish\Core\MVC\Symfony\Cache\GatewayCachePurger');
+        $this->httpCachePurger = new SwitchableHttpCachePurger($this->gatewayCachePurgerMock);
     }
 
     public function testPurgeSwitchedOn()
     {
         $this->httpCachePurger->switchOn();
 
-        $this->gatewayCachePurgerMock->expects( $this->once() )->method( 'purge' )->willReturn( $this->getCacheElements() );
+        $this->gatewayCachePurgerMock->expects($this->once())->method('purge')->willReturn($this->getCacheElements());
         self::assertEquals(
             $this->getCacheElements(),
-            $this->httpCachePurger->purge( $this->getCacheElements() )
+            $this->httpCachePurger->purge($this->getCacheElements())
         );
     }
 
     public function testPurgeSwitchedOff()
     {
         $this->httpCachePurger->switchOff();
-        $this->gatewayCachePurgerMock->expects( $this->never() )->method( 'purge' );
+        $this->gatewayCachePurgerMock->expects($this->never())->method('purge');
         self::assertEquals(
             $this->getCacheElements(),
-            $this->httpCachePurger->purge( $this->getCacheElements() )
+            $this->httpCachePurger->purge($this->getCacheElements())
         );
     }
 
     public function testPurgeAllSwitchedOn()
     {
         $this->httpCachePurger->switchOn();
-        $this->gatewayCachePurgerMock->expects( $this->once() )->method( 'purgeAll' );
+        $this->gatewayCachePurgerMock->expects($this->once())->method('purgeAll');
         $this->httpCachePurger->purgeAll();
     }
 
     public function testPurgeAllSwitchedOff()
     {
         $this->httpCachePurger->switchOff();
-        $this->gatewayCachePurgerMock->expects( $this->never() )->method( 'purgeAll' );
+        $this->gatewayCachePurgerMock->expects($this->never())->method('purgeAll');
         $this->httpCachePurger->purgeAll();
     }
 
     private function getCacheElements()
     {
-        return array( 1, 2, 3 );
+        return array(1, 2, 3);
     }
 }

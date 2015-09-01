@@ -6,7 +6,6 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Publish\Core\MVC\Legacy;
 
 use Exception;
@@ -17,19 +16,19 @@ use Psr\Log\LoggerInterface;
 use RuntimeException;
 
 /**
- * Class wrapping the legacy kernel
+ * Class wrapping the legacy kernel.
  */
 class Kernel extends ezpKernel
 {
     /**
-     * Legacy root directory
+     * Legacy root directory.
      *
      * @var string
      */
     private $legacyRootDir;
 
     /**
-     * Original webroot directory
+     * Original webroot directory.
      *
      * @var string
      */
@@ -56,16 +55,16 @@ class Kernel extends ezpKernel
      * @param string $webRootDir Must be a absolute dir
      * @param \Psr\Log\LoggerInterface $logger
      */
-    public function __construct( ezpKernelHandler $kernelHandler, $legacyRootDir, $webRootDir, LoggerInterface $logger = null )
+    public function __construct(ezpKernelHandler $kernelHandler, $legacyRootDir, $webRootDir, LoggerInterface $logger = null)
     {
         $this->legacyRootDir = $legacyRootDir;
         $this->webRootDir = $webRootDir;
         $this->logger = $logger;
 
         $this->enterLegacyRootDir();
-        parent::__construct( $kernelHandler );
+        parent::__construct($kernelHandler);
         $this->leaveLegacyRootDir();
-        $this->setUseExceptions( true );
+        $this->setUseExceptions(true);
     }
 
     public static function resetInstance()
@@ -80,11 +79,10 @@ class Kernel extends ezpKernel
     public function enterLegacyRootDir()
     {
         $this->previousRunningDir = getcwd();
-        if ( $this->logger )
-        {
-            $this->logger->debug( "Legacy kernel: Leaving '$this->previousRunningDir' for '$this->legacyRootDir'" );
+        if ($this->logger) {
+            $this->logger->debug("Legacy kernel: Leaving '$this->previousRunningDir' for '$this->legacyRootDir'");
         }
-        chdir( $this->legacyRootDir );
+        chdir($this->legacyRootDir);
     }
 
     /**
@@ -93,10 +91,8 @@ class Kernel extends ezpKernel
     public function leaveLegacyRootDir()
     {
         $previousDir = $this->previousRunningDir;
-        if ( !$previousDir )
-        {
-            if ( $this->logger )
-            {
+        if (!$previousDir) {
+            if ($this->logger) {
                 $this->logger->warning(
                     "Trying to leave legacy root dir without a previously executing dir. Falling back to '$this->webRootDir'"
                 );
@@ -105,11 +101,10 @@ class Kernel extends ezpKernel
         }
 
         $this->previousRunningDir = null;
-        if ( $this->logger )
-        {
-            $this->logger->debug( "Legacy kernel: Leaving '$this->legacyRootDir' for '$previousDir'" );
+        if ($this->logger) {
+            $this->logger->debug("Legacy kernel: Leaving '$this->legacyRootDir' for '$previousDir'");
         }
-        chdir( $previousDir );
+        chdir($previousDir);
     }
 
     /**
@@ -122,6 +117,7 @@ class Kernel extends ezpKernel
         $this->enterLegacyRootDir();
         $return = parent::run();
         $this->leaveLegacyRootDir();
+
         return $return;
     }
 
@@ -131,7 +127,7 @@ class Kernel extends ezpKernel
      * Will throw a \RuntimeException if trying to run a callback inside a callback.
      *
      * @param \Closure $callback
-     * @param boolean $postReinitialize Default is true.
+     * @param bool $postReinitialize Default is true.
      *                               If set to false, the kernel environment will not be reinitialized.
      *                               This can be useful to optimize several calls to the kernel within the same context.
      *
@@ -141,40 +137,35 @@ class Kernel extends ezpKernel
      * @throws \Exception
      * @return mixed The result of the callback
      */
-    public function runCallback( \Closure $callback, $postReinitialize = true, $formTokenEnable = null )
+    public function runCallback(\Closure $callback, $postReinitialize = true, $formTokenEnable = null)
     {
-        if ( $this->runningCallback )
-        {
-            throw new RuntimeException( 'Trying to run recursive callback in legacy kernel! Inception!' );
+        if ($this->runningCallback) {
+            throw new RuntimeException('Trying to run recursive callback in legacy kernel! Inception!');
         }
 
         $this->runningCallback = true;
         $this->enterLegacyRootDir();
 
-        if ( $formTokenEnable !== null && class_exists( 'ezxFormToken' ) )
-        {
+        if ($formTokenEnable !== null && class_exists('ezxFormToken')) {
             $formTokenWasEnabled = ezxFormToken::isEnabled();
-            ezxFormToken::setIsEnabled( $formTokenEnable );
+            ezxFormToken::setIsEnabled($formTokenEnable);
         }
 
-        try
-        {
-            $return = parent::runCallback( $callback, $postReinitialize );
-        }
-        catch ( Exception $e )
-        {
+        try {
+            $return = parent::runCallback($callback, $postReinitialize);
+        } catch (Exception $e) {
             $this->leaveLegacyRootDir();
             $this->runningCallback = false;
             throw $e;
         }
 
-        if ( isset( $formTokenWasEnabled ) )
-        {
-            ezxFormToken::setIsEnabled( $formTokenWasEnabled );
+        if (isset($formTokenWasEnabled)) {
+            ezxFormToken::setIsEnabled($formTokenWasEnabled);
         }
 
         $this->leaveLegacyRootDir();
         $this->runningCallback = false;
+
         return $return;
     }
 }

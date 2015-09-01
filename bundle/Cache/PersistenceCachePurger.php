@@ -6,7 +6,6 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Bundle\EzPublishLegacyBundle\Cache;
 
 use Symfony\Component\HttpKernel\CacheClearer\CacheClearerInterface;
@@ -17,7 +16,7 @@ use eZ\Publish\Core\Persistence\Cache\CacheServiceDecorator;
 use Psr\Log\LoggerInterface;
 
 /**
- * Class PersistenceCachePurger
+ * Class PersistenceCachePurger.
  */
 class PersistenceCachePurger implements CacheClearerInterface
 {
@@ -46,13 +45,13 @@ class PersistenceCachePurger implements CacheClearerInterface
     protected $logger;
 
     /**
-     * Setups current handler with everything needed
+     * Setups current handler with everything needed.
      *
      * @param \eZ\Publish\Core\Persistence\Cache\CacheServiceDecorator $cache
      * @param \eZ\Publish\SPI\Persistence\Content\Location\Handler $locationHandler
      * @param \Psr\Log\LoggerInterface $logger
      */
-    public function __construct( CacheServiceDecorator $cache, LocationHandlerInterface $locationHandler, LoggerInterface $logger )
+    public function __construct(CacheServiceDecorator $cache, LocationHandlerInterface $locationHandler, LoggerInterface $logger)
     {
         $this->cache = $cache;
         $this->locationHandler = $locationHandler;
@@ -60,21 +59,22 @@ class PersistenceCachePurger implements CacheClearerInterface
     }
 
     /**
-     * Clear all persistence cache
+     * Clear all persistence cache.
      *
      * Sets a internal flag 'allCleared' to avoid clearing cache several times
      */
     public function all()
     {
-        if ( $this->isSwitchedOff() )
+        if ($this->isSwitchedOff()) {
             return;
+        }
 
         $this->cache->clear();
         $this->allCleared = true;
     }
 
     /**
-     * Returns true if all cache has been cleared already
+     * Returns true if all cache has been cleared already.
      *
      * Returns the internal flag 'allCleared' that avoids clearing cache several times
      *
@@ -86,7 +86,7 @@ class PersistenceCachePurger implements CacheClearerInterface
     }
 
     /**
-     * Reset 'allCleared' flag
+     * Reset 'allCleared' flag.
      *
      * Resets the internal flag 'allCleared' that avoids clearing cache several times
      */
@@ -106,38 +106,33 @@ class PersistenceCachePurger implements CacheClearerInterface
      *
      * @throws \eZ\Publish\Core\Base\Exceptions\InvalidArgumentType On invalid $id type
      */
-    public function content( $locationIds = null )
+    public function content($locationIds = null)
     {
-        if ( $this->allCleared === true || $this->isSwitchedOff() )
+        if ($this->allCleared === true || $this->isSwitchedOff()) {
             return $locationIds;
+        }
 
-        if ( $locationIds === null )
-        {
-            $this->cache->clear( 'content' );
+        if ($locationIds === null) {
+            $this->cache->clear('content');
             goto relatedCache;
-        }
-        else if ( !is_array( $locationIds ) )
-        {
-            $locationIds = array( $locationIds );
+        } elseif (!is_array($locationIds)) {
+            $locationIds = array($locationIds);
         }
 
-        foreach ( $locationIds as $id )
-        {
-            if ( !is_scalar( $id ) )
-                throw new InvalidArgumentType( "\$id", "int[]|null", $id );
-
-            try
-            {
-                $location = $this->locationHandler->load( $id );
-                $this->cache->clear( 'content', $location->contentId );
-                $this->cache->clear( 'content', 'info', $location->contentId );
-                $this->cache->clear( 'content', 'info', 'remoteId' );
-                $this->cache->clear( 'content', 'locations', $location->contentId );
-                $this->cache->clear( 'user', 'role', 'assignments', 'byGroup', $location->contentId );
-                $this->cache->clear( 'user', 'role', 'assignments', 'byGroup', 'inherited', $location->contentId );
+        foreach ($locationIds as $id) {
+            if (!is_scalar($id)) {
+                throw new InvalidArgumentType('$id', 'int[]|null', $id);
             }
-            catch ( NotFoundException $e )
-            {
+
+            try {
+                $location = $this->locationHandler->load($id);
+                $this->cache->clear('content', $location->contentId);
+                $this->cache->clear('content', 'info', $location->contentId);
+                $this->cache->clear('content', 'info', 'remoteId');
+                $this->cache->clear('content', 'locations', $location->contentId);
+                $this->cache->clear('user', 'role', 'assignments', 'byGroup', $location->contentId);
+                $this->cache->clear('user', 'role', 'assignments', 'byGroup', 'inherited', $location->contentId);
+            } catch (NotFoundException $e) {
                 $this->logger->notice(
                     "Unable to load the location with the id '$id' to clear its cache"
                 );
@@ -146,8 +141,8 @@ class PersistenceCachePurger implements CacheClearerInterface
 
         // clear content related cache as well
         relatedCache:
-        $this->cache->clear( 'urlAlias' );
-        $this->cache->clear( 'location' );
+        $this->cache->clear('urlAlias');
+        $this->cache->clear('location');
 
         return $locationIds;
     }
@@ -158,131 +153,118 @@ class PersistenceCachePurger implements CacheClearerInterface
      * @param int $contentId
      * @param int $versionNo
      */
-    public function contentVersion( $contentId, $versionNo )
+    public function contentVersion($contentId, $versionNo)
     {
-        if ( $this->allCleared === true || $this->isSwitchedOff() )
+        if ($this->allCleared === true || $this->isSwitchedOff()) {
             return;
+        }
 
-        $this->cache->clear( 'content', $contentId, $versionNo );
+        $this->cache->clear('content', $contentId, $versionNo);
     }
 
     /**
-     * Clear all contentType persistence cache, or by id
+     * Clear all contentType persistence cache, or by id.
      *
      * @param int|null $id Purges all contentType cache if null
      * @throws \eZ\Publish\Core\Base\Exceptions\InvalidArgumentType On invalid $id type
      */
-    public function contentType( $id = null )
+    public function contentType($id = null)
     {
-        if ( $this->allCleared === true || $this->isSwitchedOff() )
+        if ($this->allCleared === true || $this->isSwitchedOff()) {
             return;
+        }
 
-        if ( $id === null )
-        {
-            $this->cache->clear( 'contentType' );
-        }
-        else if ( is_scalar( $id ) )
-        {
-            $this->cache->clear( 'contentType', $id );
-        }
-        else
-        {
-            throw new InvalidArgumentType( "\$id", "int|null", $id );
+        if ($id === null) {
+            $this->cache->clear('contentType');
+        } elseif (is_scalar($id)) {
+            $this->cache->clear('contentType', $id);
+        } else {
+            throw new InvalidArgumentType('$id', 'int|null', $id);
         }
     }
 
     /**
-     * Clear all contentTypeGroup persistence cache, or by id
+     * Clear all contentTypeGroup persistence cache, or by id.
      *
      * Either way, contentType cache is also cleared as it contains the relation to contentTypeGroups
      *
      * @param int|null $id Purges all contentTypeGroup cache if null
      * @throws \eZ\Publish\Core\Base\Exceptions\InvalidArgumentType On invalid $id type
      */
-    public function contentTypeGroup( $id = null )
+    public function contentTypeGroup($id = null)
     {
-        if ( $this->allCleared === true || $this->isSwitchedOff() )
+        if ($this->allCleared === true || $this->isSwitchedOff()) {
             return;
+        }
 
-        if ( $id === null )
-        {
-            $this->cache->clear( 'contentTypeGroup' );
-        }
-        else if ( is_scalar( $id ) )
-        {
-            $this->cache->clear( 'contentTypeGroup', $id );
-        }
-        else
-        {
-            throw new InvalidArgumentType( "\$id", "int|null", $id );
+        if ($id === null) {
+            $this->cache->clear('contentTypeGroup');
+        } elseif (is_scalar($id)) {
+            $this->cache->clear('contentTypeGroup', $id);
+        } else {
+            throw new InvalidArgumentType('$id', 'int|null', $id);
         }
 
         // clear content type in case of changes as it contains the relation to groups
-        $this->cache->clear( 'contentType' );
+        $this->cache->clear('contentType');
     }
 
     /**
-     * Clear all section persistence cache, or by id
+     * Clear all section persistence cache, or by id.
      *
      * @param int|null $id Purges all section cache if null
      * @throws \eZ\Publish\Core\Base\Exceptions\InvalidArgumentType On invalid $id type
      */
-    public function section( $id = null )
+    public function section($id = null)
     {
-        if ( $this->allCleared === true || $this->isSwitchedOff() )
+        if ($this->allCleared === true || $this->isSwitchedOff()) {
             return;
+        }
 
-        if ( $id === null )
-        {
-            $this->cache->clear( 'section' );
-        }
-        else if ( is_scalar( $id ) )
-        {
-            $this->cache->clear( 'section', $id );
-        }
-        else
-        {
-            throw new InvalidArgumentType( "\$id", "int|null", $id );
+        if ($id === null) {
+            $this->cache->clear('section');
+        } elseif (is_scalar($id)) {
+            $this->cache->clear('section', $id);
+        } else {
+            throw new InvalidArgumentType('$id', 'int|null', $id);
         }
     }
 
     /**
-     * Clear all language persistence cache, or by id
+     * Clear all language persistence cache, or by id.
      *
      * @param array|int $ids
      */
-    public function languages( $ids )
+    public function languages($ids)
     {
-        if ( $this->allCleared === true || $this->isSwitchedOff() )
+        if ($this->allCleared === true || $this->isSwitchedOff()) {
             return;
+        }
 
         $ids = (array)$ids;
-        foreach ( $ids as $id )
-            $this->cache->clear( 'language', $id );
+        foreach ($ids as $id) {
+            $this->cache->clear('language', $id);
+        }
     }
 
     /**
-     * Clear all user persistence cache
+     * Clear all user persistence cache.
      *
      * @param int|null $id Purges all users cache if null
      * @throws \eZ\Publish\Core\Base\Exceptions\InvalidArgumentType On invalid $id type
      */
-    public function user( $id = null )
+    public function user($id = null)
     {
-        if ( $this->allCleared === true || $this->isSwitchedOff() )
+        if ($this->allCleared === true || $this->isSwitchedOff()) {
             return;
+        }
 
-        if ( $id === null )
-        {
-            $this->cache->clear( 'user' );
-        }
-        else if ( is_scalar( $id ) )
-        {
-            $this->cache->clear( 'user', $id );
-        }
-        else
-        {
-            throw new InvalidArgumentType( "\$id", "int|null", $id );
+        if ($id === null) {
+            $this->cache->clear('user');
+        } elseif (is_scalar($id)) {
+            $this->cache->clear('user', $id);
+        } else {
+            throw new InvalidArgumentType('$id', 'int|null', $id);
         }
     }
 
@@ -291,7 +273,7 @@ class PersistenceCachePurger implements CacheClearerInterface
      *
      * @param string $cacheDir The cache directory.
      */
-    public function clear( $cacheDir )
+    public function clear($cacheDir)
     {
         $this->all();
     }

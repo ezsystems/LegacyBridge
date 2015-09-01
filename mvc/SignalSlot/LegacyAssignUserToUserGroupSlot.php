@@ -1,12 +1,11 @@
 <?php
 /**
- * File containing the LegacyAssignUserToUserGroupSlot class
+ * File containing the LegacyAssignUserToUserGroupSlot class.
  *
  * @copyright Copyright (C) eZ Systems AS. All rights reserved.
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Publish\Core\MVC\Legacy\SignalSlot;
 
 use eZ\Publish\Core\SignalSlot\Signal;
@@ -19,22 +18,18 @@ use eZRole;
 class LegacyAssignUserToUserGroupSlot extends AbstractLegacySlot
 {
     /**
-     * Receive the given $signal and react on it
+     * Receive the given $signal and react on it.
      *
      * @param \eZ\Publish\Core\SignalSlot\Signal $signal
-     *
-     * @return void
      */
-    public function receive( Signal $signal )
+    public function receive(Signal $signal)
     {
-        if ( !$signal instanceof Signal\UserService\AssignUserToUserGroupSignal )
-        {
+        if (!$signal instanceof Signal\UserService\AssignUserToUserGroupSignal) {
             return;
         }
 
         $this->runLegacyKernelCallback(
-            function ()
-            {
+            function () {
                 eZContentCacheManager::clearAllContentCache();
                 eZRole::expireCache();
             }

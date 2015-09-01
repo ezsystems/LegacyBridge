@@ -6,7 +6,6 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Bundle\EzPublishLegacyBundle\Composer;
 
 use Sensio\Bundle\DistributionBundle\Composer\ScriptHandler as DistributionBundleScriptHandler;
@@ -26,54 +25,50 @@ class ScriptHandler extends DistributionBundleScriptHandler
      *
      * @param $event CommandEvent A instance
      */
-    public static function installAssets( CommandEvent $event )
+    public static function installAssets(CommandEvent $event)
     {
-        $options = self::getOptions( $event );
+        $options = self::getOptions($event);
         $appDir = $options['symfony-app-dir'];
         $webDir = $options['symfony-web-dir'];
 
         $symlink = '';
-        if ( $options['symfony-assets-install'] === 'symlink' )
-        {
+        if ($options['symfony-assets-install'] === 'symlink') {
             $symlink = '--symlink ';
-        }
-        else if ( $options['symfony-assets-install'] === 'relative' )
-        {
+        } elseif ($options['symfony-assets-install'] === 'relative') {
             $symlink = '--symlink --relative ';
         }
 
-        if ( !is_dir( $appDir ) )
-        {
+        if (!is_dir($appDir)) {
             echo 'The symfony-app-dir (' . $appDir . ') specified in composer.json was not found in ' . getcwd() . ', can not install assets.' . PHP_EOL;
+
             return;
         }
 
-        if ( !is_dir( $webDir ) )
-        {
+        if (!is_dir($webDir)) {
             echo 'The symfony-web-dir (' . $webDir . ') specified in composer.json was not found in ' . getcwd() . ', can not install assets.' . PHP_EOL;
+
             return;
         }
 
-        static::executeCommand( $event, $appDir, 'ezpublish:legacy:assets_install ' . $symlink . escapeshellarg( $webDir ) );
+        static::executeCommand($event, $appDir, 'ezpublish:legacy:assets_install ' . $symlink . escapeshellarg($webDir));
     }
 
-    public static function installLegacyBundlesExtensions( CommandEvent $event )
+    public static function installLegacyBundlesExtensions(CommandEvent $event)
     {
-        $options = self::getOptions( $event );
+        $options = self::getOptions($event);
         $appDir = $options['symfony-app-dir'];
 
         $symlink = '';
-        if ( $options['symfony-assets-install'] === 'relative' )
-        {
+        if ($options['symfony-assets-install'] === 'relative') {
             $symlink = '--relative ';
         }
 
-        if ( !is_dir( $appDir ) )
-        {
+        if (!is_dir($appDir)) {
             echo 'The symfony-app-dir (' . $appDir . ') specified in composer.json was not found in ' . getcwd() . ', can not install assets.' . PHP_EOL;
+
             return;
         }
 
-        static::executeCommand( $event, $appDir, 'ezpublish:legacybundles:install_extensions ' . $symlink );
+        static::executeCommand($event, $appDir, 'ezpublish:legacybundles:install_extensions ' . $symlink);
     }
 }

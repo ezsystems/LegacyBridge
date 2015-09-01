@@ -6,7 +6,6 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Bundle\EzPublishLegacyBundle\Controller;
 
 use eZ\Publish\Core\MVC\Symfony\Controller\Controller;
@@ -20,9 +19,9 @@ class LegacyTreeMenuController extends Controller
      */
     protected $treeMenuKernel;
 
-    public function __construct( \Closure $treeMenuKernelHandler, Loader $legacyKernelFactory, array $options = array() )
+    public function __construct(\Closure $treeMenuKernelHandler, Loader $legacyKernelFactory, array $options = array())
     {
-        $kernelClosure = $legacyKernelFactory->buildLegacyKernel( $treeMenuKernelHandler );
+        $kernelClosure = $legacyKernelFactory->buildLegacyKernel($treeMenuKernelHandler);
         $this->treeMenuKernel = $kernelClosure();
     }
 
@@ -37,25 +36,26 @@ class LegacyTreeMenuController extends Controller
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function viewMenu( $nodeId, $modified, $expiry, $perm )
+    public function viewMenu($nodeId, $modified, $expiry, $perm)
     {
         $response = new Response();
-        if ( $this->getParameter( 'treemenu.http_cache' ) )
-        {
+        if ($this->getParameter('treemenu.http_cache')) {
             $request = $this->getRequest();
-            $response->setMaxAge( $this->getParameter( 'treemenu.ttl_cache' ) );
+            $response->setMaxAge($this->getParameter('treemenu.ttl_cache'));
             // Aggressive cache : Always return a 304 response if "If-Modified-Since" request header is present.
-            if ( $request->headers->has( 'If-Modified-Since' ) )
-            {
+            if ($request->headers->has('If-Modified-Since')) {
                 $response->setNotModified();
+
                 return $response;
             }
         }
 
         $result = $this->treeMenuKernel->run();
-        if ( $result->hasAttribute( 'lastModified' ) )
-            $response->setLastModified( $result->getAttribute( 'lastModified' ) );
-        $response->setContent( $result->getContent() );
+        if ($result->hasAttribute('lastModified')) {
+            $response->setLastModified($result->getAttribute('lastModified'));
+        }
+        $response->setContent($result->getContent());
+
         return $response;
     }
 }

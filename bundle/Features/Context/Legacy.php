@@ -6,13 +6,12 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Bundle\EzPublishLegacyBundle\Features\Context;
 
 use EzSystems\BehatBundle\Context\Browser\Context;
 
 /**
- * Legacy base context class
+ * Legacy base context class.
  */
 class Legacy extends Context
 {

@@ -3,3 +3,5 @@ composer.lock
 ezpublish_legacy
 bin
 config.php
+.php_cs.cache
+

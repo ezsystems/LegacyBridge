@@ -6,7 +6,6 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Bundle\EzPublishLegacyBundle\Command;
 
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
@@ -22,15 +21,15 @@ class LegacyWrapperInstallCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setName( 'ezpublish:legacy:assets_install' )
+            ->setName('ezpublish:legacy:assets_install')
             ->setDefinition(
                 array(
-                    new InputArgument( 'target', InputArgument::OPTIONAL, 'The target directory', 'web' ),
+                    new InputArgument('target', InputArgument::OPTIONAL, 'The target directory', 'web'),
                 )
             )
-            ->addOption( 'symlink', null, InputOption::VALUE_NONE, 'Symlinks the assets instead of copying it' )
-            ->addOption( 'relative', null, InputOption::VALUE_NONE, 'Make relative symlinks' )
-            ->setDescription( 'Installs assets from eZ Publish legacy installation and wrapper scripts for front controllers (like index_cluster.php).' )
+            ->addOption('symlink', null, InputOption::VALUE_NONE, 'Symlinks the assets instead of copying it')
+            ->addOption('relative', null, InputOption::VALUE_NONE, 'Make relative symlinks')
+            ->setDescription('Installs assets from eZ Publish legacy installation and wrapper scripts for front controllers (like index_cluster.php).')
             ->setHelp(
                 <<<EOT
 The command <info>%command.name%</info> installs <info>assets</info> from eZ Publish legacy installation
@@ -41,72 +40,60 @@ EOT
             );
     }
 
-    protected function execute( InputInterface $input, OutputInterface $output )
+    protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $targetArg = rtrim( $input->getArgument( 'target' ), '/' );
-        if ( !is_dir( $targetArg ) )
-        {
-            throw new \InvalidArgumentException( sprintf( 'The target directory "%s" does not exist.', $input->getArgument( 'target' ) ) );
+        $targetArg = rtrim($input->getArgument('target'), '/');
+        if (!is_dir($targetArg)) {
+            throw new \InvalidArgumentException(sprintf('The target directory "%s" does not exist.', $input->getArgument('target')));
         }
 
         /**
          * @var \Symfony\Component\Filesystem\Filesystem
          */
-        $filesystem = $this->getContainer()->get( 'filesystem' );
-        $legacyRootDir = rtrim( $this->getContainer()->getParameter( 'ezpublish_legacy.root_dir' ), '/' );
+        $filesystem = $this->getContainer()->get('filesystem');
+        $legacyRootDir = rtrim($this->getContainer()->getParameter('ezpublish_legacy.root_dir'), '/');
 
-        $output->writeln( sprintf( "Installing eZ Publish legacy assets from $legacyRootDir using the <comment>%s</comment> option", $input->getOption( 'symlink' ) ? 'symlink' : 'hard copy' ) );
-        $symlink = $input->getOption( 'symlink' );
+        $output->writeln(sprintf("Installing eZ Publish legacy assets from $legacyRootDir using the <comment>%s</comment> option", $input->getOption('symlink') ? 'symlink' : 'hard copy'));
+        $symlink = $input->getOption('symlink');
 
-        foreach ( array( 'design', 'extension', 'share', 'var' ) as $folder )
-        {
+        foreach (array('design', 'extension', 'share', 'var') as $folder) {
             $targetDir = "$targetArg/$folder";
             $originDir = "$legacyRootDir/$folder";
-            $filesystem->remove( $targetDir );
-            if ( $symlink )
-            {
-                if ( $input->getOption( 'relative' ) )
-                {
-                    $originDir = $filesystem->makePathRelative( $originDir, realpath( $targetArg ) );
+            $filesystem->remove($targetDir);
+            if ($symlink) {
+                if ($input->getOption('relative')) {
+                    $originDir = $filesystem->makePathRelative($originDir, realpath($targetArg));
                 }
 
-                try
-                {
-                    $filesystem->symlink( $originDir, $targetDir );
-                }
-                catch ( IOException $e )
-                {
+                try {
+                    $filesystem->symlink($originDir, $targetDir);
+                } catch (IOException $e) {
                     $symlink = false;
-                    $output->writeln( 'It looks like your system doesn\'t support symbolic links, so will fallback to hard copy instead!' );
+                    $output->writeln('It looks like your system doesn\'t support symbolic links, so will fallback to hard copy instead!');
                 }
             }
 
-            if ( !$symlink )
-            {
-                $filesystem->mkdir( $targetDir, 0777 );
+            if (!$symlink) {
+                $filesystem->mkdir($targetDir, 0777);
                 // We use a custom iterator to ignore VCS files
                 $currentDir = getcwd();
-                chdir( realpath( $targetArg ) );
-                $filesystem->mirror( $originDir, $targetDir, Finder::create()->in( $originDir ) );
-                chdir( $currentDir );
+                chdir(realpath($targetArg));
+                $filesystem->mirror($originDir, $targetDir, Finder::create()->in($originDir));
+                chdir($currentDir);
             }
         }
 
-        if ( $input->getOption( 'relative' ) )
-        {
-            $legacyRootDir = $filesystem->makePathRelative( realpath( $legacyRootDir ), realpath( $targetArg ) );
+        if ($input->getOption('relative')) {
+            $legacyRootDir = $filesystem->makePathRelative(realpath($legacyRootDir), realpath($targetArg));
             $rootDirCode = "__DIR__ . DIRECTORY_SEPARATOR . '{$legacyRootDir}'";
-        }
-        else
-        {
+        } else {
             $rootDirCode = "'{$legacyRootDir}'";
         }
 
-        $output->writeln( "Installing wrappers for eZ Publish legacy front controllers (rest & cluster) with path $legacyRootDir" );
-        foreach ( array( 'index_rest.php', 'index_cluster.php' ) as $frontController )
-        {
+        $output->writeln("Installing wrappers for eZ Publish legacy front controllers (rest & cluster) with path $legacyRootDir");
+        foreach (array('index_rest.php', 'index_cluster.php') as $frontController) {
             $newFrontController = "$targetArg/$frontController";
-            $filesystem->remove( $newFrontController );
+            $filesystem->remove($newFrontController);
 
             $code = <<<EOT
 <?php
@@ -122,7 +109,7 @@ EOT
  require '{$frontController}';
 
 EOT;
-            $filesystem->dumpFile( $newFrontController, $code );
+            $filesystem->dumpFile($newFrontController, $code);
         }
     }
 }

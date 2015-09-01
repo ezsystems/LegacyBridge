@@ -6,7 +6,6 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Bundle\EzPublishLegacyBundle\Tests\Cache;
 
 use eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger;
@@ -40,12 +39,12 @@ class PersistenceCachePurgerTest extends PHPUnit_Framework_TestCase
     {
         parent::setUp();
         $this->cacheService = $this
-            ->getMockBuilder( 'eZ\\Publish\\Core\\Persistence\\Cache\\CacheServiceDecorator' )
+            ->getMockBuilder('eZ\\Publish\\Core\\Persistence\\Cache\\CacheServiceDecorator')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->locationHandler = $this->getMock( 'eZ\\Publish\\SPI\\Persistence\\Content\\Location\\Handler' );
-        $this->logger = $this->getMock( 'Psr\\Log\\LoggerInterface' );
+        $this->locationHandler = $this->getMock('eZ\\Publish\\SPI\\Persistence\\Content\\Location\\Handler');
+        $this->logger = $this->getMock('Psr\\Log\\LoggerInterface');
 
         $this->cachePurger = new PersistenceCachePurger(
             $this->cacheService, $this->locationHandler, $this->logger
@@ -53,21 +52,21 @@ class PersistenceCachePurgerTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test case for https://jira.ez.no/browse/EZP-20618
+     * Test case for https://jira.ez.no/browse/EZP-20618.
      */
     public function testNotFoundLocation()
     {
         $id = 'locationIdThatDoesNotExist';
         $this->locationHandler
-            ->expects( $this->once() )
-            ->method( 'load' )
-            ->will( $this->throwException( new NotFoundException( 'location', $id ) ) );
+            ->expects($this->once())
+            ->method('load')
+            ->will($this->throwException(new NotFoundException('location', $id)));
 
         $this->logger
-            ->expects( $this->once() )
-            ->method( 'notice' );
+            ->expects($this->once())
+            ->method('notice');
 
-        $this->cachePurger->content( $id );
+        $this->cachePurger->content($id);
     }
 
     /**
@@ -77,12 +76,12 @@ class PersistenceCachePurgerTest extends PHPUnit_Framework_TestCase
     public function testClearAll()
     {
         $this->cacheService
-            ->expects( $this->once() )
-            ->method( 'clear' )
+            ->expects($this->once())
+            ->method('clear')
             ->with();
 
         $this->cachePurger->all();
-        $this->assertTrue( $this->cachePurger->isAllCleared() );
+        $this->assertTrue($this->cachePurger->isAllCleared());
     }
 
     /**
@@ -92,11 +91,11 @@ class PersistenceCachePurgerTest extends PHPUnit_Framework_TestCase
      */
     public function testResetAllCleared()
     {
-        $this->assertFalse( $this->cachePurger->isAllCleared() );
+        $this->assertFalse($this->cachePurger->isAllCleared());
         $this->cachePurger->all();
-        $this->assertTrue( $this->cachePurger->isAllCleared() );
+        $this->assertTrue($this->cachePurger->isAllCleared());
         $this->cachePurger->resetAllCleared();
-        $this->assertFalse( $this->cachePurger->isAllCleared() );
+        $this->assertFalse($this->cachePurger->isAllCleared());
     }
 
     /**
@@ -107,8 +106,8 @@ class PersistenceCachePurgerTest extends PHPUnit_Framework_TestCase
     {
         $this->cachePurger->all();
         $this->cacheService
-            ->expects( $this->never() )
-            ->method( 'clear' );
+            ->expects($this->never())
+            ->method('clear');
         $this->cachePurger->content();
     }
 
@@ -119,8 +118,8 @@ class PersistenceCachePurgerTest extends PHPUnit_Framework_TestCase
     {
         $this->cachePurger->switchOff();
         $this->cacheService
-            ->expects( $this->never() )
-            ->method( 'clear' );
+            ->expects($this->never())
+            ->method('clear');
         $this->cachePurger->content();
     }
 
@@ -132,8 +131,8 @@ class PersistenceCachePurgerTest extends PHPUnit_Framework_TestCase
     {
         $this->cachePurger->switchOff();
         $this->cacheService
-            ->expects( $this->never() )
-            ->method( 'clear' );
+            ->expects($this->never())
+            ->method('clear');
         $this->cachePurger->all();
     }
 
@@ -143,15 +142,15 @@ class PersistenceCachePurgerTest extends PHPUnit_Framework_TestCase
     public function testClearAllContent()
     {
         $map = array(
-            array( 'content', null ),
-            array( 'urlAlias', null ),
-            array( 'location', null ),
+            array('content', null),
+            array('urlAlias', null),
+            array('location', null),
         );
         $this->cacheService
-            ->expects( $this->exactly( count( $map ) ) )
-            ->method( 'clear' )
-            ->will( $this->returnValueMap( $map ) );
-        $this->assertNull( $this->cachePurger->content() );
+            ->expects($this->exactly(count($map)))
+            ->method('clear')
+            ->will($this->returnValueMap($map));
+        $this->assertNull($this->cachePurger->content());
     }
 
     /**
@@ -167,38 +166,38 @@ class PersistenceCachePurgerTest extends PHPUnit_Framework_TestCase
         $contentId3 = 30;
 
         $this->locationHandler
-            ->expects( $this->exactly( 3 ) )
-            ->method( 'load' )
+            ->expects($this->exactly(3))
+            ->method('load')
             ->will(
                 $this->returnValueMap(
                     array(
-                        array( $locationId1, $this->buildLocation( $locationId1, $contentId1 ) ),
-                        array( $locationId2, $this->buildLocation( $locationId2, $contentId2 ) ),
-                        array( $locationId3, $this->buildLocation( $locationId3, $contentId3 ) ),
+                        array($locationId1, $this->buildLocation($locationId1, $contentId1)),
+                        array($locationId2, $this->buildLocation($locationId2, $contentId2)),
+                        array($locationId3, $this->buildLocation($locationId3, $contentId3)),
                     )
                 )
             );
 
         $this->cacheService
-            ->expects( $this->any() )
-            ->method( 'clear' )
+            ->expects($this->any())
+            ->method('clear')
             ->will(
                 $this->returnValueMap(
                     array(
-                        array( 'content', $contentId1, null ),
-                        array( 'content', 'info', $contentId1, null ),
-                        array( 'content', $contentId2, null ),
-                        array( 'content', 'info', $contentId2, null ),
-                        array( 'content', $contentId3, null ),
-                        array( 'content', 'info', $contentId3, null ),
-                        array( 'urlAlias', null ),
-                        array( 'location', null ),
+                        array('content', $contentId1, null),
+                        array('content', 'info', $contentId1, null),
+                        array('content', $contentId2, null),
+                        array('content', 'info', $contentId2, null),
+                        array('content', $contentId3, null),
+                        array('content', 'info', $contentId3, null),
+                        array('urlAlias', null),
+                        array('location', null),
                     )
                 )
             );
 
-        $locationIds = array( $locationId1, $locationId2, $locationId3 );
-        $this->assertSame( $locationIds, $this->cachePurger->content( $locationIds ) );
+        $locationIds = array($locationId1, $locationId2, $locationId3);
+        $this->assertSame($locationIds, $this->cachePurger->content($locationIds));
     }
 
     /**
@@ -210,25 +209,25 @@ class PersistenceCachePurgerTest extends PHPUnit_Framework_TestCase
         $contentId = 10;
 
         $this->locationHandler
-            ->expects( $this->once() )
-            ->method( 'load' )
-            ->will( $this->returnValue( $this->buildLocation( $locationId, $contentId ) ) );
+            ->expects($this->once())
+            ->method('load')
+            ->will($this->returnValue($this->buildLocation($locationId, $contentId)));
         $this->cacheService
-            ->expects( $this->any() )
-            ->method( 'clear' )
+            ->expects($this->any())
+            ->method('clear')
             ->will(
                 $this->returnValueMap(
                     array(
-                        array( 'content', $contentId, null ),
-                        array( 'content', 'info', $contentId, null ),
-                        array( 'content', 'info', 'remoteId', null ),
-                        array( 'urlAlias', null ),
-                        array( 'location', null ),
+                        array('content', $contentId, null),
+                        array('content', 'info', $contentId, null),
+                        array('content', 'info', 'remoteId', null),
+                        array('urlAlias', null),
+                        array('location', null),
                     )
                 )
             );
 
-        $this->assertSame( array( $locationId ), $this->cachePurger->content( $locationId ) );
+        $this->assertSame(array($locationId), $this->cachePurger->content($locationId));
     }
 
     /**
@@ -236,12 +235,12 @@ class PersistenceCachePurgerTest extends PHPUnit_Framework_TestCase
      * @param $contentId
      * @return \eZ\Publish\SPI\Persistence\Content\Location
      */
-    private function buildLocation( $locationId, $contentId )
+    private function buildLocation($locationId, $contentId)
     {
         return new Location(
             array(
-                'id'           => $locationId,
-                'contentId'    => $contentId
+                'id' => $locationId,
+                'contentId' => $contentId,
             )
         );
     }
@@ -253,7 +252,7 @@ class PersistenceCachePurgerTest extends PHPUnit_Framework_TestCase
      */
     public function testClearContentFail()
     {
-        $this->cachePurger->content( new \stdClass );
+        $this->cachePurger->content(new \stdClass());
     }
 
     /**
@@ -262,9 +261,9 @@ class PersistenceCachePurgerTest extends PHPUnit_Framework_TestCase
     public function testClearContentTypeAll()
     {
         $this->cacheService
-            ->expects( $this->once() )
-            ->method( 'clear' )
-            ->with( 'contentType' );
+            ->expects($this->once())
+            ->method('clear')
+            ->with('contentType');
 
         $this->cachePurger->contentType();
     }
@@ -275,11 +274,11 @@ class PersistenceCachePurgerTest extends PHPUnit_Framework_TestCase
     public function testClearContentType()
     {
         $this->cacheService
-            ->expects( $this->once() )
-            ->method( 'clear' )
-            ->with( 'contentType', 123 );
+            ->expects($this->once())
+            ->method('clear')
+            ->with('contentType', 123);
 
-        $this->cachePurger->contentType( 123 );
+        $this->cachePurger->contentType(123);
     }
 
     /**
@@ -289,7 +288,7 @@ class PersistenceCachePurgerTest extends PHPUnit_Framework_TestCase
      */
     public function testClearContentTypeFail()
     {
-        $this->cachePurger->contentType( new \stdClass() );
+        $this->cachePurger->contentType(new \stdClass());
     }
 
     /**
@@ -298,13 +297,13 @@ class PersistenceCachePurgerTest extends PHPUnit_Framework_TestCase
     public function testClearContentTypeGroupAll()
     {
         $this->cacheService
-            ->expects( $this->exactly( 2 ) )
-            ->method( 'clear' )
+            ->expects($this->exactly(2))
+            ->method('clear')
             ->will(
                 $this->returnValueMap(
                     array(
-                        array( 'contentTypeGroup', null ),
-                        array( 'contentType', null ),
+                        array('contentTypeGroup', null),
+                        array('contentType', null),
                     )
                 )
             );
@@ -318,18 +317,18 @@ class PersistenceCachePurgerTest extends PHPUnit_Framework_TestCase
     public function testClearContentTypeGroup()
     {
         $this->cacheService
-            ->expects( $this->exactly( 2 ) )
-            ->method( 'clear' )
+            ->expects($this->exactly(2))
+            ->method('clear')
             ->will(
                 $this->returnValueMap(
                     array(
-                        array( 'contentTypeGroup', 123, null ),
-                        array( 'contentType', null ),
+                        array('contentTypeGroup', 123, null),
+                        array('contentType', null),
                     )
                 )
             );
 
-        $this->cachePurger->contentTypeGroup( 123 );
+        $this->cachePurger->contentTypeGroup(123);
     }
 
     /**
@@ -339,7 +338,7 @@ class PersistenceCachePurgerTest extends PHPUnit_Framework_TestCase
      */
     public function testClearContentTypeGroupFail()
     {
-        $this->cachePurger->contentTypeGroup( new \stdClass() );
+        $this->cachePurger->contentTypeGroup(new \stdClass());
     }
 
     /**
@@ -348,9 +347,9 @@ class PersistenceCachePurgerTest extends PHPUnit_Framework_TestCase
     public function testClearSectionAll()
     {
         $this->cacheService
-            ->expects( $this->once() )
-            ->method( 'clear' )
-            ->with( 'section' );
+            ->expects($this->once())
+            ->method('clear')
+            ->with('section');
 
         $this->cachePurger->section();
     }
@@ -361,11 +360,11 @@ class PersistenceCachePurgerTest extends PHPUnit_Framework_TestCase
     public function testClearSection()
     {
         $this->cacheService
-            ->expects( $this->once() )
-            ->method( 'clear' )
-            ->with( 'section', 123 );
+            ->expects($this->once())
+            ->method('clear')
+            ->with('section', 123);
 
-        $this->cachePurger->section( 123 );
+        $this->cachePurger->section(123);
     }
 
     /**
@@ -375,7 +374,7 @@ class PersistenceCachePurgerTest extends PHPUnit_Framework_TestCase
      */
     public function testClearSectionFail()
     {
-        $this->cachePurger->section( new \stdClass() );
+        $this->cachePurger->section(new \stdClass());
     }
 
     /**
@@ -388,19 +387,19 @@ class PersistenceCachePurgerTest extends PHPUnit_Framework_TestCase
         $languageId3 = 789;
 
         $this->cacheService
-            ->expects( $this->exactly( 3 ) )
-            ->method( 'clear' )
+            ->expects($this->exactly(3))
+            ->method('clear')
             ->will(
                 $this->returnValueMap(
                     array(
-                        array( $languageId1, null ),
-                        array( $languageId2, null ),
-                        array( $languageId3, null ),
+                        array($languageId1, null),
+                        array($languageId2, null),
+                        array($languageId3, null),
                     )
                 )
             );
 
-        $this->cachePurger->languages( array( $languageId1, $languageId2, $languageId3 ) );
+        $this->cachePurger->languages(array($languageId1, $languageId2, $languageId3));
     }
 
     /**
@@ -411,17 +410,17 @@ class PersistenceCachePurgerTest extends PHPUnit_Framework_TestCase
         $languageId = 123;
 
         $this->cacheService
-            ->expects( $this->once() )
-            ->method( 'clear' )
+            ->expects($this->once())
+            ->method('clear')
             ->will(
                 $this->returnValueMap(
                     array(
-                        array( $languageId, null ),
+                        array($languageId, null),
                     )
                 )
             );
 
-        $this->cachePurger->languages( $languageId );
+        $this->cachePurger->languages($languageId);
     }
 
     /**
@@ -430,9 +429,9 @@ class PersistenceCachePurgerTest extends PHPUnit_Framework_TestCase
     public function testClearUserAll()
     {
         $this->cacheService
-            ->expects( $this->once() )
-            ->method( 'clear' )
-            ->with( 'user' );
+            ->expects($this->once())
+            ->method('clear')
+            ->with('user');
 
         $this->cachePurger->user();
     }
@@ -443,11 +442,11 @@ class PersistenceCachePurgerTest extends PHPUnit_Framework_TestCase
     public function testClearUser()
     {
         $this->cacheService
-            ->expects( $this->once() )
-            ->method( 'clear' )
-            ->with( 'user', 123 );
+            ->expects($this->once())
+            ->method('clear')
+            ->with('user', 123);
 
-        $this->cachePurger->user( 123 );
+        $this->cachePurger->user(123);
     }
 
     /**
@@ -457,6 +456,6 @@ class PersistenceCachePurgerTest extends PHPUnit_Framework_TestCase
      */
     public function testClearUserFail()
     {
-        $this->cachePurger->user( new \stdClass() );
+        $this->cachePurger->user(new \stdClass());
     }
 }

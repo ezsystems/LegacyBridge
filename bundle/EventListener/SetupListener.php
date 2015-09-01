@@ -5,10 +5,8 @@
  * @copyright Copyright (C) eZ Systems AS. All rights reserved.
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  */
-
 namespace eZ\Bundle\EzPublishLegacyBundle\EventListener;
 
-use eZ\Publish\Core\MVC\Symfony\SiteAccess;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
@@ -28,7 +26,7 @@ class SetupListener implements EventSubscriberInterface
      */
     private $router;
 
-    public function __construct( RouterInterface $router, $defaultSiteAccess )
+    public function __construct(RouterInterface $router, $defaultSiteAccess)
     {
         $this->defaultSiteAccess = $defaultSiteAccess;
         $this->router = $router;
@@ -38,33 +36,34 @@ class SetupListener implements EventSubscriberInterface
     {
         return array(
             KernelEvents::REQUEST => array(
-                array( 'onKernelRequestSetup', 190 ),
-            )
+                array('onKernelRequestSetup', 190),
+            ),
         );
     }
 
     /**
-     * Checks if it's needed to redirect to setup wizard
+     * Checks if it's needed to redirect to setup wizard.
      *
      * @param \Symfony\Component\HttpKernel\Event\GetResponseEvent $event
      */
-    public function onKernelRequestSetup( GetResponseEvent $event )
+    public function onKernelRequestSetup(GetResponseEvent $event)
     {
-        if ( $event->getRequestType() == HttpKernelInterface::MASTER_REQUEST )
-        {
-            if ( $this->defaultSiteAccess !== 'setup' )
+        if ($event->getRequestType() == HttpKernelInterface::MASTER_REQUEST) {
+            if ($this->defaultSiteAccess !== 'setup') {
                 return;
+            }
 
             $request = $event->getRequest();
             $requestContext = $this->router->getContext();
-            $requestContext->fromRequest( $request );
-            $this->router->setContext( $requestContext );
-            $setupURI = $this->router->generate( 'ezpublishSetup' );
+            $requestContext->fromRequest($request);
+            $this->router->setContext($requestContext);
+            $setupURI = $this->router->generate('ezpublishSetup');
 
-            if ( ( $requestContext->getBaseUrl() . $request->getPathInfo() ) === $setupURI )
+            if (($requestContext->getBaseUrl() . $request->getPathInfo()) === $setupURI) {
                 return;
+            }
 
-            $event->setResponse( new RedirectResponse( $setupURI ) );
+            $event->setResponse(new RedirectResponse($setupURI));
         }
     }
 }

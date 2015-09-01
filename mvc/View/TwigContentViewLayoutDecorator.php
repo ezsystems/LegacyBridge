@@ -6,7 +6,6 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Publish\Core\MVC\Legacy\View;
 
 use eZ\Publish\Core\MVC\ConfigResolverInterface;
@@ -39,10 +38,10 @@ class TwigContentViewLayoutDecorator implements ContentViewInterface
      */
     private $configResolver;
 
-    public function __construct( Twig_Environment $twig, array $options, ConfigResolverInterface $configResolver )
+    public function __construct(Twig_Environment $twig, array $options, ConfigResolverInterface $configResolver)
     {
         $this->twig = $twig;
-        $this->options = $options + array( 'contentBlockName' => 'content' );
+        $this->options = $options + array('contentBlockName' => 'content');
         $this->configResolver = $configResolver;
     }
 
@@ -51,7 +50,7 @@ class TwigContentViewLayoutDecorator implements ContentViewInterface
      *
      * @param \eZ\Publish\Core\MVC\Symfony\View\ContentView $contentView
      */
-    public function setContentView( ContentView $contentView )
+    public function setContentView(ContentView $contentView)
     {
         $this->contentView = $contentView;
     }
@@ -66,12 +65,13 @@ class TwigContentViewLayoutDecorator implements ContentViewInterface
      *
      * @throws \eZ\Publish\Core\Base\Exceptions\InvalidArgumentType
      */
-    public function setTemplateIdentifier( $templateIdentifier )
+    public function setTemplateIdentifier($templateIdentifier)
     {
-        if ( !$templateIdentifier instanceof \Closure )
-            throw new InvalidArgumentType( 'templateIdentifier', '\\Closure', $templateIdentifier );
+        if (!$templateIdentifier instanceof \Closure) {
+            throw new InvalidArgumentType('templateIdentifier', '\\Closure', $templateIdentifier);
+        }
 
-        $this->contentView->setTemplateIdentifier( $templateIdentifier );
+        $this->contentView->setTemplateIdentifier($templateIdentifier);
     }
 
     /**
@@ -86,13 +86,11 @@ class TwigContentViewLayoutDecorator implements ContentViewInterface
         $options = $this->options;
         $contentView = $this->contentView;
         $twig = $this->twig;
-        $layout = $this->configResolver->getParameter( 'view_default_layout', 'ezpublish_legacy' );
+        $layout = $this->configResolver->getParameter('view_default_layout', 'ezpublish_legacy');
 
-        return function ( array $params ) use ( $options, $contentView, $twig, $layout )
-        {
+        return function (array $params) use ($options, $contentView, $twig, $layout) {
             $contentViewClosure = $contentView->getTemplateIdentifier();
-            if ( isset( $params['noLayout'] ) && $params['noLayout'] )
-            {
+            if (isset($params['noLayout']) && $params['noLayout']) {
                 $layout = $options['viewbaseLayout'];
             }
             $twigContentTemplate = <<<EOT
@@ -102,10 +100,11 @@ class TwigContentViewLayoutDecorator implements ContentViewInterface
 {{ viewResult|raw }}
 {% endblock %}
 EOT;
+
             return $twig->render(
                 $twigContentTemplate,
                 $params + array(
-                    'viewResult' => $contentViewClosure( $params )
+                    'viewResult' => $contentViewClosure($params),
                 )
             );
         };
@@ -117,9 +116,9 @@ EOT;
      *
      * @param array $parameters Hash of parameters
      */
-    public function setParameters( array $parameters )
+    public function setParameters(array $parameters)
     {
-        $this->contentView->setParameters( $parameters );
+        $this->contentView->setParameters($parameters);
     }
 
     /**
@@ -127,9 +126,9 @@ EOT;
      *
      * @param array $parameters
      */
-    public function addParameters( array $parameters )
+    public function addParameters(array $parameters)
     {
-        $this->contentView->addParameters( $parameters );
+        $this->contentView->addParameters($parameters);
     }
 
     /**
@@ -147,11 +146,11 @@ EOT;
      *
      * @param string $parameterName
      *
-     * @return boolean
+     * @return bool
      */
-    public function hasParameter( $parameterName )
+    public function hasParameter($parameterName)
     {
-        return $this->contentView->hasParameter( $parameterName );
+        return $this->contentView->hasParameter($parameterName);
     }
 
     /**
@@ -164,9 +163,9 @@ EOT;
      *
      * @return mixed
      */
-    public function getParameter( $parameterName )
+    public function getParameter($parameterName)
     {
-        return $this->contentView->getParameter( $parameterName );
+        return $this->contentView->getParameter($parameterName);
     }
 
     /**
@@ -174,11 +173,11 @@ EOT;
      * Typically, the hash would have as keys:
      *  - template : The template that has been matched
      *  - match : The matching configuration, including the matcher "identifier" and what has been passed to it.
-     *  - matcher : The matcher object
+     *  - matcher : The matcher object.
      *
      * @param array $config
      */
-    public function setConfigHash( array $config )
+    public function setConfigHash(array $config)
     {
         $this->configHash = $config;
     }

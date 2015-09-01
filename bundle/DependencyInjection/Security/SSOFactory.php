@@ -6,7 +6,6 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Bundle\EzPublishLegacyBundle\DependencyInjection\Security;
 
 use Symfony\Bundle\SecurityBundle\DependencyInjection\Security\Factory\AbstractFactory;
@@ -19,25 +18,25 @@ use Symfony\Component\DependencyInjection\Reference;
  */
 class SSOFactory extends AbstractFactory
 {
-    protected function createAuthProvider( ContainerBuilder $container, $id, $config, $userProviderId )
+    protected function createAuthProvider(ContainerBuilder $container, $id, $config, $userProviderId)
     {
         $preAuthProviderId = 'security.authentication.provider.pre_authenticated';
         $providerId = "$preAuthProviderId.$id";
         $container
-            ->setDefinition( $providerId, new DefinitionDecorator( $preAuthProviderId ) )
-            ->replaceArgument( 0, new Reference( $userProviderId ) )
-            ->addArgument( $id );
+            ->setDefinition($providerId, new DefinitionDecorator($preAuthProviderId))
+            ->replaceArgument(0, new Reference($userProviderId))
+            ->addArgument($id);
 
         return $providerId;
     }
 
-    protected function createListener( $container, $id, $config, $userProvider )
+    protected function createListener($container, $id, $config, $userProvider)
     {
         $parentListenerId = $this->getListenerId();
         $listenerId = "$parentListenerId.$id";
         $container
-            ->setDefinition( $listenerId, new DefinitionDecorator( $parentListenerId ) )
-            ->replaceArgument( 2, $id );
+            ->setDefinition($listenerId, new DefinitionDecorator($parentListenerId))
+            ->replaceArgument(2, $id);
 
         return $listenerId;
     }

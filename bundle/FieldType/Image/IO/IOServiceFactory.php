@@ -26,7 +26,7 @@ class IOServiceFactory
     /** @var \eZ\Publish\Core\MVC\ConfigResolverInterface */
     private $configResolver;
 
-    public function __construct( IOServiceInterface $publishedIOService, IOServiceInterface $draftIOService, ConfigResolverInterface $configResolver )
+    public function __construct(IOServiceInterface $publishedIOService, IOServiceInterface $draftIOService, ConfigResolverInterface $configResolver)
     {
         $this->draftIOService = $draftIOService;
         $this->publishedIOService = $publishedIOService;
@@ -34,19 +34,19 @@ class IOServiceFactory
     }
 
     /**
-     * Builds the IOService from $class
+     * Builds the IOService from $class.
      * @param string $class
      * @return \eZ\Publish\Core\IO\IOServiceInterface
      */
-    public function buildService( $class )
+    public function buildService($class)
     {
         $options = array(
-            'var_dir' => $this->configResolver->getParameter( 'var_dir' ),
-            'storage_dir' => $this->configResolver->getParameter( 'storage_dir' ),
-            'draft_images_dir' => $this->configResolver->getParameter( 'image.versioned_images_dir' ),
-            'published_images_dir' => $this->configResolver->getParameter( 'image.published_images_dir' )
+            'var_dir' => $this->configResolver->getParameter('var_dir'),
+            'storage_dir' => $this->configResolver->getParameter('storage_dir'),
+            'draft_images_dir' => $this->configResolver->getParameter('image.versioned_images_dir'),
+            'published_images_dir' => $this->configResolver->getParameter('image.published_images_dir'),
         );
 
-        return new $class( $this->publishedIOService, $this->draftIOService, $options );
+        return new $class($this->publishedIOService, $this->draftIOService, $options);
     }
 }

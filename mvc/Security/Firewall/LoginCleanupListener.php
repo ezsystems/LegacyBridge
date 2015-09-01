@@ -6,7 +6,6 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Publish\Core\MVC\Legacy\Security\Firewall;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -33,11 +32,10 @@ class LoginCleanupListener implements EventSubscriberInterface
      *
      * @param InteractiveLoginEvent $e
      */
-    public function onInteractiveLogin( InteractiveLoginEvent $e )
+    public function onInteractiveLogin(InteractiveLoginEvent $e)
     {
         $request = $e->getRequest();
-        if ( !$e->getAuthenticationToken()->isAuthenticated() && $request->cookies->has( 'is_logged_in' ) )
-        {
+        if (!$e->getAuthenticationToken()->isAuthenticated() && $request->cookies->has('is_logged_in')) {
             $request->getSession()->invalidate();
             $this->needsCookieCleanup = true;
         }
@@ -48,14 +46,14 @@ class LoginCleanupListener implements EventSubscriberInterface
      *
      * @param FilterResponseEvent $e
      */
-    public function onFilterResponse( FilterResponseEvent $e )
+    public function onFilterResponse(FilterResponseEvent $e)
     {
-        if ( $e->getRequestType() !== HttpKernelInterface::MASTER_REQUEST )
+        if ($e->getRequestType() !== HttpKernelInterface::MASTER_REQUEST) {
             return;
+        }
 
-        if ( $this->needsCookieCleanup )
-        {
-            $e->getResponse()->headers->clearCookie( 'is_logged_in' );
+        if ($this->needsCookieCleanup) {
+            $e->getResponse()->headers->clearCookie('is_logged_in');
             $this->needsCookieCleanup = false;
         }
     }
@@ -64,7 +62,7 @@ class LoginCleanupListener implements EventSubscriberInterface
     {
         return array(
             SecurityEvents::INTERACTIVE_LOGIN => 'onInteractiveLogin',
-            KernelEvents::RESPONSE => 'onFilterResponse'
+            KernelEvents::RESPONSE => 'onFilterResponse',
         );
     }
 }

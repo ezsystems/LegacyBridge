@@ -6,7 +6,6 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Bundle\EzPublishLegacyBundle\LegacyMapper;
 
 use eZ\Publish\Core\MVC\Legacy\LegacyEvents;
@@ -17,13 +16,13 @@ use Symfony\Component\DependencyInjection\ContainerAware;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
- * Maps the SiteAccess object to the legacy parameters
+ * Maps the SiteAccess object to the legacy parameters.
  */
 class SiteAccess extends ContainerAware implements EventSubscriberInterface
 {
     protected $options = array();
 
-    public function __construct( array $options = array() )
+    public function __construct(array $options = array())
     {
         $this->options = $options;
     }
@@ -31,26 +30,23 @@ class SiteAccess extends ContainerAware implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return array(
-            LegacyEvents::PRE_BUILD_LEGACY_KERNEL_WEB => array( 'onBuildKernelWebHandler', 128 )
+            LegacyEvents::PRE_BUILD_LEGACY_KERNEL_WEB => array('onBuildKernelWebHandler', 128),
         );
     }
 
     /**
-     * Maps matched siteaccess to the legacy parameters
+     * Maps matched siteaccess to the legacy parameters.
      *
      * @param \eZ\Publish\Core\MVC\Legacy\Event\PreBuildKernelWebHandlerEvent $event
-     *
-     * @return void
      */
-    public function onBuildKernelWebHandler( PreBuildKernelWebHandlerEvent $event )
+    public function onBuildKernelWebHandler(PreBuildKernelWebHandlerEvent $event)
     {
-        $siteAccess = $this->container->get( 'ezpublish.siteaccess' );
+        $siteAccess = $this->container->get('ezpublish.siteaccess');
         $request = $event->getRequest();
         $uriPart = array();
 
         // Convert matching type
-        switch ( $siteAccess->matchingType )
-        {
+        switch ($siteAccess->matchingType) {
             case 'default':
                 $legacyAccessType = eZSiteAccess::TYPE_DEFAULT;
                 break;
@@ -82,28 +78,24 @@ class SiteAccess extends ContainerAware implements EventSubscriberInterface
         }
 
         // uri_part
-        $pathinfo = str_replace( $request->attributes->get( 'viewParametersString' ), '', $request->getPathInfo() );
-        $semanticPathinfo = $request->attributes->get( 'semanticPathinfo', $pathinfo );
-        if ( $pathinfo != $semanticPathinfo )
-        {
-            $aPathinfo = explode( '/', substr( $pathinfo, 1 ) );
-            $aSemanticPathinfo = explode( '/', substr( $semanticPathinfo, 1 ) );
-            $uriPart = array_diff( $aPathinfo, $aSemanticPathinfo, $this->getFragmentPathItems() );
+        $pathinfo = str_replace($request->attributes->get('viewParametersString'), '', $request->getPathInfo());
+        $semanticPathinfo = $request->attributes->get('semanticPathinfo', $pathinfo);
+        if ($pathinfo != $semanticPathinfo) {
+            $aPathinfo = explode('/', substr($pathinfo, 1));
+            $aSemanticPathinfo = explode('/', substr($semanticPathinfo, 1));
+            $uriPart = array_diff($aPathinfo, $aSemanticPathinfo, $this->getFragmentPathItems());
         }
 
         // Handle host_uri match
-        if ( $siteAccess->matcher instanceof CompoundInterface )
-        {
+        if ($siteAccess->matcher instanceof CompoundInterface) {
             $subMatchers = $siteAccess->matcher->getSubMatchers();
-            if ( !$subMatchers )
-            {
-                throw new \RuntimeException( 'Compound matcher used but not submatchers found.' );
+            if (!$subMatchers) {
+                throw new \RuntimeException('Compound matcher used but not submatchers found.');
             }
 
-            if ( count( $subMatchers ) == 2 && isset( $subMatchers['Map\Host'] ) && isset( $subMatchers['Map\URI'] ))
-            {
+            if (count($subMatchers) == 2 && isset($subMatchers['Map\Host']) && isset($subMatchers['Map\URI'])) {
                 $legacyAccessType = eZSiteAccess::TYPE_HTTP_HOST_URI;
-                $uriPart = array( $subMatchers['Map\URI']->getMapKey() );
+                $uriPart = array($subMatchers['Map\URI']->getMapKey());
             }
         }
 
@@ -112,21 +104,21 @@ class SiteAccess extends ContainerAware implements EventSubscriberInterface
             array(
                 'name' => $siteAccess->name,
                 'type' => $legacyAccessType,
-                'uri_part' => $uriPart
+                'uri_part' => $uriPart,
             )
         );
     }
 
     /**
-     * Returns an array with all the components of the fragment_path option
+     * Returns an array with all the components of the fragment_path option.
      * @return array
      */
     protected function getFragmentPathItems()
     {
-        if ( isset( $this->options['fragment_path'] ) )
-        {
-            return explode( '/', trim( $this->options['fragment_path'], '/' ) );
+        if (isset($this->options['fragment_path'])) {
+            return explode('/', trim($this->options['fragment_path'], '/'));
         }
-        return array( '_fragment' );
+
+        return array('_fragment');
     }
 }

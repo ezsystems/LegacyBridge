@@ -6,7 +6,6 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Publish\Core\MVC\Legacy\Tests\Event;
 
 use eZ\Publish\Core\MVC\Legacy\Event\PreBuildKernelEvent;
@@ -18,7 +17,7 @@ class PreBuildKernelEventTest extends PHPUnit_Framework_TestCase
     public function testConstruct()
     {
         $parameterBag = new ParameterBag();
-        $event = new PreBuildKernelEvent( $parameterBag );
-        $this->assertSame( $parameterBag, $event->getParameters() );
+        $event = new PreBuildKernelEvent($parameterBag);
+        $this->assertSame($parameterBag, $event->getParameters());
     }
 }

@@ -6,7 +6,6 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Publish\Core\MVC\Legacy\View\Provider;
 
 use eZ\Publish\Core\MVC\Legacy\View\Provider;
@@ -30,33 +29,30 @@ class Block extends Provider implements BlockViewProviderInterface
     /**
      * @param \eZ\Publish\Core\FieldType\Page\PageService $pageService
      */
-    public function setPageService( PageService $pageService )
+    public function setPageService(PageService $pageService)
     {
         $this->pageService = $pageService;
     }
 
     /**
-     * Returns a ContentView object corresponding to $block, or null if not applicable
+     * Returns a ContentView object corresponding to $block, or null if not applicable.
      *
      * @param \eZ\Publish\Core\FieldType\Page\Parts\Block $block
      *
      * @return \eZ\Publish\Core\MVC\Symfony\View\ContentView
      */
-    public function getView( PageBlock $block )
+    public function getView(PageBlock $block)
     {
         $legacyKernel = $this->getLegacyKernel();
-        $legacyBlockClosure = function ( array $params ) use ( $block, $legacyKernel )
-        {
+        $legacyBlockClosure = function (array $params) use ($block, $legacyKernel) {
             return $legacyKernel->runCallback(
-                function () use ( $block, $params )
-                {
+                function () use ($block, $params) {
                     $tpl = eZTemplate::factory();
                     /**
                      * @var \eZObjectForwarder
                      */
-                    $funcObject = $tpl->fetchFunctionObject( 'block_view_gui' );
-                    if ( !$funcObject )
-                    {
+                    $funcObject = $tpl->fetchFunctionObject('block_view_gui');
+                    if (!$funcObject) {
                         return '';
                     }
 
@@ -75,29 +71,29 @@ class Block extends Provider implements BlockViewProviderInterface
                                     // retrieve the object without creating a variable.
                                     // (TYPE_STRING, TYPE_BOOLEAN, ... have the same
                                     // behaviour, see eZTemplate::elementValue())
-                                    new BlockAdapter( $block )
-                                )
-                            )
+                                    new BlockAdapter($block),
+                                ),
+                            ),
                         ),
                         array(), '', ''
                     );
-                    if ( is_array( $children ) && isset( $children[0] ) )
-                    {
-                        return ezpEvent::getInstance()->filter( 'response/output', $children[0] );
+                    if (is_array($children) && isset($children[0])) {
+                        return ezpEvent::getInstance()->filter('response/output', $children[0]);
                     }
+
                     return '';
                 },
                 false
             );
         };
 
-        return new ContentView( $legacyBlockClosure );
+        return new ContentView($legacyBlockClosure);
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
-    public function match( ViewProviderMatcher $matcher, ValueObject $valueObject )
+    public function match(ViewProviderMatcher $matcher, ValueObject $valueObject)
     {
         return true;
     }

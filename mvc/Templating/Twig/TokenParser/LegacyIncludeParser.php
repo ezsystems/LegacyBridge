@@ -6,7 +6,6 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Publish\Core\MVC\Legacy\Templating\Twig\TokenParser;
 
 use eZ\Publish\Core\MVC\Legacy\Templating\Twig\Node\LegacyIncludeNode;
@@ -21,7 +20,6 @@ use Twig_Node_Expression_Array;
  */
 class LegacyIncludeParser extends Twig_TokenParser
 {
-
     /**
      * Parses a token and returns a node.
      *
@@ -29,7 +27,7 @@ class LegacyIncludeParser extends Twig_TokenParser
      *
      * @return \Twig_NodeInterface A Twig_NodeInterface instance
      */
-    public function parse( Twig_Token $token )
+    public function parse(Twig_Token $token)
     {
         $exprParser = $this->parser->getExpressionParser();
         $stream = $this->parser->getStream();
@@ -38,19 +36,16 @@ class LegacyIncludeParser extends Twig_TokenParser
         $tplPath = $exprParser->parseExpression();
 
         // Parameters
-        if ( $stream->test( Twig_Token::NAME_TYPE, 'with' ) )
-        {
+        if ($stream->test(Twig_Token::NAME_TYPE, 'with')) {
             $stream->next();
             $params = $exprParser->parseExpression();
-        }
-        else
-        {
-            $params = new Twig_Node_Expression_Array( array(), $token->getLine() );
+        } else {
+            $params = new Twig_Node_Expression_Array(array(), $token->getLine());
         }
 
-        $stream->expect( Twig_Token::BLOCK_END_TYPE );
+        $stream->expect(Twig_Token::BLOCK_END_TYPE);
 
-        return new LegacyIncludeNode( $tplPath, $params, $token->getLine(), $this->getTag() );
+        return new LegacyIncludeNode($tplPath, $params, $token->getLine(), $this->getTag());
     }
 
     /**

@@ -6,7 +6,6 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Publish\Core\MVC\Legacy\View\Provider;
 
 use eZ\Publish\Core\FieldType\XmlText\Converter\EmbedToHtml5;
@@ -23,60 +22,51 @@ use ezpEvent;
 class Content extends Provider implements ContentViewProviderInterface
 {
     /**
-     * Returns a ContentView object corresponding to $contentInfo, or void if not applicable
+     * Returns a ContentView object corresponding to $contentInfo, or void if not applicable.
      *
      * @param \eZ\Publish\API\Repository\Values\Content\ContentInfo $contentInfo
      * @param string $viewType Variation of display for your content
      *
      * @return \eZ\Publish\Core\MVC\Symfony\View\ContentView|void
      */
-    public function getView( ContentInfo $contentInfo, $viewType )
+    public function getView(ContentInfo $contentInfo, $viewType)
     {
         $legacyKernel = $this->getLegacyKernel();
-        $legacyContentClosure = function ( array $params ) use ( $contentInfo, $viewType, $legacyKernel )
-        {
+        $legacyContentClosure = function (array $params) use ($contentInfo, $viewType, $legacyKernel) {
             return $legacyKernel->runCallback(
-                function () use ( $contentInfo, $viewType, $params )
-                {
+                function () use ($contentInfo, $viewType, $params) {
                     $tpl = eZTemplate::factory();
                     /**
                      * @var \eZObjectForwarder
                      */
-                    $funcObject = $tpl->fetchFunctionObject( 'content_view_gui' );
-                    if ( !$funcObject )
-                    {
+                    $funcObject = $tpl->fetchFunctionObject('content_view_gui');
+                    if (!$funcObject) {
                         return '';
                     }
 
                     // Used by XmlText field type
-                    if ( isset( $params['objectParameters'] ) )
-                    {
-                        if ( isset( $params['linkParameters'] ) && $params['linkParameters'] !== null )
-                        {
+                    if (isset($params['objectParameters'])) {
+                        if (isset($params['linkParameters']) && $params['linkParameters'] !== null) {
                             $linkParameters = $params['linkParameters'];
                         }
-                        $tpl->setVariable( 'object_parameters', $params["objectParameters"], 'ContentView' );
+                        $tpl->setVariable('object_parameters', $params['objectParameters'], 'ContentView');
                     }
                     // Used by RichText field type
-                    else if ( isset( $params['embedParams'] ) )
-                    {
-                        if ( isset( $params['embedParams']['link'] ) )
-                        {
+                    elseif (isset($params['embedParams'])) {
+                        if (isset($params['embedParams']['link'])) {
                             $linkParameters = $params['embedParams']['link'];
                         }
 
-                        if ( isset( $params['embedParams']['config'] ) )
-                        {
-                            $tpl->setVariable( 'object_parameters', $params['embedParams']['config'], 'ContentView' );
+                        if (isset($params['embedParams']['config'])) {
+                            $tpl->setVariable('object_parameters', $params['embedParams']['config'], 'ContentView');
                         }
                     }
 
                     // Convert link parameters to Legacy Stack format
-                    if ( isset( $linkParameters ) )
-                    {
+                    if (isset($linkParameters)) {
                         $tpl->setVariable(
                             'link_parameters',
-                            $this->legalizeLinkParameters( $linkParameters ),
+                            $this->legalizeLinkParameters($linkParameters),
                             'ContentView'
                         );
                     }
@@ -96,88 +86,81 @@ class Content extends Provider implements ContentViewProviderInterface
                                     // retrieve the object without creating a variable.
                                     // (TYPE_STRING, TYPE_BOOLEAN, ... have the same
                                     // behaviour, see eZTemplate::elementValue())
-                                    eZContentObject::fetch( $contentInfo->id )
-                                )
+                                    eZContentObject::fetch($contentInfo->id),
+                                ),
                             ),
                             'view' => array(
                                 array(
                                     eZTemplate::TYPE_STRING,
-                                    $viewType
-                                )
-                            )
+                                    $viewType,
+                                ),
+                            ),
                         ),
                         array(), '', ''
                     );
-                    if ( is_array( $children ) && isset( $children[0] ) )
-                    {
-                        return ezpEvent::getInstance()->filter( 'response/output', $children[0] );
+                    if (is_array($children) && isset($children[0])) {
+                        return ezpEvent::getInstance()->filter('response/output', $children[0]);
                     }
+
                     return '';
                 },
                 false
             );
         };
         $this->decorator->setContentView(
-            new ContentView( $legacyContentClosure )
+            new ContentView($legacyContentClosure)
         );
+
         return $this->decorator;
     }
 
     /**
-     * Converts link parameters to Legacy Stack format
+     * Converts link parameters to Legacy Stack format.
      *
      * @param array $linkParameters
      *
      * @return array
      */
-    protected function legalizeLinkParameters( array $linkParameters )
+    protected function legalizeLinkParameters(array $linkParameters)
     {
         $parameters = array();
 
-        if ( isset( $linkParameters["href"] ) )
-        {
-            $parameters["href"] = $linkParameters["href"];
+        if (isset($linkParameters['href'])) {
+            $parameters['href'] = $linkParameters['href'];
         }
 
-        if ( isset( $linkParameters["resourceFragmentIdentifier"] ) )
-        {
-            $parameters["anchor_name"] = $linkParameters["resourceFragmentIdentifier"];
+        if (isset($linkParameters['resourceFragmentIdentifier'])) {
+            $parameters['anchor_name'] = $linkParameters['resourceFragmentIdentifier'];
         }
 
-        if ( isset( $linkParameters["class"] ) )
-        {
-            $parameters["class"] = $linkParameters["class"];
+        if (isset($linkParameters['class'])) {
+            $parameters['class'] = $linkParameters['class'];
         }
 
-        if ( isset( $linkParameters["id"] ) )
-        {
-            $parameters["xhtml:id"] = $linkParameters["id"];
+        if (isset($linkParameters['id'])) {
+            $parameters['xhtml:id'] = $linkParameters['id'];
         }
 
-        if ( isset( $linkParameters["target"] ) )
-        {
-            $parameters["target"] = $linkParameters["target"];
+        if (isset($linkParameters['target'])) {
+            $parameters['target'] = $linkParameters['target'];
         }
 
-        if ( isset( $linkParameters["title"] ) )
-        {
-            $parameters["xhtml:title"] = $linkParameters["title"];
+        if (isset($linkParameters['title'])) {
+            $parameters['xhtml:title'] = $linkParameters['title'];
         }
 
-        if ( $linkParameters["resourceType"] !== null )
-        {
-            switch ( $linkParameters["resourceType"] )
-            {
+        if ($linkParameters['resourceType'] !== null) {
+            switch ($linkParameters['resourceType']) {
                 case EmbedToHtml5::LINK_RESOURCE_CONTENT:
-                    $parameters["object_id"] = $linkParameters["resourceId"];
+                    $parameters['object_id'] = $linkParameters['resourceId'];
                     break;
 
                 case EmbedToHtml5::LINK_RESOURCE_LOCATION:
-                    $parameters["node_id"] = $linkParameters["resourceId"];
+                    $parameters['node_id'] = $linkParameters['resourceId'];
                     break;
 
                 case EmbedToHtml5::LINK_RESOURCE_URL:
-                    $parameters["url_id"] = $linkParameters["resourceId"];
+                    $parameters['url_id'] = $linkParameters['resourceId'];
                     break;
 
                 default:
@@ -198,7 +181,7 @@ class Content extends Provider implements ContentViewProviderInterface
      *
      * @return bool
      */
-    public function match( ViewProviderMatcher $matcher, ValueObject $valueObject )
+    public function match(ViewProviderMatcher $matcher, ValueObject $valueObject)
     {
         return true;
     }

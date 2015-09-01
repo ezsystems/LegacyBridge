@@ -6,7 +6,6 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Bundle\EzPublishLegacyBundle\Collector;
 
 use Symfony\Component\HttpFoundation\Request;
@@ -23,14 +22,14 @@ class LegacyTemplatesCollector extends DataCollector
      */
     private $legacyKernel;
 
-    public function __construct( \Closure $legacyKernel )
+    public function __construct(\Closure $legacyKernel)
     {
         $this->legacyKernel = $legacyKernel;
     }
 
-    public function collect( Request $request, Response $response, \Exception $exception = null )
+    public function collect(Request $request, Response $response, \Exception $exception = null)
     {
-        $this->data = ['legacyTemplates' => TemplateDebugInfo::getLegacyTemplatesList( $this->legacyKernel )];
+        $this->data = ['legacyTemplates' => TemplateDebugInfo::getLegacyTemplatesList($this->legacyKernel)];
     }
 
     public function getName()
@@ -39,7 +38,7 @@ class LegacyTemplatesCollector extends DataCollector
     }
 
     /**
-     * Returns templates list
+     * Returns templates list.
      *
      * @return array
      */

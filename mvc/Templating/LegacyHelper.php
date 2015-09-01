@@ -6,7 +6,6 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Publish\Core\MVC\Legacy\Templating;
 
 use Symfony\Component\HttpFoundation\ParameterBag;
@@ -21,45 +20,42 @@ class LegacyHelper extends ParameterBag
      */
     private $legacyKernelClosure;
 
-    public function __construct( \Closure $legacyKernelClosure )
+    public function __construct(\Closure $legacyKernelClosure)
     {
         $this->legacyKernelClosure = $legacyKernelClosure;
         parent::__construct();
     }
 
     /**
-     * Fills up the LegacyHelper with data from a given moduleResult
+     * Fills up the LegacyHelper with data from a given moduleResult.
      *
      * @param array $moduleResult
      */
-    public function loadDataFromModuleResult( array $moduleResult )
+    public function loadDataFromModuleResult(array $moduleResult)
     {
         $kernelClosure = $this->legacyKernelClosure;
         $that = $this;
 
         $kernelClosure()->runCallback(
-            function () use ( $moduleResult, $that )
-            {
+            function () use ($moduleResult, $that) {
                 // Injecting all $moduleResult entries in the legacy helper
-                foreach ( $moduleResult as $key => $val )
-                {
-                    if ( $key === 'content' )
+                foreach ($moduleResult as $key => $val) {
+                    if ($key === 'content') {
                         continue;
+                    }
 
-                    $that->set( $key, $val );
+                    $that->set($key, $val);
                 }
 
                 // Adding ezjscore data to module result if not present for support in legacy modules
-                if ( !isset( $moduleResult['content_info']['persistent_variable'] ) )
-                {
+                if (!isset($moduleResult['content_info']['persistent_variable'])) {
                     $moduleResult['content_info']['persistent_variable'] = ezjscPackerTemplateFunctions::getPersistentVariable();
                 }
-                $that->set( 'persistent_variable', $moduleResult['content_info']['persistent_variable'] );
+                $that->set('persistent_variable', $moduleResult['content_info']['persistent_variable']);
 
                 // Javascript/CSS files required with ezcss_require/ezscript_require
                 // Compression level is forced to 0 to only get the files list
-                if ( isset( $moduleResult['content_info']['persistent_variable']['css_files'] ) )
-                {
+                if (isset($moduleResult['content_info']['persistent_variable']['css_files'])) {
                     $that->set(
                         'css_files',
                         array_unique(
@@ -70,8 +66,7 @@ class LegacyHelper extends ParameterBag
                         )
                     );
                 }
-                if ( isset( $moduleResult['content_info']['persistent_variable']['js_files'] ) )
-                {
+                if (isset($moduleResult['content_info']['persistent_variable']['js_files'])) {
                     $that->set(
                         'js_files',
                         array_unique(
@@ -85,12 +80,12 @@ class LegacyHelper extends ParameterBag
 
                 // Now getting configured JS/CSS files, in design.ini
                 // Will only take FrontendCSSFileList/FrontendJavascriptList
-                $designINI = eZINI::instance( 'design.ini' );
+                $designINI = eZINI::instance('design.ini');
                 $that->set(
                     'css_files_configured',
                     array_unique(
                         ezjscPacker::buildStylesheetFiles(
-                            $designINI->variable( 'StylesheetSettings', 'FrontendCSSFileList' ),
+                            $designINI->variable('StylesheetSettings', 'FrontendCSSFileList'),
                             0
                         )
                     )
@@ -99,7 +94,7 @@ class LegacyHelper extends ParameterBag
                     'js_files_configured',
                     array_unique(
                         ezjscPacker::buildJavascriptFiles(
-                            $designINI->variable( 'JavaScriptSettings', 'FrontendJavaScriptList' ),
+                            $designINI->variable('JavaScriptSettings', 'FrontendJavaScriptList'),
                             0
                         )
                     )

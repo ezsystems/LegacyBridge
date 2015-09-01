@@ -6,7 +6,6 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Publish\Core\MVC\Legacy\EventListener;
 
 use eZ\Publish\Core\MVC\Symfony\Event\APIContentExceptionEvent;
@@ -36,7 +35,7 @@ class APIContentExceptionListener implements EventSubscriberInterface
      */
     protected $logger;
 
-    public function __construct( LegacyContentViewProvider $legacyCVP, LegacyLocationViewProvider $legacyLVP, LoggerInterface $logger = null )
+    public function __construct(LegacyContentViewProvider $legacyCVP, LegacyLocationViewProvider $legacyLVP, LoggerInterface $logger = null)
     {
         $this->legacyCVP = $legacyCVP;
         $this->legacyLVP = $legacyLVP;
@@ -46,36 +45,33 @@ class APIContentExceptionListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return array(
-            MVCEvents::API_CONTENT_EXCEPTION    => 'onAPIContentException'
+            MVCEvents::API_CONTENT_EXCEPTION => 'onAPIContentException',
         );
     }
 
-    public function onAPIContentException( APIContentExceptionEvent $event )
+    public function onAPIContentException(APIContentExceptionEvent $event)
     {
         $exception = $event->getApiException();
         $contentMeta = $event->getContentMeta();
-        if ( $exception instanceof ConverterNotFound )
-        {
-            if ( isset( $this->logger ) )
+        if ($exception instanceof ConverterNotFound) {
+            if (isset($this->logger)) {
                 $this->logger->notice(
                     'Missing field converter in legacy storage engine, forwarding to legacy kernel.',
-                    array( 'content' => $contentMeta )
+                    array('content' => $contentMeta)
                 );
+            }
 
-            if ( isset( $contentMeta['locationId'] ) )
-            {
+            if (isset($contentMeta['locationId'])) {
                 $event->setContentView(
                     $this->legacyLVP->getView(
-                        new Location( array( 'id' => $contentMeta['locationId'] ) ),
+                        new Location(array('id' => $contentMeta['locationId'])),
                         $contentMeta['viewType']
                     )
                 );
-            }
-            else if ( isset( $contentMeta['contentId'] ) )
-            {
+            } elseif (isset($contentMeta['contentId'])) {
                 $event->setContentView(
                     $this->legacyCVP->getView(
-                        new ContentInfo( array( 'id' => $contentMeta['contentId'] ) ),
+                        new ContentInfo(array('id' => $contentMeta['contentId'])),
                         $contentMeta['viewType']
                     )
                 );

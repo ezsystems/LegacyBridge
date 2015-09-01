@@ -6,13 +6,12 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Publish\Core\MVC\Legacy\Templating\Adapter;
 
 use eZ\Publish\Core\FieldType\Page\Parts\Zone;
 
 /**
- * Adapter for Page\Parts\Zone objects
+ * Adapter for Page\Parts\Zone objects.
  */
 class ZoneAdapter extends DefinitionBasedAdapter
 {
@@ -27,20 +26,17 @@ class ZoneAdapter extends DefinitionBasedAdapter
     protected function definition()
     {
         return array(
-            'id'                => 'id',
-            'action'            => 'action',
-            'zone_identifier'   => 'identifier',
-            'blocks'            =>
-                function ( Zone $zone )
-                {
+            'id' => 'id',
+            'action' => 'action',
+            'zone_identifier' => 'identifier',
+            'blocks' => function (Zone $zone) {
                     $legacyBlocks = array();
-                    foreach ( $zone->blocks as $block )
-                    {
-                        $legacyBlocks[] = new BlockAdapter( $block );
+                    foreach ($zone->blocks as $block) {
+                        $legacyBlocks[] = new BlockAdapter($block);
                     }
 
                     return $legacyBlocks;
-                }
+                },
         );
     }
 }

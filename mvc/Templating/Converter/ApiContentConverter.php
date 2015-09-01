@@ -6,7 +6,6 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Publish\Core\MVC\Legacy\Templating\Converter;
 
 use eZ\Publish\API\Repository\Values\Content\Content;
@@ -30,7 +29,7 @@ class ApiContentConverter implements MultipleObjectConverter
      */
     private $apiObjects;
 
-    public function __construct( \Closure $legacyKernelClosure )
+    public function __construct(\Closure $legacyKernelClosure)
     {
         $this->legacyKernelClosure = $legacyKernelClosure;
         $this->apiObjects = array();
@@ -42,6 +41,7 @@ class ApiContentConverter implements MultipleObjectConverter
     final protected function getLegacyKernel()
     {
         $closure = $this->legacyKernelClosure;
+
         return $closure();
     }
 
@@ -54,25 +54,20 @@ class ApiContentConverter implements MultipleObjectConverter
      *
      * @return mixed|\eZ\Publish\Core\MVC\Legacy\Templating\LegacyCompatible
      */
-    public function convert( $object )
+    public function convert($object)
     {
-        if ( !is_object( $object ) )
-            throw new \InvalidArgumentException( 'Transferred object must be a real object. Got ' . gettype( $object ) );
+        if (!is_object($object)) {
+            throw new \InvalidArgumentException('Transferred object must be a real object. Got ' . gettype($object));
+        }
 
         return $this->getLegacyKernel()->runCallback(
-            function () use ( $object )
-            {
-                if ( $object instanceof Content )
-                {
-                    return eZContentObject::fetch( $object->getVersionInfo()->getContentInfo()->id );
-                }
-                else if ( $object instanceof Location )
-                {
-                    return eZContentObjectTreeNode::fetch( $object->id );
-                }
-                else if ( $object instanceof VersionInfo )
-                {
-                    return eZContentObjectVersion::fetchVersion( $object->versionNo, $object->getContentInfo()->id );
+            function () use ($object) {
+                if ($object instanceof Content) {
+                    return eZContentObject::fetch($object->getVersionInfo()->getContentInfo()->id);
+                } elseif ($object instanceof Location) {
+                    return eZContentObjectTreeNode::fetch($object->id);
+                } elseif ($object instanceof VersionInfo) {
+                    return eZContentObjectVersion::fetchVersion($object->versionNo, $object->getContentInfo()->id);
                 }
             },
             false,
@@ -88,13 +83,12 @@ class ApiContentConverter implements MultipleObjectConverter
      * @param string $alias
      *
      * @throws \InvalidArgumentException If $object is not an object
-     *
-     * @return void
      */
-    public function register( $object, $alias )
+    public function register($object, $alias)
     {
-        if ( !is_object( $object ) )
-            throw new \InvalidArgumentException( 'Transferred object must be a real object. Got ' . gettype( $object ) );
+        if (!is_object($object)) {
+            throw new \InvalidArgumentException('Transferred object must be a real object. Got ' . gettype($object));
+        }
 
         $this->apiObjects[$alias] = $object;
     }
@@ -107,28 +101,20 @@ class ApiContentConverter implements MultipleObjectConverter
     public function convertAll()
     {
         $apiObjects = $this->apiObjects;
-        if ( empty( $apiObjects ) )
-        {
+        if (empty($apiObjects)) {
             return array();
         }
 
         return $this->getLegacyKernel()->runCallback(
-            function () use ( $apiObjects )
-            {
+            function () use ($apiObjects) {
                 $convertedObjects = array();
-                foreach ( $apiObjects as $alias => $apiObject )
-                {
-                    if ( $apiObject instanceof Content )
-                    {
-                        $convertedObjects[$alias] = eZContentObject::fetch( $apiObject->getVersionInfo()->getContentInfo()->id );
-                    }
-                    else if ( $apiObject instanceof Location )
-                    {
-                        $convertedObjects[$alias] = eZContentObjectTreeNode::fetch( $apiObject->id );
-                    }
-                    else if ( $apiObject instanceof VersionInfo )
-                    {
-                        $convertedObjects[$alias] = eZContentObjectVersion::fetchVersion( $apiObject->versionNo, $apiObject->getContentInfo()->id );
+                foreach ($apiObjects as $alias => $apiObject) {
+                    if ($apiObject instanceof Content) {
+                        $convertedObjects[$alias] = eZContentObject::fetch($apiObject->getVersionInfo()->getContentInfo()->id);
+                    } elseif ($apiObject instanceof Location) {
+                        $convertedObjects[$alias] = eZContentObjectTreeNode::fetch($apiObject->id);
+                    } elseif ($apiObject instanceof VersionInfo) {
+                        $convertedObjects[$alias] = eZContentObjectVersion::fetchVersion($apiObject->versionNo, $apiObject->getContentInfo()->id);
                     }
                 }
 

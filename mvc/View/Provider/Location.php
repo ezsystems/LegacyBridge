@@ -6,7 +6,6 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Publish\Core\MVC\Legacy\View\Provider;
 
 use eZ\Publish\API\Repository\Values\Content\Content as APIContent;
@@ -20,7 +19,6 @@ use eZ\Publish\Core\MVC\Symfony\View\ViewProviderMatcher;
 use eZ\Publish\API\Repository\Values\ValueObject;
 use eZModule;
 use ezpEvent;
-use Symfony\Component\HttpFoundation\Request;
 
 class Location extends Provider implements LocationViewProviderInterface
 {
@@ -35,51 +33,48 @@ class Location extends Provider implements LocationViewProviderInterface
      *
      * @return \eZ\Publish\Core\MVC\Symfony\View\ContentView|void
      */
-    public function getView( APILocation $location, $viewType )
+    public function getView(APILocation $location, $viewType)
     {
         $logger = $this->logger;
         $legacyHelper = $this->legacyHelper;
         $currentViewProvider = $this;
         $viewParameters = array();
         $request = $this->getCurrentRequest();
-        if ( isset( $request ) )
-            $viewParameters = $request->attributes->get( 'viewParameters', array() );
+        if (isset($request)) {
+            $viewParameters = $request->attributes->get('viewParameters', array());
+        }
 
-        $legacyContentClosure = function ( array $params ) use ( $location, $viewType, $logger, $legacyHelper, $viewParameters, $currentViewProvider )
-        {
-            $content = isset( $params['content'] ) ? $params['content'] : null;
+        $legacyContentClosure = function (array $params) use ($location, $viewType, $logger, $legacyHelper, $viewParameters, $currentViewProvider) {
+            $content = isset($params['content']) ? $params['content'] : null;
             // Additional parameters (aka user parameters in legacy) are expected to be scalar
-            foreach ( $params as $paramName => $param )
-            {
-                if ( !is_scalar( $param ) )
-                {
-                    unset( $params[$paramName] );
-                    if ( isset( $logger ) )
+            foreach ($params as $paramName => $param) {
+                if (!is_scalar($param)) {
+                    unset($params[$paramName]);
+                    if (isset($logger)) {
                         $logger->notice(
                             "'$paramName' is not scalar, cannot pass it to legacy content module. Skipping.",
-                            array( __METHOD__ )
+                            array(__METHOD__)
                         );
+                    }
                 }
             }
 
             // viewbaseLayout is useless in legacy views
-            unset( $params['viewbaseLayout'] );
+            unset($params['viewbaseLayout']);
             $params += $viewParameters;
 
             // Render preview or published view depending on context.
-            if ( isset( $params['isPreview'] ) && $params['isPreview'] === true && $content instanceof APIContent )
-            {
-                return $currentViewProvider->renderPreview( $content, $params, $legacyHelper );
-            }
-            else
-            {
-                return $currentViewProvider->renderPublishedView( $location, $viewType, $params, $legacyHelper );
+            if (isset($params['isPreview']) && $params['isPreview'] === true && $content instanceof APIContent) {
+                return $currentViewProvider->renderPreview($content, $params, $legacyHelper);
+            } else {
+                return $currentViewProvider->renderPublishedView($location, $viewType, $params, $legacyHelper);
             }
         };
 
         $this->decorator->setContentView(
-            new ContentView( $legacyContentClosure )
+            new ContentView($legacyContentClosure)
         );
+
         return $this->decorator;
     }
 
@@ -93,7 +88,7 @@ class Location extends Provider implements LocationViewProviderInterface
      *
      * @return bool
      */
-    public function match( ViewProviderMatcher $matcher, ValueObject $valueObject )
+    public function match(ViewProviderMatcher $matcher, ValueObject $valueObject)
     {
         return true;
     }
@@ -108,28 +103,27 @@ class Location extends Provider implements LocationViewProviderInterface
      *
      * @return string
      */
-    public function renderPublishedView( APILocation $location, $viewType, array $params, LegacyHelper $legacyHelper )
+    public function renderPublishedView(APILocation $location, $viewType, array $params, LegacyHelper $legacyHelper)
     {
         $moduleResult = array();
 
         // Filling up moduleResult
         $result = $this->getLegacyKernel()->runCallback(
-            function () use ( $location, $viewType, $params, &$moduleResult )
-            {
-                $contentViewModule = eZModule::findModule( 'content' );
+            function () use ($location, $viewType, $params, &$moduleResult) {
+                $contentViewModule = eZModule::findModule('content');
                 $moduleResult = $contentViewModule->run(
                     'view',
-                    array( $viewType, $location->id ),
+                    array($viewType, $location->id),
                     false,
                     $params
                 );
 
-                return ezpEvent::getInstance()->filter( 'response/output', $moduleResult['content'] );
+                return ezpEvent::getInstance()->filter('response/output', $moduleResult['content']);
             },
             false
         );
 
-        $legacyHelper->loadDataFromModuleResult( $moduleResult );
+        $legacyHelper->loadDataFromModuleResult($moduleResult);
 
         return $result;
     }
@@ -143,30 +137,29 @@ class Location extends Provider implements LocationViewProviderInterface
      *
      * @return string
      */
-    public function renderPreview( APIContent $content, array $params, LegacyHelper $legacyHelper )
+    public function renderPreview(APIContent $content, array $params, LegacyHelper $legacyHelper)
     {
         /** @var \eZ\Publish\Core\MVC\Symfony\SiteAccess $siteAccess */
-        $siteAccess = $this->getCurrentRequest()->attributes->get( 'siteaccess' );
+        $siteAccess = $this->getCurrentRequest()->attributes->get('siteaccess');
         $moduleResult = array();
 
         // Filling up moduleResult
         $result = $this->getLegacyKernel()->runCallback(
-            function () use ( $content, $params, $siteAccess, &$moduleResult )
-            {
-                $contentViewModule = eZModule::findModule( 'content' );
+            function () use ($content, $params, $siteAccess, &$moduleResult) {
+                $contentViewModule = eZModule::findModule('content');
                 $moduleResult = $contentViewModule->run(
                     'versionview',
-                    array( $content->contentInfo->id, $content->getVersionInfo()->versionNo, $content->getVersionInfo()->languageCodes[0] ),
+                    array($content->contentInfo->id, $content->getVersionInfo()->versionNo, $content->getVersionInfo()->languageCodes[0]),
                     false,
-                    array( 'site_access' => $siteAccess->name ) + $params
+                    array('site_access' => $siteAccess->name) + $params
                 );
 
-                return ezpEvent::getInstance()->filter( 'response/output', $moduleResult['content'] );
+                return ezpEvent::getInstance()->filter('response/output', $moduleResult['content']);
             },
             false
         );
 
-        $legacyHelper->loadDataFromModuleResult( $moduleResult );
+        $legacyHelper->loadDataFromModuleResult($moduleResult);
 
         return $result;
     }

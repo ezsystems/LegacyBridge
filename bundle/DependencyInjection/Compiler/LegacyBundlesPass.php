@@ -6,7 +6,6 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Bundle\EzPublishLegacyBundle\DependencyInjection\Compiler;
 
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
@@ -22,26 +21,24 @@ class LegacyBundlesPass implements CompilerPassInterface
     /** @var \Symfony\Component\HttpKernel\KernelInterface */
     private $kernel;
 
-    public function __construct( KernelInterface $kernel )
+    public function __construct(KernelInterface $kernel)
     {
         $this->kernel = $kernel;
     }
 
-    public function process( ContainerBuilder $container )
+    public function process(ContainerBuilder $container)
     {
-        if ( !$container->has( 'ezpublish_legacy.legacy_bundles.extension_locator' ) )
-        {
+        if (!$container->has('ezpublish_legacy.legacy_bundles.extension_locator')) {
             return;
         }
 
-        $locator = $container->get( 'ezpublish_legacy.legacy_bundles.extension_locator' );
+        $locator = $container->get('ezpublish_legacy.legacy_bundles.extension_locator');
 
         $extensionNames = array();
-        foreach ( $this->kernel->getBundles() as $bundle )
-        {
-            $extensionNames += array_flip( $locator->getExtensionNames( $bundle ) );
+        foreach ($this->kernel->getBundles() as $bundle) {
+            $extensionNames += array_flip($locator->getExtensionNames($bundle));
         }
 
-        $container->setParameter( 'ezpublish_legacy.legacy_bundles_extensions', array_keys( $extensionNames ) );
+        $container->setParameter('ezpublish_legacy.legacy_bundles_extensions', array_keys($extensionNames));
     }
 }

@@ -26,27 +26,21 @@ class KernelTest extends PHPUnit_Framework_TestCase
     public function testRunCallbackWithException()
     {
         $this->getKernelHandlerMock()
-            ->expects( $this->any() )
-            ->method( 'runCallback' )
-            ->will( $this->throwException( new Exception ) );
+            ->expects($this->any())
+            ->method('runCallback')
+            ->will($this->throwException(new Exception()));
 
         $iterations = 1;
-        do
-        {
-            try
-            {
-                $this->getLegacyKernel()->runCallback( '' );
+        do {
+            try {
+                $this->getLegacyKernel()->runCallback('');
             }
             // this will occur on the 2nd iteration if the kernel state hasn't been correctly reset
-            catch ( RuntimeException $e )
-            {
-                $this->fail( "LegacyKernel was not reinitialized after the first exception" );
+            catch (RuntimeException $e) {
+                $this->fail('LegacyKernel was not reinitialized after the first exception');
+            } catch (Exception $e) {
             }
-            catch ( Exception $e )
-            {
-            }
-        }
-        while ( $iterations++ < 2 );
+        } while ($iterations++ < 2);
     }
 
     /**
@@ -54,10 +48,10 @@ class KernelTest extends PHPUnit_Framework_TestCase
      */
     protected function getLegacyKernel()
     {
-        if ( !isset( $this->legacyKernel ) )
-        {
-            $this->legacyKernel = new Kernel( $this->getKernelHandlerMock(), '/tmp', '/tmp' );
+        if (!isset($this->legacyKernel)) {
+            $this->legacyKernel = new Kernel($this->getKernelHandlerMock(), '/tmp', '/tmp');
         }
+
         return $this->legacyKernel;
     }
 
@@ -66,10 +60,10 @@ class KernelTest extends PHPUnit_Framework_TestCase
      */
     protected function getKernelHandlerMock()
     {
-        if ( !isset( $this->kernelHandlerMock ) )
-        {
-            $this->kernelHandlerMock = $this->getMock( 'ezpKernelHandler' );
+        if (!isset($this->kernelHandlerMock)) {
+            $this->kernelHandlerMock = $this->getMock('ezpKernelHandler');
         }
+
         return $this->kernelHandlerMock;
     }
 }

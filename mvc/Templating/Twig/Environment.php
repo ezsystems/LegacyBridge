@@ -6,7 +6,6 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Publish\Core\MVC\Legacy\Templating\Twig;
 
 use Twig_Environment;
@@ -27,28 +26,28 @@ class Environment extends Twig_Environment
      */
     protected $legacyTemplatesCache = array();
 
-    public function setEzLegacyEngine( LegacyEngine $legacyEngine )
+    public function setEzLegacyEngine(LegacyEngine $legacyEngine)
     {
         $this->legacyEngine = $legacyEngine;
     }
 
-    public function loadTemplate( $name, $index = null )
+    public function loadTemplate($name, $index = null)
     {
         // If legacy engine supports given template, delegate it.
-        if ( is_string( $name ) && isset( $this->legacyTemplatesCache[$name] ) )
-            return $this->legacyTemplatesCache[$name];
-
-        if ( is_string( $name ) && $this->legacyEngine->supports( $name ) )
-        {
-            if ( !$this->legacyEngine->exists( $name ) )
-            {
-                throw new Twig_Error_Loader( "Unable to find the template \"$name\"" );
-            }
-
-            $this->legacyTemplatesCache[$name] = new Template( $name, $this, $this->legacyEngine );
+        if (is_string($name) && isset($this->legacyTemplatesCache[$name])) {
             return $this->legacyTemplatesCache[$name];
         }
 
-        return parent::loadTemplate( $name, $index );
+        if (is_string($name) && $this->legacyEngine->supports($name)) {
+            if (!$this->legacyEngine->exists($name)) {
+                throw new Twig_Error_Loader("Unable to find the template \"$name\"");
+            }
+
+            $this->legacyTemplatesCache[$name] = new Template($name, $this, $this->legacyEngine);
+
+            return $this->legacyTemplatesCache[$name];
+        }
+
+        return parent::loadTemplate($name, $index);
     }
 }

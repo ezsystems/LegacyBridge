@@ -6,7 +6,6 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Bundle\EzPublishLegacyBundle\Routing;
 
 use Symfony\Component\Routing\RouterInterface;
@@ -37,10 +36,10 @@ class FallbackRouter implements RouterInterface, RequestMatcherInterface
      */
     private $urlGenerator;
 
-    public function __construct( UrlGenerator $urlGenerator, RequestContext $context = null, LoggerInterface $logger = null )
+    public function __construct(UrlGenerator $urlGenerator, RequestContext $context = null, LoggerInterface $logger = null)
     {
         $this->urlGenerator = $urlGenerator;
-        $this->context = $context = $context ?: new RequestContext;
+        $this->context = $context = $context ?: new RequestContext();
         $this->logger = $logger;
     }
 
@@ -49,7 +48,7 @@ class FallbackRouter implements RouterInterface, RequestMatcherInterface
      *
      * @param \Symfony\Component\Routing\RequestContext $context The context
      */
-    public function setContext( RequestContext $context )
+    public function setContext(RequestContext $context)
     {
         $this->context = $context;
     }
@@ -79,7 +78,7 @@ class FallbackRouter implements RouterInterface, RequestMatcherInterface
      * Generates a URL for an eZ Publish legacy fallback route, from the given parameters.
      * "module_uri" must be provided as a key in $parameters. The module URI must contain ordered parameters if any
      * (e.g. /content/view/full/2, "full", and "2" being regular ordered parameters. See your module definition for more info.).
-     * All additional named parameters will be passed as unordered params in the form "/(<paramName>)/<paramValue"
+     * All additional named parameters will be passed as unordered params in the form "/(<paramName>)/<paramValue".
      *
      * Example :
      * <code>
@@ -94,7 +93,7 @@ class FallbackRouter implements RouterInterface, RequestMatcherInterface
      *
      * @param string $name The name of the route
      * @param mixed $parameters An array of parameters
-     * @param boolean $absolute Whether to generate an absolute URL
+     * @param bool $absolute Whether to generate an absolute URL
      *
      * @throws \Symfony\Component\Routing\Exception\RouteNotFoundException
      * @throws \InvalidArgumentException
@@ -103,37 +102,37 @@ class FallbackRouter implements RouterInterface, RequestMatcherInterface
      *
      * @api
      */
-    public function generate( $name, $parameters = array(), $absolute = false )
+    public function generate($name, $parameters = array(), $absolute = false)
     {
-        if ( $name === self::ROUTE_NAME )
-        {
-            if ( !isset( $parameters['module_uri'] ) )
-            {
-                throw new \InvalidArgumentException( 'When generating an eZ Publish legacy fallback route, "uri" parameter must be provided.' );
+        if ($name === self::ROUTE_NAME) {
+            if (!isset($parameters['module_uri'])) {
+                throw new \InvalidArgumentException('When generating an eZ Publish legacy fallback route, "uri" parameter must be provided.');
             }
 
             $moduleUri = $parameters['module_uri'];
-            unset( $parameters['module_uri'] );
-            return $this->urlGenerator->generate( $moduleUri, $parameters, $absolute );
+            unset($parameters['module_uri']);
+
+            return $this->urlGenerator->generate($moduleUri, $parameters, $absolute);
         }
 
         throw new RouteNotFoundException();
     }
 
-    public function match( $pathinfo )
+    public function match($pathinfo)
     {
-        throw new RuntimeException( "The UrlAliasRouter doesn't support the match() method. Please use matchRequest() instead." );
+        throw new RuntimeException("The UrlAliasRouter doesn't support the match() method. Please use matchRequest() instead.");
     }
 
-    public function matchRequest( Request $request )
+    public function matchRequest(Request $request)
     {
-        $moduleUri = rtrim( $request->attributes->get( 'semanticPathinfo', $request->getPathInfo() ), '/' )
-                     . $request->attributes->get( 'viewParametersString', '' )
+        $moduleUri = rtrim($request->attributes->get('semanticPathinfo', $request->getPathInfo()), '/')
+                     . $request->attributes->get('viewParametersString', '')
                      . '?' . $request->getQueryString();
+
         return array(
-            "_route" => self::ROUTE_NAME,
-            "_controller" => "ezpublish_legacy.controller:indexAction",
-            "module_uri" => $moduleUri
+            '_route' => self::ROUTE_NAME,
+            '_controller' => 'ezpublish_legacy.controller:indexAction',
+            'module_uri' => $moduleUri,
         );
     }
 }

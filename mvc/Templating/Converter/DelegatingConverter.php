@@ -6,7 +6,6 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Publish\Core\MVC\Legacy\Templating\Converter;
 
 class DelegatingConverter implements MultipleObjectConverter
@@ -25,13 +24,13 @@ class DelegatingConverter implements MultipleObjectConverter
     private $genericConverter;
 
     /**
-     * Array of objects to convert, indexed by their alias (variable name in legacy templates)
+     * Array of objects to convert, indexed by their alias (variable name in legacy templates).
      *
      * @var array
      */
     private $objectsToConvert;
 
-    public function __construct( ObjectConverter $genericConverter )
+    public function __construct(ObjectConverter $genericConverter)
     {
         $this->convertersMap = array();
         $this->objectsToConvert = array();
@@ -39,12 +38,12 @@ class DelegatingConverter implements MultipleObjectConverter
     }
 
     /**
-     * Registers $converter for classes contained in $classes
+     * Registers $converter for classes contained in $classes.
      *
      * @param \eZ\Publish\Core\MVC\Legacy\Templating\Converter\ObjectConverter $converter
      * @param string $class Class the converter is for
      */
-    public function addConverter( ObjectConverter $converter, $class )
+    public function addConverter(ObjectConverter $converter, $class)
     {
         $this->convertersMap[$class] = $converter;
     }
@@ -57,10 +56,8 @@ class DelegatingConverter implements MultipleObjectConverter
      * @param string $alias
      *
      * @throws \InvalidArgumentException If $object is not an object
-     *
-     * @return void
      */
-    public function register( $object, $alias )
+    public function register($object, $alias)
     {
         $this->objectsToConvert[$alias] = $object;
     }
@@ -75,33 +72,26 @@ class DelegatingConverter implements MultipleObjectConverter
         $convertedObjects = array();
         $delegatingConverters = array();
 
-        foreach ( $this->objectsToConvert as $alias => $obj )
-        {
-            $className = get_class( $obj );
-            if ( isset( $this->convertersMap[$className] ) )
-            {
+        foreach ($this->objectsToConvert as $alias => $obj) {
+            $className = get_class($obj);
+            if (isset($this->convertersMap[$className])) {
                 $converter = $this->convertersMap[$className];
                 // MultipleObjectConverter => Register it for later conversion
-                if ( $converter instanceof MultipleObjectConverter )
-                {
-                    $converter->register( $obj, $alias );
+                if ($converter instanceof MultipleObjectConverter) {
+                    $converter->register($obj, $alias);
                     $delegatingConverters[] = $converter;
-                }
-                else
-                {
-                    $convertedObjects[$alias] = $converter->convert( $obj );
+                } else {
+                    $convertedObjects[$alias] = $converter->convert($obj);
                 }
             }
             // No registered converter => fallback to generic converter
-            else
-            {
-                $convertedObjects[$alias] = $this->genericConverter->convert( $obj );
+            else {
+                $convertedObjects[$alias] = $this->genericConverter->convert($obj);
             }
         }
 
         // Finally loop against delegating converters (aka MultipleObjectConverter instances) to convert all registered objects
-        foreach ( $delegatingConverters as $converter )
-        {
+        foreach ($delegatingConverters as $converter) {
             $convertedObjects += $converter->convertAll();
         }
 
@@ -117,14 +107,15 @@ class DelegatingConverter implements MultipleObjectConverter
      *
      * @return mixed|\eZ\Publish\Core\MVC\Legacy\Templating\LegacyCompatible
      */
-    public function convert( $object )
+    public function convert($object)
     {
-        $className = get_class( $object );
-        if ( isset( $this->convertersMap[$className] ) )
+        $className = get_class($object);
+        if (isset($this->convertersMap[$className])) {
             $converter = $this->convertersMap[$className];
-        else
+        } else {
             $converter = $this->genericConverter;
+        }
 
-        return $converter->convert( $object );
+        return $converter->convert($object);
     }
 }

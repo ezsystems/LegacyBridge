@@ -1,12 +1,11 @@
 <?php
 /**
- * File containing the AbstractLegacySlot class
+ * File containing the AbstractLegacySlot class.
  *
  * @copyright Copyright (C) eZ Systems AS. All rights reserved.
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Publish\Core\MVC\Legacy\SignalSlot;
 
 use eZ\Publish\Core\SignalSlot\Slot;
@@ -38,19 +37,20 @@ abstract class AbstractLegacySlot extends Slot
      * @param \eZ\Bundle\EzPublishLegacyBundle\Cache\Switchable $persistenceCacheClearer
      * @param \eZ\Bundle\EzPublishLegacyBundle\Cache\Switchable $httpCacheClearer
      */
-    public function __construct( $legacyKernel, $persistenceCacheClearer, $httpCacheClearer )
+    public function __construct($legacyKernel, $persistenceCacheClearer, $httpCacheClearer)
     {
-        if ( $legacyKernel instanceof Closure || $legacyKernel instanceof ezpKernelHandler )
+        if ($legacyKernel instanceof Closure || $legacyKernel instanceof ezpKernelHandler) {
             $this->legacyKernel = $legacyKernel;
-        else
-            throw new \RuntimeException( "Legacy slot only accepts \$legacyKernel instance of Closure or ezpKernelHandler" );
+        } else {
+            throw new \RuntimeException('Legacy slot only accepts $legacyKernel instance of Closure or ezpKernelHandler');
+        }
 
         $this->persistenceCacheClearer = $persistenceCacheClearer;
         $this->httpCacheClearer = $httpCacheClearer;
     }
 
     /**
-     * Executes a legacy kernel callback
+     * Executes a legacy kernel callback.
      *
      * Does the callback with both post-reinitialize and formtoken checks disabled.
      *
@@ -58,14 +58,13 @@ abstract class AbstractLegacySlot extends Slot
      *
      * @return mixed
      */
-    protected function runLegacyKernelCallback( $callback )
+    protected function runLegacyKernelCallback($callback)
     {
         $this->persistenceCacheClearer->switchOff();
         $this->httpCacheClearer->switchOff();
 
         // Initialize legacy kernel if not already done
-        if ( $this->legacyKernel instanceof Closure )
-        {
+        if ($this->legacyKernel instanceof Closure) {
             $legacyKernelClosure = $this->legacyKernel;
             $this->legacyKernel = $legacyKernelClosure();
         }

@@ -6,7 +6,6 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Bundle\EzPublishLegacyBundle\DependencyInjection\Configuration;
 
 use eZ\Publish\Core\MVC\ConfigResolverInterface;
@@ -42,7 +41,7 @@ class LegacyConfigResolver implements ConfigResolverInterface
      */
     protected $defaultNamespace;
 
-    public function __construct( \Closure $legacyKernelClosure, $defaultNamespace )
+    public function __construct(\Closure $legacyKernelClosure, $defaultNamespace)
     {
         $this->legacyKernelClosure = $legacyKernelClosure;
         $this->defaultNamespace = $defaultNamespace;
@@ -54,6 +53,7 @@ class LegacyConfigResolver implements ConfigResolverInterface
     protected function getLegacyKernel()
     {
         $kernelClosure = $this->legacyKernelClosure;
+
         return $kernelClosure();
     }
 
@@ -69,33 +69,29 @@ class LegacyConfigResolver implements ConfigResolverInterface
      *
      * @return mixed
      */
-    public function getParameter( $paramName, $namespace = null, $scope = null )
+    public function getParameter($paramName, $namespace = null, $scope = null)
     {
-        if ( !$this->isValidParameterName( $paramName ) )
-        {
-            throw new ParameterNotFoundException( $paramName, "$namespace.ini" );
+        if (!$this->isValidParameterName($paramName)) {
+            throw new ParameterNotFoundException($paramName, "$namespace.ini");
         }
 
         $namespace = $namespace ?: $this->defaultNamespace;
-        $namespace = str_replace( '.ini', '', $namespace );
-        list( $iniGroup, $paramName ) = explode( '.', $paramName, 2 );
+        $namespace = str_replace('.ini', '', $namespace);
+        list($iniGroup, $paramName) = explode('.', $paramName, 2);
 
         return $this->getLegacyKernel()->runCallback(
-            function () use ( $iniGroup, $paramName, $namespace, $scope )
-            {
-                if ( isset( $scope ) )
-                {
-                    $ini = eZINI::getSiteAccessIni( $scope, "$namespace.ini" );
-                }
-                else
-                {
-                    $ini = eZINI::instance( "$namespace.ini" );
+            function () use ($iniGroup, $paramName, $namespace, $scope) {
+                if (isset($scope)) {
+                    $ini = eZINI::getSiteAccessIni($scope, "$namespace.ini");
+                } else {
+                    $ini = eZINI::instance("$namespace.ini");
                 }
 
-                if ( !$ini->hasVariable( $iniGroup, $paramName ) )
-                    throw new ParameterNotFoundException( $paramName, "$namespace.ini" );
+                if (!$ini->hasVariable($iniGroup, $paramName)) {
+                    throw new ParameterNotFoundException($paramName, "$namespace.ini");
+                }
 
-                return $ini->variable( $iniGroup, $paramName );
+                return $ini->variable($iniGroup, $paramName);
             },
             false,
             false
@@ -113,27 +109,24 @@ class LegacyConfigResolver implements ConfigResolverInterface
      *
      * @return array
      */
-    public function getGroup( $groupName, $namespace = null, $scope = null )
+    public function getGroup($groupName, $namespace = null, $scope = null)
     {
         $namespace = $namespace ?: $this->defaultNamespace;
-        $namespace = str_replace( '.ini', '', $namespace );
+        $namespace = str_replace('.ini', '', $namespace);
 
         return $this->getLegacyKernel()->runCallback(
-            function () use ( $groupName, $namespace, $scope )
-            {
-                if ( isset( $scope ) )
-                {
-                    $ini = eZINI::getSiteAccessIni( $scope, "$namespace.ini" );
-                }
-                else
-                {
-                    $ini = eZINI::instance( "$namespace.ini" );
+            function () use ($groupName, $namespace, $scope) {
+                if (isset($scope)) {
+                    $ini = eZINI::getSiteAccessIni($scope, "$namespace.ini");
+                } else {
+                    $ini = eZINI::instance("$namespace.ini");
                 }
 
-                if ( !$ini->hasGroup( $groupName ) )
-                    throw new ParameterNotFoundException( $groupName, "$namespace.ini" );
+                if (!$ini->hasGroup($groupName)) {
+                    throw new ParameterNotFoundException($groupName, "$namespace.ini");
+                }
 
-                return $ini->group( $groupName );
+                return $ini->group($groupName);
             },
             false,
             false
@@ -141,40 +134,35 @@ class LegacyConfigResolver implements ConfigResolverInterface
     }
 
     /**
-     * Checks if $paramName exists in $namespace
+     * Checks if $paramName exists in $namespace.
      *
      * @param string $paramName
      * @param string $namespace If null, the default namespace should be used.
      * @param string $scope The scope you need $paramName value for.
      *
-     * @return boolean
+     * @return bool
      */
-    public function hasParameter( $paramName, $namespace = null, $scope = null )
+    public function hasParameter($paramName, $namespace = null, $scope = null)
     {
         // $paramName must have a '.' as it separates INI section and actual parameter name.
         // e.g. DebugSettings.DebugOutput
-        if ( !$this->isValidParameterName( $paramName ) )
-        {
+        if (!$this->isValidParameterName($paramName)) {
             return false;
         }
 
         $namespace = $namespace ?: $this->defaultNamespace;
-        $namespace = str_replace( '.ini', '', $namespace );
-        list( $iniGroup, $paramName ) = explode( '.', $paramName, 2 );
+        $namespace = str_replace('.ini', '', $namespace);
+        list($iniGroup, $paramName) = explode('.', $paramName, 2);
 
         return $this->getLegacyKernel()->runCallback(
-            function () use ( $iniGroup, $paramName, $namespace, $scope )
-            {
-                if ( isset( $scope ) )
-                {
-                    $ini = eZINI::getSiteAccessIni( $scope, "$namespace.ini" );
-                }
-                else
-                {
-                    $ini = eZINI::instance( "$namespace.ini" );
+            function () use ($iniGroup, $paramName, $namespace, $scope) {
+                if (isset($scope)) {
+                    $ini = eZINI::getSiteAccessIni($scope, "$namespace.ini");
+                } else {
+                    $ini = eZINI::instance("$namespace.ini");
                 }
 
-                return $ini->hasVariable( $iniGroup, $paramName );
+                return $ini->hasVariable($iniGroup, $paramName);
             },
             false,
             false
@@ -186,7 +174,7 @@ class LegacyConfigResolver implements ConfigResolverInterface
      *
      * @param string $defaultNamespace
      */
-    public function setDefaultNamespace( $defaultNamespace )
+    public function setDefaultNamespace($defaultNamespace)
     {
         $this->defaultNamespace = $defaultNamespace;
     }
@@ -204,14 +192,14 @@ class LegacyConfigResolver implements ConfigResolverInterface
     /**
      * Checks $paramName validity.
      * $paramName must have a '.' as it separates INI section and actual parameter name.
-     * e.g. DebugSettings.DebugOutput
+     * e.g. DebugSettings.DebugOutput.
      *
      * @param string $paramName
      *
      * @return int
      */
-    private function isValidParameterName( $paramName )
+    private function isValidParameterName($paramName)
     {
-        return strpos( $paramName, '.' ) !== false;
+        return strpos($paramName, '.') !== false;
     }
 }

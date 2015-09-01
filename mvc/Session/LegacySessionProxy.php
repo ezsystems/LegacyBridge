@@ -6,7 +6,6 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Publish\Core\MVC\Legacy\Session;
 
 use Symfony\Component\HttpFoundation\Session\Storage\Proxy\AbstractProxy;
@@ -32,12 +31,12 @@ class LegacySessionProxy extends AbstractProxy implements SessionHandlerInterfac
      */
     private $sessionHandler;
 
-    public function __construct( Closure $legacyKernelClosure, SessionHandlerInterface $sessionHandler )
+    public function __construct(Closure $legacyKernelClosure, SessionHandlerInterface $sessionHandler)
     {
         $this->legacyKernelClosure = $legacyKernelClosure;
         $this->sessionHandler = $sessionHandler;
         $this->wrapper = true;
-        $this->saveHandlerName = ini_get( 'session.save_handler' );
+        $this->saveHandlerName = ini_get('session.save_handler');
     }
 
     /**
@@ -46,15 +45,15 @@ class LegacySessionProxy extends AbstractProxy implements SessionHandlerInterfac
     private function getLegacyKernel()
     {
         $closure = $this->legacyKernelClosure;
+
         return $closure();
     }
 
-    public function open( $savePath, $sessionName )
+    public function open($savePath, $sessionName)
     {
-        $return = (bool)$this->sessionHandler->open( $savePath, $sessionName );
+        $return = (bool)$this->sessionHandler->open($savePath, $sessionName);
 
-        if ( $return === true )
-        {
+        if ($return === true) {
             $this->active = true;
         }
 
@@ -64,45 +63,46 @@ class LegacySessionProxy extends AbstractProxy implements SessionHandlerInterfac
     public function close()
     {
         $this->active = false;
+
         return (bool)$this->sessionHandler->close();
     }
 
-    public function read( $sessionId )
+    public function read($sessionId)
     {
-        return (string)$this->sessionHandler->read( $sessionId );
+        return (string)$this->sessionHandler->read($sessionId);
     }
 
-    public function write( $sessionId, $data )
+    public function write($sessionId, $data)
     {
-        return (bool)$this->sessionHandler->write( $sessionId, $data );
+        return (bool)$this->sessionHandler->write($sessionId, $data);
     }
 
-    public function destroy( $sessionId )
+    public function destroy($sessionId)
     {
         $this->getLegacyKernel()->runCallback(
-            function () use ( $sessionId )
-            {
-                ezpEvent::getInstance()->notify( 'session/destroy', array( $sessionId ) );
+            function () use ($sessionId) {
+                ezpEvent::getInstance()->notify('session/destroy', array($sessionId));
             },
             false
         );
 
-        return $this->sessionHandler->destroy( $sessionId );
+        return $this->sessionHandler->destroy($sessionId);
     }
 
-    public function gc( $maxlifetime )
+    public function gc($maxlifetime)
     {
         $sessionHandler = $this->sessionHandler;
+
         return $this->getLegacyKernel()->runCallback(
-            function () use ( $maxlifetime, $sessionHandler )
-            {
-                ezpEvent::getInstance()->notify( 'session/gc', array( $maxlifetime ) );
+            function () use ($maxlifetime, $sessionHandler) {
+                ezpEvent::getInstance()->notify('session/gc', array($maxlifetime));
                 $db = eZDB::instance();
-                eZSession::triggerCallback( 'gc_pre', array( $db, $maxlifetime ) );
+                eZSession::triggerCallback('gc_pre', array($db, $maxlifetime));
 
-                $success = $sessionHandler->gc( $maxlifetime );
+                $success = $sessionHandler->gc($maxlifetime);
 
-                eZSession::triggerCallback( 'gc_post', array( $db, $maxlifetime ) );
+                eZSession::triggerCallback('gc_post', array($db, $maxlifetime));
+
                 return $success;
             },
             false
