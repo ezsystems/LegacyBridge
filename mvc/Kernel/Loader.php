@@ -313,12 +313,15 @@ class Loader extends ContainerAware
      */
     public function resetKernel()
     {
-        /** @var \Closure $kernelClosure */
-        $kernelClosure = $this->container->get('ezpublish_legacy.kernel');
-        $this->eventDispatcher->dispatch(
-            LegacyEvents::PRE_RESET_LEGACY_KERNEL,
-            new PreResetLegacyKernelEvent($kernelClosure())
-        );
+        // Reset the kernel only if it has been initialized.
+        if (LegacyKernel::hasInstance()) {
+            /** @var \Closure $kernelClosure */
+            $kernelClosure = $this->container->get('ezpublish_legacy.kernel');
+            $this->eventDispatcher->dispatch(
+                LegacyEvents::PRE_RESET_LEGACY_KERNEL,
+                new PreResetLegacyKernelEvent($kernelClosure())
+            );
+        }
 
         LegacyKernel::resetInstance();
         $this->webHandler = null;
