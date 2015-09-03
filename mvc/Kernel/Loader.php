@@ -210,6 +210,9 @@ class Loader extends ContainerAware
                 $currentDir = getcwd();
                 chdir($legacyRootDir);
 
+                // require global functions before cli instance.
+                require_once 'kernel/private/classes/global_functions.php';
+
                 $legacyParameters = new ParameterBag($container->getParameter('ezpublish_legacy.kernel_handler.cli.options'));
                 if ($that->getBuildEventsEnabled()) {
                     $eventDispatcher->dispatch(LegacyEvents::PRE_BUILD_LEGACY_KERNEL, new PreBuildKernelEvent($legacyParameters));
