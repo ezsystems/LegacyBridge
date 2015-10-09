@@ -12,29 +12,31 @@ use eZ\Publish\API\Repository\Values\Content\Content as APIContent;
 use eZ\Publish\Core\MVC\Legacy\Templating\LegacyHelper;
 use eZ\Publish\Core\MVC\Legacy\View\Provider;
 use eZ\Publish\Core\MVC\Symfony\RequestStackAware;
-use eZ\Publish\Core\MVC\Symfony\View\Provider\Location as LocationViewProviderInterface;
+use eZ\Publish\Core\MVC\Symfony\View\View;
+use eZ\Publish\Core\MVC\Symfony\View\ViewProvider;
 use eZ\Publish\API\Repository\Values\Content\Location as APILocation;
 use eZ\Publish\Core\MVC\Symfony\View\ContentView;
-use eZ\Publish\Core\MVC\Symfony\View\ViewProviderMatcher;
-use eZ\Publish\API\Repository\Values\ValueObject;
 use eZModule;
 use ezpEvent;
 
-class Location extends Provider implements LocationViewProviderInterface
+class Location extends Provider implements ViewProvider
 {
     use RequestStackAware;
 
     /**
-     * Returns a ContentView object corresponding to $location.
+     * Returns a ContentView object corresponding to location found within $view.
      * Will basically run content/view legacy module with appropriate parameters.
      *
-     * @param \eZ\Publish\API\Repository\Values\Content\Location $location
-     * @param string $viewType Variation of display for your content.
+     * @param \eZ\Publish\Core\MVC\Symfony\View\View $view
      *
      * @return \eZ\Publish\Core\MVC\Symfony\View\ContentView|void
      */
-    public function getView(APILocation $location, $viewType)
+    public function getView(View $view)
     {
+        if (!$view instanceof ContentView || !$view->getLocation() instanceof APILocation) {
+            return null;
+        }
+
         $logger = $this->logger;
         $legacyHelper = $this->legacyHelper;
         $currentViewProvider = $this;
@@ -43,6 +45,9 @@ class Location extends Provider implements LocationViewProviderInterface
         if (isset($request)) {
             $viewParameters = $request->attributes->get('viewParameters', array());
         }
+
+        $viewType = $view->getViewType();
+        $location = $view->getLocation();
 
         $legacyContentClosure = function (array $params) use ($location, $viewType, $logger, $legacyHelper, $viewParameters, $currentViewProvider) {
             $content = isset($params['content']) ? $params['content'] : null;
@@ -76,21 +81,6 @@ class Location extends Provider implements LocationViewProviderInterface
         );
 
         return $this->decorator;
-    }
-
-    /**
-     * Checks if $valueObject matches the $matcher's rules.
-     *
-     * @param \eZ\Publish\Core\MVC\Symfony\View\ViewProviderMatcher $matcher
-     * @param \eZ\Publish\API\Repository\Values\ValueObject $valueObject
-     *
-     * @throws \InvalidArgumentException If $valueObject is not of expected sub-type.
-     *
-     * @return bool
-     */
-    public function match(ViewProviderMatcher $matcher, ValueObject $valueObject)
-    {
-        return true;
     }
 
     /**

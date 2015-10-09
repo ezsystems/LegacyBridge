@@ -10,27 +10,31 @@ namespace eZ\Publish\Core\MVC\Legacy\View\Provider;
 
 use eZ\Publish\Core\FieldType\XmlText\Converter\EmbedToHtml5;
 use eZ\Publish\Core\MVC\Legacy\View\Provider;
-use eZ\Publish\Core\MVC\Symfony\View\Provider\Content as ContentViewProviderInterface;
-use eZ\Publish\API\Repository\Values\Content\ContentInfo;
+use eZ\Publish\Core\MVC\Symfony\View\View;
+use eZ\Publish\Core\MVC\Symfony\View\ViewProvider;
 use eZ\Publish\Core\MVC\Symfony\View\ContentView;
-use eZ\Publish\Core\MVC\Symfony\View\ViewProviderMatcher;
-use eZ\Publish\API\Repository\Values\ValueObject;
 use eZContentObject;
 use eZTemplate;
 use ezpEvent;
 
-class Content extends Provider implements ContentViewProviderInterface
+class Content extends Provider implements ViewProvider
 {
     /**
-     * Returns a ContentView object corresponding to $contentInfo, or void if not applicable.
+     * Returns a ContentView object corresponding to content info found within $view, or void if not applicable.
      *
-     * @param \eZ\Publish\API\Repository\Values\Content\ContentInfo $contentInfo
-     * @param string $viewType Variation of display for your content
+     * @param \eZ\Publish\Core\MVC\Symfony\View\View $view
      *
      * @return \eZ\Publish\Core\MVC\Symfony\View\ContentView|void
      */
-    public function getView(ContentInfo $contentInfo, $viewType)
+    public function getView(View $view)
     {
+        if (!$view instanceof ContentView) {
+            return null;
+        }
+
+        $viewType = $view->getViewType();
+        $contentInfo = $view->getContent()->contentInfo;
+
         $legacyKernel = $this->getLegacyKernel();
         $legacyContentClosure = function (array $params) use ($contentInfo, $viewType, $legacyKernel) {
             return $legacyKernel->runCallback(
@@ -107,6 +111,7 @@ class Content extends Provider implements ContentViewProviderInterface
                 false
             );
         };
+
         $this->decorator->setContentView(
             new ContentView($legacyContentClosure)
         );
@@ -169,20 +174,5 @@ class Content extends Provider implements ContentViewProviderInterface
         }
 
         return $parameters;
-    }
-
-    /**
-     * Checks if $valueObject matches the $matcher's rules.
-     *
-     * @param \eZ\Publish\Core\MVC\Symfony\View\ViewProviderMatcher $matcher
-     * @param \eZ\Publish\API\Repository\Values\ValueObject $valueObject
-     *
-     * @throws \InvalidArgumentException If $valueObject is not of expected sub-type.
-     *
-     * @return bool
-     */
-    public function match(ViewProviderMatcher $matcher, ValueObject $valueObject)
-    {
-        return true;
     }
 }
