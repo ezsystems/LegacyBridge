@@ -10,9 +10,12 @@ namespace eZ\Publish\Core\MVC\Legacy\EventListener;
 
 use eZ\Publish\Core\MVC\Symfony\Event\APIContentExceptionEvent;
 use eZ\Publish\Core\MVC\Symfony\MVCEvents;
+use eZ\Publish\Core\MVC\Symfony\View\ContentView;
 use eZ\Publish\Core\Persistence\Legacy\Content\FieldValue\Converter\Exception\NotFound as ConverterNotFound;
 use eZ\Publish\Core\Repository\Values\Content\Location;
+use eZ\Publish\Core\Repository\Values\Content\Content;
 use eZ\Publish\API\Repository\Values\Content\ContentInfo;
+use eZ\Publish\Core\Repository\Values\Content\VersionInfo;
 use eZ\Publish\Core\MVC\Legacy\View\Provider\Content as LegacyContentViewProvider;
 use eZ\Publish\Core\MVC\Legacy\View\Provider\Location as LegacyLocationViewProvider;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -61,20 +64,25 @@ class APIContentExceptionListener implements EventSubscriberInterface
                 );
             }
 
+            $contentView = new ContentView();
+            $contentView->setViewType($contentMeta['viewType']);
+
             if (isset($contentMeta['locationId'])) {
-                $event->setContentView(
-                    $this->legacyLVP->getView(
-                        new Location(array('id' => $contentMeta['locationId'])),
-                        $contentMeta['viewType']
-                    )
-                );
+                $contentView->setLocation(new Location(array('id' => $contentMeta['locationId'])));
+                $event->setContentView($this->legacyLVP->getView($contentView));
             } elseif (isset($contentMeta['contentId'])) {
-                $event->setContentView(
-                    $this->legacyCVP->getView(
-                        new ContentInfo(array('id' => $contentMeta['contentId'])),
-                        $contentMeta['viewType']
+                $contentView->setContent(
+                    new Content(
+                        array(
+                            'versionInfo' => new VersionInfo(
+                                array(
+                                    'contentInfo' => new ContentInfo(array('id' => $contentMeta['contentId'])),
+                                )
+                            ),
+                        )
                     )
                 );
+                $event->setContentView($this->legacyCVP->getView($contentView));
             }
 
             $event->stopPropagation();
