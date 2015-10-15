@@ -13,6 +13,24 @@ use PHPUnit_Framework_TestCase;
 
 class LoaderStringTest extends PHPUnit_Framework_TestCase
 {
+    public function testGetSource()
+    {
+        $loaderString = new LoaderString();
+        $this->assertSame('foo', $loaderString->getSource('foo'));
+    }
+
+    public function testGetCacheKey()
+    {
+        $loaderString = new LoaderString();
+        $this->assertSame('foo', $loaderString->getCacheKey('foo'));
+    }
+
+    public function testIsFresh()
+    {
+        $loaderString = new LoaderString();
+        $this->assertSame(true, $loaderString->isFresh('foo', time()));
+    }
+
     /**
      * @dataProvider existsProvider
      */

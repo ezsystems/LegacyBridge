@@ -8,15 +8,40 @@
  */
 namespace eZ\Publish\Core\MVC\Legacy\Templating\Twig;
 
-use Twig_Loader_String;
+use Twig_LoaderInterface;
+use Twig_ExistsLoaderInterface;
 
 /**
  * This loader is supposed to directly load templates as a string, not from FS.
  *
  * {@inheritdoc}
  */
-class LoaderString extends Twig_Loader_String
+class LoaderString implements Twig_LoaderInterface, Twig_ExistsLoaderInterface
 {
+    /**
+     * {@inheritdoc}
+     */
+    public function getSource($name)
+    {
+        return $name;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getCacheKey($name)
+    {
+        return $name;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isFresh($name, $time)
+    {
+        return true;
+    }
+
     /**
      * Returns true if $name is a string template, false if $name is a template name (which should be loaded by Twig_Loader_Filesystem.
      *
