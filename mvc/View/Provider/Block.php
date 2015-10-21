@@ -9,17 +9,16 @@
 namespace eZ\Publish\Core\MVC\Legacy\View\Provider;
 
 use eZ\Publish\Core\MVC\Legacy\View\Provider;
-use eZ\Publish\Core\MVC\Symfony\View\Provider\Block as BlockViewProviderInterface;
-use eZ\Publish\Core\FieldType\Page\Parts\Block as PageBlock;
+use eZ\Publish\Core\MVC\Symfony\View\BlockView;
+use eZ\Publish\Core\MVC\Symfony\View\View;
+use eZ\Publish\Core\MVC\Symfony\View\ViewProvider;
 use eZ\Publish\Core\MVC\Legacy\Templating\Adapter\BlockAdapter;
 use eZ\Publish\Core\MVC\Symfony\View\ContentView;
-use eZ\Publish\Core\MVC\Symfony\View\ViewProviderMatcher;
-use eZ\Publish\API\Repository\Values\ValueObject;
 use eZ\Publish\Core\FieldType\Page\PageService;
 use eZTemplate;
 use ezpEvent;
 
-class Block extends Provider implements BlockViewProviderInterface
+class Block extends Provider implements ViewProvider
 {
     /**
      * @var \eZ\Publish\Core\FieldType\Page\PageService
@@ -35,14 +34,20 @@ class Block extends Provider implements BlockViewProviderInterface
     }
 
     /**
-     * Returns a ContentView object corresponding to $block, or null if not applicable.
+     * Returns a ContentView object corresponding to block found within $view, or null if not applicable.
      *
-     * @param \eZ\Publish\Core\FieldType\Page\Parts\Block $block
+     * @param \eZ\Publish\Core\MVC\Symfony\View\View $view
      *
      * @return \eZ\Publish\Core\MVC\Symfony\View\ContentView
      */
-    public function getView(PageBlock $block)
+    public function getView(View $view)
     {
+        if (!$view instanceof BlockView) {
+            return null;
+        }
+
+        $block = $view->getBlock();
+
         $legacyKernel = $this->getLegacyKernel();
         $legacyBlockClosure = function (array $params) use ($block, $legacyKernel) {
             return $legacyKernel->runCallback(
@@ -88,13 +93,5 @@ class Block extends Provider implements BlockViewProviderInterface
         };
 
         return new ContentView($legacyBlockClosure);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function match(ViewProviderMatcher $matcher, ValueObject $valueObject)
-    {
-        return true;
     }
 }

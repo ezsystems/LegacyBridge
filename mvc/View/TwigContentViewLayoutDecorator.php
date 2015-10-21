@@ -9,12 +9,14 @@
 namespace eZ\Publish\Core\MVC\Legacy\View;
 
 use eZ\Publish\Core\MVC\ConfigResolverInterface;
-use eZ\Publish\Core\MVC\Symfony\View\ContentViewInterface;
+use eZ\Publish\Core\MVC\Symfony\View\View;
 use eZ\Publish\Core\MVC\Symfony\View\ContentView;
 use eZ\Publish\Core\Base\Exceptions\InvalidArgumentType;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Controller\ControllerReference;
 use Twig_Environment;
 
-class TwigContentViewLayoutDecorator implements ContentViewInterface
+class TwigContentViewLayoutDecorator implements View
 {
     /**
      * @var \eZ\Publish\Core\MVC\Symfony\View\ContentView
@@ -26,17 +28,35 @@ class TwigContentViewLayoutDecorator implements ContentViewInterface
      */
     protected $twig;
 
+    /**
+     * @var array
+     */
     protected $options;
 
     /**
      * @var array
      */
-    protected $configHash;
+    protected $configHash = array();
 
     /**
      * @var \eZ\Publish\Core\MVC\ConfigResolverInterface
      */
-    private $configResolver;
+    protected $configResolver;
+
+    /**
+     * @var string
+     */
+    protected $viewType = 'full';
+
+    /**
+     * @var \Symfony\Component\HttpKernel\Controller\ControllerReference
+     */
+    protected $controllerReference;
+
+    /**
+     * @var \Symfony\Component\HttpFoundation\Response
+     */
+    protected $response;
 
     public function __construct(Twig_Environment $twig, array $options, ConfigResolverInterface $configResolver)
     {
@@ -190,5 +210,48 @@ EOT;
     public function getConfigHash()
     {
         return $this->configHash;
+    }
+
+    public function setViewType($viewType)
+    {
+        $this->viewType = $viewType;
+    }
+
+    public function getViewType()
+    {
+        return $this->viewType;
+    }
+
+    public function setControllerReference(ControllerReference $controllerReference)
+    {
+        $this->controllerReference = $controllerReference;
+    }
+
+    /**
+     * @return ControllerReference
+     */
+    public function getControllerReference()
+    {
+        return $this->controllerReference;
+    }
+
+    /**
+     * Sets a pre-configured Response that will be used to render the View.
+     *
+     * @param Response $response
+     */
+    public function setResponse(Response $response)
+    {
+        $this->response = $response;
+    }
+
+    /**
+     * Returns the pre-configured Response.
+     *
+     * @return \Symfony\Component\HttpFoundation\Response|null
+     */
+    public function getResponse()
+    {
+        return $this->response;
     }
 }

@@ -18,7 +18,7 @@ services:
         class: %ezpublish_legacy.content_view_provider.class%
         parent: ezpublish_legacy.view_provider
         tags:
-            - {name: ezpublish.content_view_provider, priority: -255}
+            - {name: ezpublish.view_provider, type: 'eZ\Publish\Core\MVC\Symfony\View\ContentView', priority: -255}
 
     ezpublish_legacy.location_view_provider:
         class: %ezpublish_legacy.location_view_provider.class%
@@ -27,7 +27,9 @@ services:
             # Injecting the request, in non strict mode ("=") avoiding this service to be forced in request scope.
             - [setRequestStack, [@request_stack]]
         tags:
-            - {name: ezpublish.location_view_provider, priority: -255}
+            # Location view provider must have priority higher than content view provider to be able
+            # to match the location first, in case it exists in the view
+            - {name: ezpublish.view_provider, type: 'eZ\Publish\Core\MVC\Symfony\View\ContentView', priority: -250}
 
     ezpublish_legacy.block_view_provider:
         class: %ezpublish_legacy.block_view_provider.class%
@@ -35,7 +37,7 @@ services:
         calls:
             - [setPageService, [@ezpublish.fieldType.ezpage.pageService]]
         tags:
-            - {name: ezpublish.block_view_provider, priority: -255}
+            - {name: ezpublish.view_provider, type: 'eZ\Publish\Core\MVC\Symfony\View\BlockView', priority: -255}
 
     ezpublish_legacy.view_decorator.twig:
         class: %ezpublish_legacy.view_decorator.twig.class%
