@@ -14,11 +14,12 @@ use eZ\Publish\Core\MVC\Legacy\Templating\LegacyEngine;
 use Twig_Extension;
 use Twig_SimpleFunction;
 use Twig_Environment;
+use Twig_Extension_InitRuntimeInterface;
 
 /**
  * Twig extension for eZ Publish legacy.
  */
-class LegacyExtension extends Twig_Extension
+class LegacyExtension extends Twig_Extension implements Twig_Extension_InitRuntimeInterface
 {
     /**
      * @var \eZ\Publish\Core\MVC\Legacy\Templating\LegacyEngine
