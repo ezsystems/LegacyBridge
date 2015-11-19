@@ -33,9 +33,9 @@ services:
     ezpublish_legacy.signalslot.base:
         class: eZ\Publish\Core\MVC\Legacy\SignalSlot\AbstractLegacySlot
         arguments:
-            - @ezpublish_legacy.kernel
-            - @ezpublish_legacy.persistence_cache_purger
-            - @ezpublish_legacy.switchable_http_cache_purger
+            - "@ezpublish_legacy.kernel"
+            - "@ezpublish_legacy.persistence_cache_purger"
+            - "@ezpublish_legacy.switchable_http_cache_purger"
 
     ezpublish_legacy.signalslot.assign_section:
         class: %ezpublish_legacy.signalslot.assign_section.class%

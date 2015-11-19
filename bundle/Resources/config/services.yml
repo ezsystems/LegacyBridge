@@ -87,18 +87,18 @@ services:
     ezpublish_legacy.kernel.lazy:
         class: Closure
         factory: ["@ezpublish_legacy.kernel.lazy_loader", buildLegacyKernel]
-        arguments: [@ezpublish_legacy.kernel_handler]
+        arguments: ["@ezpublish_legacy.kernel_handler"]
 
     ezpublish_legacy.kernel.lazy_loader:
         class: %ezpublish_legacy.kernel.lazy_loader.class%
         arguments:
             - %ezpublish_legacy.root_dir%
             - %webroot_dir%
-            - @event_dispatcher
-            - @ezpublish_legacy.uri_helper
-            - @?logger
+            - "@event_dispatcher"
+            - "@ezpublish_legacy.uri_helper"
+            - "@?logger"
         calls:
-            - [setContainer, [@service_container]]
+            - [setContainer, ["@service_container"]]
 
     ezpublish_legacy.rest.kernel_handler:
         class: %ezpublish_legacy.kernel_handler.rest.class%
@@ -123,47 +123,47 @@ services:
 
     ezpublish_legacy.response_manager:
         class: %ezpublish_legacy.response_manager.class%
-        arguments: [@templating, @ezpublish.config.resolver]
+        arguments: ["@templating", "@ezpublish.config.resolver"]
 
     ezpublish_legacy.controller:
         class: %ezpublish_legacy.controller.class%
         arguments:
-            - @ezpublish_legacy.kernel
-            - @ezpublish.config.resolver
-            - @ezpublish_legacy.uri_helper
-            - @ezpublish_legacy.response_manager
-            - @ezpublish_legacy.templating.legacy_helper
-            - @router
+            - "@ezpublish_legacy.kernel"
+            - "@ezpublish.config.resolver"
+            - "@ezpublish_legacy.uri_helper"
+            - "@ezpublish_legacy.response_manager"
+            - "@ezpublish_legacy.templating.legacy_helper"
+            - "@router"
 
     ezpublish_legacy.treemenu.controller:
         class: %ezpublish_legacy.treemenu.controller.class%
         arguments:
-            - @ezpublish_legacy.kernel_handler.treemenu
-            - @ezpublish_legacy.kernel.lazy_loader
+            - "@ezpublish_legacy.kernel_handler.treemenu"
+            - "@ezpublish_legacy.kernel.lazy_loader"
             - %ezpublish_legacy.treemenu.controller.options%
         parent: ezpublish.controller.base
 
     ezpublish_legacy.rest.controller:
         class: %ezpublish_legacy.rest.controller.class%
         arguments:
-            - @ezpublish_legacy.rest.kernel_handler
-            - @ezpublish_legacy.kernel.lazy_loader
+            - "@ezpublish_legacy.rest.kernel_handler"
+            - "@ezpublish_legacy.kernel.lazy_loader"
         parent: ezpublish.controller.base
 
     ezpublish_legacy.setup.controller:
         class: %ezpublish_legacy.setup.controller.class%
         parent: ezpublish.controller.base
         arguments:
-            - @ezpublish_legacy.kernel
-            - @ezpublish_legacy.config.resolver
-            - @ezpublish_legacy.persistence_cache_purger
-            - @ezpublish_legacy.kernel.lazy_loader
+            - "@ezpublish_legacy.kernel"
+            - "@ezpublish_legacy.config.resolver"
+            - "@ezpublish_legacy.persistence_cache_purger"
+            - "@ezpublish_legacy.kernel.lazy_loader"
 
     ezpublish_legacy.preview.controller:
         class: %ezpublish_legacy.preview.controller.class%
         parent: ezpublish.controller.content.preview.core
         calls:
-            - [setConfigResolver, [@ezpublish.config.resolver]]
+            - [setConfigResolver, ["@ezpublish.config.resolver"]]
 
     ezpublish.controller.content.preview:
         alias: ezpublish_legacy.preview.controller
@@ -172,16 +172,16 @@ services:
         class: %ezpublish_legacy.website_toolbar.controller.class%
         parent: ezpublish.controller.base
         arguments:
-            - @templating.engine.eztpl
-            - @ezpublish.api.service.content
-            - @ezpublish.api.service.location
-            - @security.authorization_checker
-            - @ezpublish.content_preview_helper
-            - @?form.csrf_provider
+            - "@templating.engine.eztpl"
+            - "@ezpublish.api.service.content"
+            - "@ezpublish.api.service.location"
+            - "@security.authorization_checker"
+            - "@ezpublish.content_preview_helper"
+            - "@?form.csrf_provider"
 
     ezpublish_legacy.router:
         class: %ezpublish_legacy.router.class%
-        arguments: [@ezpublish_legacy.url_generator, @?request_context, @?logger]
+        arguments: ["@ezpublish_legacy.url_generator", "@?request_context", "@?logger"]
         tags:
             - {name: router, priority: -255}
         lazy: true
@@ -191,7 +191,7 @@ services:
 
     ezpublish_legacy.url_generator:
         class: %ezpublish_legacy.url_generator.class%
-        arguments: [@ezpublish_legacy.kernel]
+        arguments: ["@ezpublish_legacy.kernel"]
         parent: ezpublish.url_generator.base
 
     ezpublish_legacy.siteaccess_mapper:
@@ -199,52 +199,52 @@ services:
         arguments:
             - %ezpublish_legacy.siteaccess_mapper.options%
         calls:
-            - [setContainer, [@service_container]]
+            - [setContainer, ["@service_container"]]
         tags:
             - { name: kernel.event_subscriber }
 
     ezpublish_legacy.session_mapper:
         class: %ezpublish_legacy.session_mapper.class%
-        arguments: [@session.storage, %ezpublish.session.attribute_bag.storage_key%, @?session]
+        arguments: ["@session.storage", %ezpublish.session.attribute_bag.storage_key%, "@?session"]
         calls:
-            - [setRequestStack, [@request_stack]]
+            - [setRequestStack, ["@request_stack"]]
         tags:
             - { name: kernel.event_subscriber }
 
     ezpublish_legacy.session_storage_proxy:
         class: %ezpublish_legacy.session_storage_proxy.class%
-        arguments: [@ezpublish_legacy.kernel, ~]
+        arguments: ["@ezpublish_legacy.kernel", ~]
 
     ezpublish_legacy.session_handler_proxy:
         class: %ezpublish_legacy.session_handler_proxy.class%
-        arguments: [@ezpublish_legacy.kernel, ~]
+        arguments: ["@ezpublish_legacy.kernel", ~]
 
     ezpublish_legacy.configuration_mapper:
         class: %ezpublish_legacy.configuration_mapper.class%
         arguments:
-            - @ezpublish.config.resolver.core
-            - @ezpublish_legacy.switchable_http_cache_purger
-            - @ezpublish_legacy.persistence_cache_purger
-            - @ezpublish.urlalias_generator
-            - @ezpublish.api.storage_engine.legacy.dbhandler
-            - @ezpublish_legacy.image_alias.cleaner
+            - "@ezpublish.config.resolver.core"
+            - "@ezpublish_legacy.switchable_http_cache_purger"
+            - "@ezpublish_legacy.persistence_cache_purger"
+            - "@ezpublish.urlalias_generator"
+            - "@ezpublish.api.storage_engine.legacy.dbhandler"
+            - "@ezpublish_legacy.image_alias.cleaner"
             - %ezpublish_legacy.configuration_mapper.options%
         calls:
-            - [setContainer, [@service_container]]
+            - [setContainer, ["@service_container"]]
         tags:
             - { name: kernel.event_subscriber }
 
     ezpublish_legacy.legacy_bundles_mapper:
         class: %ezpublish_legacy.legacy_bundles_mapper.class%
         arguments:
-            - @ezpublish.config.resolver.core
+            - "@ezpublish.config.resolver.core"
             - { extensions: %ezpublish_legacy.legacy_bundles_extensions% }
         tags:
             - { name: kernel.event_subscriber }
 
     ezpublish_legacy.persistence_cache_purger:
         class: %ezpublish_legacy.persistence_cache_purger.class%
-        arguments: [@ezpublish.cache_pool.spi.cache.decorator, @ezpublish.spi.persistence.cache.locationHandler, @logger]
+        arguments: ["@ezpublish.cache_pool.spi.cache.decorator", "@ezpublish.spi.persistence.cache.locationHandler", "@logger"]
         tags:
             - { name: kernel.cache_clearer }
         lazy: true
@@ -252,44 +252,44 @@ services:
     ezpublish_legacy.legacy_cache_purger:
         class: %ezpublish_legacy.legacy_cache_purger.class%
         arguments:
-            - @ezpublish_legacy.kernel
-            - @ezpublish_legacy.configuration_mapper
-            - @filesystem
+            - "@ezpublish_legacy.kernel"
+            - "@ezpublish_legacy.configuration_mapper"
+            - "@filesystem"
             - %ezpublish_legacy.root_dir%
-            - @ezpublish.siteaccess
+            - "@ezpublish.siteaccess"
         tags:
             - { name: kernel.cache_clearer }
         lazy: true
 
     ezpublish_legacy.switchable_http_cache_purger:
         class: %ezpublish_legacy.switchable_http_cache_purger.class%
-        arguments: [@ezpublish.http_cache.purger]
+        arguments: ["@ezpublish.http_cache.purger"]
 
     ezpublish_legacy.content_exception_handler:
         class: %ezpublish_legacy.content_exception_handler.class%
-        arguments: [@ezpublish_legacy.content_view_provider, @ezpublish_legacy.location_view_provider, @?logger]
+        arguments: ["@ezpublish_legacy.content_view_provider", "@ezpublish_legacy.location_view_provider", "@?logger"]
         tags:
             - { name: kernel.event_subscriber }
 
     ezpublish_legacy.config.resolver:
         class: %ezpublish_legacy.config.resolver.class%
-        arguments: [@ezpublish_legacy.kernel, %ezpublish_legacy.config.default_scope%]
+        arguments: ["@ezpublish_legacy.kernel", %ezpublish_legacy.config.default_scope%]
         lazy: true
         tags:
             - { name: ezpublish.config.resolver, priority: -255 }
 
     ezpublish_legacy.setup_wizard.configuration_converter:
         class: %ezpublish_legacy.setup_wizard.configuration_converter.class%
-        arguments: [@ezpublish_legacy.config.resolver, @ezpublish_legacy.kernel, %ezpublish_legacy.setup_wizard.supported_packages%]
+        arguments: ["@ezpublish_legacy.config.resolver", "@ezpublish_legacy.kernel", %ezpublish_legacy.setup_wizard.supported_packages%]
 
     ezpublish_legacy.setup_wizard.configuration_dumper:
         class: %ezpublish_legacy.setup_wizard.configuration_dumper.class%
         arguments:
-            - @filesystem
+            - "@filesystem"
             - %ezpublish_legacy.setup_wizard.configuration_dumper.environments%
             - %kernel.root_dir%
             - %kernel.cache_dir%
-            - @ezpublish_legacy.webconfigurator
+            - "@ezpublish_legacy.webconfigurator"
 
     # eZ alias for sensio.distribution.webconfigurator to make it available despite Bundle being disabled in prod env
     # uses factory to make sure steps are injected only when service is needed
@@ -305,7 +305,7 @@ services:
     # Image alias generator using legacy
     ezpublish_legacy.fieldType.ezimage.variation_service:
         class: %ezpublish_legacy.fieldType.ezimage.variation_service.class%
-        arguments: [@ezpublish_legacy.kernel]
+        arguments: ["@ezpublish_legacy.kernel"]
 
     ezpublish_legacy.rest_listener:
         class: %ezpublish_legacy.rest_listener.class%
@@ -315,7 +315,7 @@ services:
 
     ezpublish_legacy.request_listener:
         class: %ezpublish_legacy.request_listener.class%
-        arguments: [@ezpublish.config.resolver, @ezpublish.api.repository, @security.token_storage]
+        arguments: ["@ezpublish.config.resolver", "@ezpublish.api.repository", "@security.token_storage"]
         tags:
             - { name: kernel.event_subscriber }
 
@@ -326,15 +326,15 @@ services:
 
     ezpublish_legacy.config_scope_listener:
         class: %ezpublish_legacy.config_scope_listener.class%
-        arguments: [@ezpublish_legacy.kernel.lazy_loader]
+        arguments: ["@ezpublish_legacy.kernel.lazy_loader"]
         tags:
             - { name: kernel.event_subscriber }
 
     ezpublish_legacy.legacy_kernel_listener:
         class: %ezpublish_legacy.legacy_kernel_listener.class%
-        arguments: [@event_dispatcher]
+        arguments: ["@event_dispatcher"]
         calls:
-            - [setContainer, [@service_container]]
+            - [setContainer, ["@service_container"]]
         tags:
             - { name: kernel.event_subscriber }
 
@@ -344,7 +344,7 @@ services:
     ezpublish_legacy.setup_listener:
         class: %ezpublish_legacy.setup_listener.class%
         arguments:
-            - @router
+            - "@router"
             - %ezpublish.siteaccess.default%
         tags:
             - { name: kernel.event_subscriber }

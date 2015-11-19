@@ -4,7 +4,7 @@ parameters:
 services:
     ezpublish_legacy.debug.templates_collector:
         class: %ezpublish_legacy.debug.templates_collector.class%
-        arguments: [@ezpublish_legacy.kernel]
+        arguments: ["@ezpublish_legacy.kernel"]
         tags:
             -
                 name: ezpublish_data_collector
