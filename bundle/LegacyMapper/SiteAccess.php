@@ -12,14 +12,16 @@ use eZ\Publish\Core\MVC\Legacy\LegacyEvents;
 use eZ\Publish\Core\MVC\Legacy\Event\PreBuildKernelWebHandlerEvent;
 use eZ\Publish\Core\MVC\Symfony\SiteAccess\Matcher\CompoundInterface;
 use eZSiteAccess;
-use Symfony\Component\DependencyInjection\ContainerAware;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
  * Maps the SiteAccess object to the legacy parameters.
  */
-class SiteAccess extends ContainerAware implements EventSubscriberInterface
+class SiteAccess implements EventSubscriberInterface
 {
+    use ContainerAwareTrait;
+
     protected $options = array();
 
     public function __construct(array $options = array())

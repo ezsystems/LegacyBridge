@@ -16,7 +16,7 @@ use eZ\Publish\Core\MVC\Legacy\Event\PreBuildKernelWebHandlerEvent;
 use eZ\Publish\Core\MVC\Legacy\Event\PreBuildKernelEvent;
 use ezpKernelHandler;
 use ezpKernelRest;
-use Symfony\Component\DependencyInjection\ContainerAware;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\ParameterBag;
@@ -24,8 +24,10 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 /**
  * Legacy kernel loader.
  */
-class Loader extends ContainerAware
+class Loader
 {
+    use ContainerAwareTrait;
+
     /**
      * @var string Absolute path to the legacy root directory (eZPublish 4 install dir)
      */
