@@ -142,7 +142,6 @@ services:
             - @ezpublish_legacy.kernel.lazy_loader
             - %ezpublish_legacy.treemenu.controller.options%
         parent: ezpublish.controller.base
-        scope: request
 
     ezpublish_legacy.rest.controller:
         class: %ezpublish_legacy.rest.controller.class%
@@ -150,7 +149,6 @@ services:
             - @ezpublish_legacy.rest.kernel_handler
             - @ezpublish_legacy.kernel.lazy_loader
         parent: ezpublish.controller.base
-        scope: request
 
     ezpublish_legacy.setup.controller:
         class: %ezpublish_legacy.setup.controller.class%
