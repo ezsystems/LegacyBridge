@@ -13,7 +13,7 @@ use eZ\Publish\Core\MVC\Legacy\Event\PreResetLegacyKernelEvent;
 use eZINI;
 use Symfony\Component\Console\ConsoleEvents;
 use Symfony\Component\Console\Event\ConsoleCommandEvent;
-use Symfony\Component\DependencyInjection\ContainerAware;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use eZ\Publish\Core\MVC\Symfony\MVCEvents;
@@ -23,8 +23,10 @@ use eZ\Publish\Core\MVC\Symfony\Event\ScopeChangeEvent;
  * Resets eZINI when the Legacy Kernel is reset.
  * Resets legacy kernel handler when used in a command.
  */
-class LegacyKernelListener extends ContainerAware implements EventSubscriberInterface
+class LegacyKernelListener implements EventSubscriberInterface
 {
+    use ContainerAwareTrait;
+
     /**
      * @var EventDispatcherInterface
      */

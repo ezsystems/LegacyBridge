@@ -6,6 +6,6 @@ services:
     ezpublish_legacy.image_alias.cleaner:
         class: %ezpublish_legacy.image_alias.cleaner.class%
         arguments:
-            - @ezpublish.image_alias.imagine.alias_cleaner
-            - @ezpublish.core.io.image_fieldtype.legacy_url_redecorator
+            - "@ezpublish.image_alias.imagine.alias_cleaner"
+            - "@ezpublish.core.io.image_fieldtype.legacy_url_redecorator"
         lazy: true

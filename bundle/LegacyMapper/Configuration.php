@@ -18,15 +18,17 @@ use eZ\Publish\Core\MVC\Symfony\Routing\Generator\UrlAliasGenerator;
 use eZ\Publish\Core\Persistence\Database\DatabaseHandler;
 use ezpEvent;
 use ezxFormToken;
-use Symfony\Component\DependencyInjection\ContainerAware;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use RuntimeException;
 
 /**
  * Maps configuration parameters to the legacy parameters.
  */
-class Configuration extends ContainerAware implements EventSubscriberInterface
+class Configuration implements EventSubscriberInterface
 {
+    use ContainerAwareTrait;
+
     /**
      * @var \eZ\Publish\Core\MVC\ConfigResolverInterface
      */
