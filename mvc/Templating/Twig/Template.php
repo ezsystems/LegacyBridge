@@ -9,20 +9,15 @@
 namespace eZ\Publish\Core\MVC\Legacy\Templating\Twig;
 
 use Twig_Environment;
-use Twig_TemplateInterface;
+use Twig_Template;
 use eZ\Publish\Core\MVC\Legacy\Templating\LegacyEngine;
 
 /**
  * Twig Template class representation for a legacy template.
  */
-class Template implements Twig_TemplateInterface
+class Template extends Twig_Template
 {
     private $templateName;
-
-    /**
-     * @var \Twig_Environment
-     */
-    private $env;
 
     /**
      * @var \eZ\Publish\Core\MVC\Legacy\Templating\LegacyEngine
@@ -31,8 +26,9 @@ class Template implements Twig_TemplateInterface
 
     public function __construct($templateName, Twig_Environment $env, LegacyEngine $legacyEngine)
     {
+        parent::__construct($env);
+
         $this->templateName = $templateName;
-        $this->env = $env;
         $this->legacyEngine = $legacyEngine;
     }
 
@@ -60,20 +56,17 @@ class Template implements Twig_TemplateInterface
     }
 
     /**
-     * Returns the bound environment for this template.
-     *
-     * @return Twig_Environment The current environment
-     */
-    public function getEnvironment()
-    {
-        return $this->env;
-    }
-
-    /**
      * @return string
      */
     public function getTemplateName()
     {
         return $this->templateName;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function doDisplay(array $context, array $blocks = array())
+    {
     }
 }
