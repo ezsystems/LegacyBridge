@@ -37,7 +37,7 @@ services:
         calls:
             - [setPageService, ["@ezpublish.fieldType.ezpage.pageService"]]
         tags:
-            - {name: ezpublish.view_provider, type: 'eZ\Publish\Core\MVC\Symfony\View\BlockView', priority: -255}
+            - {name: ezpublish.view_provider, type: 'eZ\Publish\Core\MVC\Symfony\View\BlockView', priority: 5}
 
     ezpublish_legacy.view_decorator.twig:
         class: %ezpublish_legacy.view_decorator.twig.class%
