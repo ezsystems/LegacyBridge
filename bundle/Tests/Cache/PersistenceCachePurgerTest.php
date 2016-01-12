@@ -63,6 +63,17 @@ class PersistenceCachePurgerTest extends PHPUnit_Framework_TestCase
             ->method('load')
             ->will($this->throwException(new NotFoundException('location', $id)));
 
+        $cacheItem = $this->getMock('Stash\\Item');
+        $cacheItem->expects($this->once())
+            ->method('get')
+            ->will($this->returnValue(null));
+
+        $this->cacheService
+            ->expects($this->once())
+            ->method('getItem')
+            ->with('location', $id)
+            ->will($this->returnValue($cacheItem));
+
         $this->logger
             ->expects($this->once())
             ->method('notice');
