@@ -330,7 +330,6 @@ class Loader
         $this->cliHandler = null;
         $this->restHandler = null;
 
-        $this->container->set('ezpublish_legacy.kernel', null);
         $this->container->set('ezpublish_legacy.kernel.lazy', null);
         $this->container->set('ezpublish_legacy.kernel_handler.web', null);
         $this->container->set('ezpublish_legacy.kernel_handler.cli', null);
