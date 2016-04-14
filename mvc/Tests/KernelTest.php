@@ -33,7 +33,7 @@ class KernelTest extends PHPUnit_Framework_TestCase
         $iterations = 1;
         do {
             try {
-                $this->getLegacyKernel()->runCallback('');
+                $this->getLegacyKernel()->runCallback(function () {});
             }
             // this will occur on the 2nd iteration if the kernel state hasn't been correctly reset
             catch (RuntimeException $e) {
