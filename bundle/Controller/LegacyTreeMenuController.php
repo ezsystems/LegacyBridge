@@ -40,14 +40,7 @@ class LegacyTreeMenuController extends Controller
     {
         $response = new Response();
         if ($this->getParameter('treemenu.http_cache')) {
-            $request = $this->getRequest();
             $response->setMaxAge($this->getParameter('treemenu.ttl_cache'));
-            // Aggressive cache : Always return a 304 response if "If-Modified-Since" request header is present.
-            if ($request->headers->has('If-Modified-Since')) {
-                $response->setNotModified();
-
-                return $response;
-            }
         }
 
         $result = $this->treeMenuKernel->run();
