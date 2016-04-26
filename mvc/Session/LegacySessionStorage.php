@@ -84,7 +84,8 @@ class LegacySessionStorage extends NativeSessionStorage
         $success = $this->innerSessionStorage->regenerate($destroy, $lifetime);
         $newSessionId = $this->getId();
 
-        if ($success) {
+        // Callbacks cannot be called once the session is destroyed.
+        if ($success && !$destroy) {
             $kernelClosure = $this->legacyKernelClosure;
             $kernelClosure()->runCallback(
                 function () use ($oldSessionId, $newSessionId) {
