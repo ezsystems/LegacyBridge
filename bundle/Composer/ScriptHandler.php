@@ -9,7 +9,7 @@
 namespace eZ\Bundle\EzPublishLegacyBundle\Composer;
 
 use Sensio\Bundle\DistributionBundle\Composer\ScriptHandler as DistributionBundleScriptHandler;
-use Composer\Script\CommandEvent;
+use Composer\Script\Event as CommandEvent;
 
 class ScriptHandler extends DistributionBundleScriptHandler
 {
