@@ -60,6 +60,16 @@ class LegacyMapperTest extends LegacyBasedTestCase
                 ),
             ),
             array(
+                '/some%C3%BCtf/path',
+                '/someütf/path',
+                new SiteAccess('foo', 'default'),
+                array(
+                    'name' => 'foo',
+                    'type' => 1,
+                    'uri_part' => array(),
+                ),
+            ),
+            array(
                 '/env/matching',
                 '/env/matching',
                 new SiteAccess('foo', 'env'),
