@@ -117,6 +117,83 @@ class Configuration implements EventSubscriberInterface
             return;
         }
 
+        $settings = $this->getLegacySettings();
+
+        $event->getParameters()->set(
+            'injected-settings',
+            $settings + (array)$event->getParameters()->get('injected-settings')
+        );
+
+        if (class_exists('ezxFormToken')) {
+            // Inject csrf protection settings to make sure legacy & symfony stack work together
+            if (
+                $this->container->hasParameter('form.type_extension.csrf.enabled') &&
+                $this->container->getParameter('form.type_extension.csrf.enabled')
+            ) {
+                ezxFormToken::setSecret($this->container->getParameter('kernel.secret'));
+                ezxFormToken::setFormField($this->container->getParameter('form.type_extension.csrf.field_name'));
+            }
+            // csrf protection is disabled, disable it in legacy extension as well.
+            else {
+                ezxFormToken::setIsEnabled(false);
+            }
+        }
+
+        // Register http cache content/cache event listener
+        $ezpEvent = ezpEvent::getInstance();
+        $ezpEvent->attach('content/cache', array($this->gatewayCachePurger, 'purge'));
+        $ezpEvent->attach('content/cache/all', array($this->gatewayCachePurger, 'purgeAll'));
+
+        // Register persistence cache event listeners
+        $ezpEvent->attach('content/cache', array($this->persistenceCachePurger, 'content'));
+        $ezpEvent->attach('content/cache/all', array($this->persistenceCachePurger, 'all'));
+        $ezpEvent->attach('content/cache/version', array($this->persistenceCachePurger, 'contentVersion'));
+        $ezpEvent->attach('content/class/cache/all', array($this->persistenceCachePurger, 'contentType'));
+        $ezpEvent->attach('content/class/cache', array($this->persistenceCachePurger, 'contentType'));
+        $ezpEvent->attach('content/class/group/cache', array($this->persistenceCachePurger, 'contentTypeGroup'));
+        $ezpEvent->attach('content/section/cache', array($this->persistenceCachePurger, 'section'));
+        $ezpEvent->attach('user/cache/all', array($this->persistenceCachePurger, 'user'));
+        $ezpEvent->attach('content/translations/cache', array($this->persistenceCachePurger, 'languages'));
+
+        // Register image alias removal listeners
+        $ezpEvent->attach('image/removeAliases', array($this->aliasCleaner, 'removeAliases'));
+        $ezpEvent->attach('image/trashAliases', array($this->aliasCleaner, 'removeAliases'));
+        $ezpEvent->attach('image/purgeAliases', array($this->aliasCleaner, 'removeAliases'));
+    }
+
+    /**
+     * Return an array with legacy settings that must be injected.
+     *
+     * @return array
+     */
+    public function getLegacySettings()
+    {
+        $settings = array();
+
+        // Database settings
+        $settings += $this->getDatabaseSettings();
+        // Image settings
+        $settings += $this->getImageSettings();
+        // File settings
+        $settings += array(
+            'site.ini/FileSettings/VarDir' => $this->configResolver->getParameter('var_dir'),
+            'site.ini/FileSettings/StorageDir' => $this->configResolver->getParameter('storage_dir'),
+        );
+        // Multisite settings (PathPrefix and co)
+        $settings += $this->getMultiSiteSettings();
+
+        // User settings
+        $settings['site.ini/UserSettings/AnonymousUserID'] = $this->configResolver->getParameter('anonymous_user_id');
+
+        // Cache settings
+        // Enforce ViewCaching to be enabled in order to persistence/http cache to be purged correctly.
+        $settings['site.ini/ContentSettings/ViewCaching'] = 'enabled';
+
+        return $settings;
+    }
+
+    private function getDatabaseSettings()
+    {
         $databaseSettings = $this->legacyDbHandler->getConnection()->getParams();
         $settings = array();
         foreach (
@@ -163,63 +240,7 @@ class Configuration implements EventSubscriberInterface
             }
         }
 
-        // Image settings
-        $settings += $this->getImageSettings();
-        // File settings
-        $settings += array(
-            'site.ini/FileSettings/VarDir' => $this->configResolver->getParameter('var_dir'),
-            'site.ini/FileSettings/StorageDir' => $this->configResolver->getParameter('storage_dir'),
-        );
-        // Multisite settings (PathPrefix and co)
-        $settings += $this->getMultiSiteSettings();
-
-        // User settings
-        $settings['site.ini/UserSettings/AnonymousUserID'] = $this->configResolver->getParameter('anonymous_user_id');
-
-        // Cache settings
-        // Enforce ViewCaching to be enabled in order to persistence/http cache to be purged correctly.
-        $settings['site.ini/ContentSettings/ViewCaching'] = 'enabled';
-
-        $event->getParameters()->set(
-            'injected-settings',
-            $settings + (array)$event->getParameters()->get('injected-settings')
-        );
-
-        if (class_exists('ezxFormToken')) {
-            // Inject csrf protection settings to make sure legacy & symfony stack work together
-            if (
-                $this->container->hasParameter('form.type_extension.csrf.enabled') &&
-                $this->container->getParameter('form.type_extension.csrf.enabled')
-            ) {
-                ezxFormToken::setSecret($this->container->getParameter('kernel.secret'));
-                ezxFormToken::setFormField($this->container->getParameter('form.type_extension.csrf.field_name'));
-            }
-            // csrf protection is disabled, disable it in legacy extension as well.
-            else {
-                ezxFormToken::setIsEnabled(false);
-            }
-        }
-
-        // Register http cache content/cache event listener
-        $ezpEvent = ezpEvent::getInstance();
-        $ezpEvent->attach('content/cache', array($this->gatewayCachePurger, 'purge'));
-        $ezpEvent->attach('content/cache/all', array($this->gatewayCachePurger, 'purgeAll'));
-
-        // Register persistence cache event listeners
-        $ezpEvent->attach('content/cache', array($this->persistenceCachePurger, 'content'));
-        $ezpEvent->attach('content/cache/all', array($this->persistenceCachePurger, 'all'));
-        $ezpEvent->attach('content/cache/version', array($this->persistenceCachePurger, 'contentVersion'));
-        $ezpEvent->attach('content/class/cache/all', array($this->persistenceCachePurger, 'contentType'));
-        $ezpEvent->attach('content/class/cache', array($this->persistenceCachePurger, 'contentType'));
-        $ezpEvent->attach('content/class/group/cache', array($this->persistenceCachePurger, 'contentTypeGroup'));
-        $ezpEvent->attach('content/section/cache', array($this->persistenceCachePurger, 'section'));
-        $ezpEvent->attach('user/cache/all', array($this->persistenceCachePurger, 'user'));
-        $ezpEvent->attach('content/translations/cache', array($this->persistenceCachePurger, 'languages'));
-
-        // Register image alias removal listeners
-        $ezpEvent->attach('image/removeAliases', array($this->aliasCleaner, 'removeAliases'));
-        $ezpEvent->attach('image/trashAliases', array($this->aliasCleaner, 'removeAliases'));
-        $ezpEvent->attach('image/purgeAliases', array($this->aliasCleaner, 'removeAliases'));
+        return $settings;
     }
 
     private function getImageSettings()
