@@ -11,6 +11,7 @@ namespace eZ\Bundle\EzPublishLegacyBundle\LegacyResponse;
 use eZ\Bundle\EzPublishLegacyBundle\LegacyResponse;
 use eZ\Publish\Core\MVC\ConfigResolverInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Templating\EngineInterface;
@@ -44,11 +45,17 @@ class LegacyResponseManager
      */
     private $legacyMode;
 
-    public function __construct(EngineInterface $templateEngine, ConfigResolverInterface $configResolver)
+    /**
+     * @var RequestStack
+     */
+    private $requestStack;
+
+    public function __construct(EngineInterface $templateEngine, ConfigResolverInterface $configResolver, RequestStack $requestStack)
     {
         $this->templateEngine = $templateEngine;
         $this->legacyLayout = $configResolver->getParameter('module_default_layout', 'ezpublish_legacy');
         $this->legacyMode = $configResolver->getParameter('legacy_mode');
+        $this->requestStack = $requestStack;
     }
 
     /**
@@ -63,7 +70,7 @@ class LegacyResponseManager
     {
         $moduleResult = $result->getAttribute('module_result');
 
-        if (isset($this->legacyLayout) && !$this->legacyMode && !isset($moduleResult['pagelayout'])) {
+        if (isset($this->legacyLayout) && !$this->legacyMode && !$this->legacyResultHasLayout($result)) {
             // Replace original module_result content by filtered one
             $moduleResult['content'] = $result->getContent();
 
@@ -93,6 +100,20 @@ class LegacyResponseManager
         }
 
         return $response;
+    }
+
+    /**
+     * Checks if $result is already embedded in a layout.
+     * Typically checks if $moduleResult['pagelayout'] is set or if current request is using /layout/set/ route.
+     *
+     * @param ezpKernelResult $result
+     * @return bool
+     */
+    public function legacyResultHasLayout(ezpKernelResult $result)
+    {
+        return
+            isset($result->getAttribute('module_result')['pagelayout'])
+            || $this->requestStack->getMasterRequest()->attributes->get('_route') === '_ezpublishLegacyLayoutSet';
     }
 
     /**
