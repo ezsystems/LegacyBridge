@@ -26,3 +26,10 @@ _ezpublishLegacyRest:
         _controller: ezpublish_legacy.rest.controller:restAction
     requirements:
         path: .*
+
+_ezpublishLegacyLayoutSet:
+    path: /layout/set/{path}
+    defaults:
+        _controller: ezpublish_legacy.controller:indexAction
+    requirements:
+        path: .+

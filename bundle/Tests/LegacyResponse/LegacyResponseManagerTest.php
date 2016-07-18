@@ -12,6 +12,8 @@ use eZ\Bundle\EzPublishLegacyBundle\LegacyResponse\LegacyResponseManager;
 use eZ\Bundle\EzPublishLegacyBundle\LegacyResponse;
 use eZ\Publish\Core\MVC\ConfigResolverInterface;
 use PHPUnit_Framework_TestCase;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Templating\EngineInterface;
 use ezpKernelResult;
 use ezpKernelRedirect;
@@ -42,7 +44,7 @@ class LegacyResponseManagerTest extends PHPUnit_Framework_TestCase
     public function testGenerateResponseAccessDenied($errorCode, $errorMessage)
     {
         $this->setExpectedException('Symfony\Component\Security\Core\Exception\AccessDeniedException', $errorMessage);
-        $manager = new LegacyResponseManager($this->templateEngine, $this->configResolver);
+        $manager = new LegacyResponseManager($this->templateEngine, $this->configResolver, new RequestStack());
         $content = 'foobar';
         $moduleResult = array(
             'content' => $content,
@@ -63,6 +65,23 @@ class LegacyResponseManagerTest extends PHPUnit_Framework_TestCase
         );
     }
 
+    public function testLegacyResultHasLayout()
+    {
+        $requestStack = new RequestStack();
+        $requestStack->push(new Request());
+        $manager = new LegacyResponseManager($this->templateEngine, $this->configResolver, $requestStack);
+        self::assertFalse($manager->legacyResultHasLayout(new ezpKernelResult()));
+
+        $resultWithLegacyLayout = new ezpKernelResult('', ['module_result' => ['pagelayout' => 'foo.tpl']]);
+        self::assertTrue($manager->legacyResultHasLayout($resultWithLegacyLayout));
+
+        $request = new Request();
+        $request->attributes->set('_route', '_ezpublishLegacyLayoutSet');
+        $requestStack->pop();
+        $requestStack->push($request);
+        self::assertTrue($manager->legacyResultHasLayout($resultWithLegacyLayout));
+    }
+
     /**
      * Tests response generation when no custom layout can be applied:
      *  - Custom layout provided, but in legacy mode
@@ -72,10 +91,11 @@ class LegacyResponseManagerTest extends PHPUnit_Framework_TestCase
      * @param string|null $customLayout Custom Twig layout being used, or null if none.
      * @param bool $legacyMode Whether legacy mode is active or not.
      * @param bool $moduleResultLayout Whether if module_result from legacy contains a "pagelayout" entry.
+     * @param bool $isLayoutSetModule Whether current request is using /layout/set/ route.
      *
      * @dataProvider generateResponseNoCustomLayoutProvider
      */
-    public function testGenerateResponseNoCustomLayout($customLayout, $legacyMode, $moduleResultLayout)
+    public function testGenerateResponseNoCustomLayout($customLayout, $legacyMode, $moduleResultLayout, $isLayoutSetModule)
     {
         $this->configResolver
             ->expects($this->any())
@@ -92,7 +112,14 @@ class LegacyResponseManagerTest extends PHPUnit_Framework_TestCase
             ->expects($this->never())
             ->method('render');
 
-        $manager = new LegacyResponseManager($this->templateEngine, $this->configResolver);
+        $requestStack = new RequestStack();
+        $request = new Request();
+        if ($isLayoutSetModule) {
+            $request->attributes->set('_route', '_ezpublishLegacyLayoutSet');
+        }
+        $requestStack->push($request);
+
+        $manager = new LegacyResponseManager($this->templateEngine, $this->configResolver, $requestStack);
         $content = 'foobar';
         $moduleResult = array(
             'content' => $content,
@@ -113,11 +140,12 @@ class LegacyResponseManagerTest extends PHPUnit_Framework_TestCase
     public function generateResponseNoCustomLayoutProvider()
     {
         return array(
-            array(null, false, false),
-            array('foo.html.twig', true, false),
-            array('foo.html.twig', false, true),
-            array(null, false, true),
-            array(null, true, true),
+            array(null, false, false, false),
+            array('foo.html.twig', true, false, false),
+            array('foo.html.twig', false, true, false),
+            array(null, false, true, false),
+            array(null, true, true, false),
+            array(null, false, false, false, true),
         );
     }
 
@@ -149,7 +177,9 @@ class LegacyResponseManagerTest extends PHPUnit_Framework_TestCase
             ->with($customLayout, array('module_result' => $moduleResult))
             ->will($this->returnValue($contentWithLayout));
 
-        $manager = new LegacyResponseManager($this->templateEngine, $this->configResolver);
+        $requestStack = new RequestStack();
+        $requestStack->push(new Request());
+        $manager = new LegacyResponseManager($this->templateEngine, $this->configResolver, $requestStack);
 
         $kernelResult = new ezpKernelResult($content, array('module_result' => $moduleResult));
 
@@ -179,7 +209,7 @@ class LegacyResponseManagerTest extends PHPUnit_Framework_TestCase
     public function testGenerateRedirectResponse($uri, $redirectStatus, $expectedStatusCode, $content)
     {
         $kernelRedirect = new ezpKernelRedirect($uri, $redirectStatus, $content);
-        $manager = new LegacyResponseManager($this->templateEngine, $this->configResolver);
+        $manager = new LegacyResponseManager($this->templateEngine, $this->configResolver, new RequestStack());
         $response = $manager->generateRedirectResponse($kernelRedirect);
         $uriInContent = htmlspecialchars($uri);
         $expectedContent = <<<EOT
@@ -222,7 +252,7 @@ EOT;
 
         // Partially mock the manager to simulate calls to header_remove()
         $manager = $this->getMockBuilder('eZ\Bundle\EzPublishLegacyBundle\LegacyResponse\LegacyResponseManager')
-            ->setConstructorArgs(array($this->templateEngine, $this->configResolver))
+            ->setConstructorArgs(array($this->templateEngine, $this->configResolver, new RequestStack()))
             ->setMethods(array('removeHeader'))
             ->getMock();
         $manager

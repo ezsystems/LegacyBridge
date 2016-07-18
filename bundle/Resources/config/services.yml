@@ -123,7 +123,7 @@ services:
 
     ezpublish_legacy.response_manager:
         class: %ezpublish_legacy.response_manager.class%
-        arguments: ["@templating", "@ezpublish.config.resolver"]
+        arguments: ["@templating", "@ezpublish.config.resolver", "@request_stack"]
 
     ezpublish_legacy.controller:
         class: %ezpublish_legacy.controller.class%
