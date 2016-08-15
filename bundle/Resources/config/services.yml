@@ -263,7 +263,7 @@ services:
 
     ezpublish_legacy.switchable_http_cache_purger:
         class: %ezpublish_legacy.switchable_http_cache_purger.class%
-        arguments: ["@ezpublish.http_cache.purger"]
+        arguments: ["@ezpublish.http_cache.purger", "@ezpublish.api.service.location"]
 
     ezpublish_legacy.content_exception_handler:
         class: %ezpublish_legacy.content_exception_handler.class%

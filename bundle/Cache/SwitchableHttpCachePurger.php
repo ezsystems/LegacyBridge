@@ -8,6 +8,7 @@
 namespace eZ\Bundle\EzPublishLegacyBundle\Cache;
 
 use eZ\Publish\Core\MVC\Symfony\Cache\GatewayCachePurger;
+use eZ\Publish\API\Repository\LocationService;
 
 /**
  * A GatewayCachePurger decorator that allows the actual purger to be switched on/off.
@@ -19,9 +20,13 @@ class SwitchableHttpCachePurger implements GatewayCachePurger
     /** @var \eZ\Publish\Core\MVC\Symfony\Cache\GatewayCachePurger */
     private $gatewayCachePurger;
 
-    public function __construct(GatewayCachePurger $gatewayCachePurger)
+    /** @var \eZ\Publish\API\Repository\LocationService */
+    private $locationService;
+
+    public function __construct(GatewayCachePurger $gatewayCachePurger, LocationService $locationService)
     {
         $this->gatewayCachePurger = $gatewayCachePurger;
+        $this->locationService = $locationService;
     }
 
     public function purge($cacheElements)
@@ -30,7 +35,14 @@ class SwitchableHttpCachePurger implements GatewayCachePurger
             return $cacheElements;
         }
 
-        return $this->gatewayCachePurger->purge($cacheElements);
+        foreach ($cacheElements as $locationId) {
+            $location = $this->locationService->loadLocation($locationId);
+            if ($locationId != 1) {
+                $this->purgeForContent($location->contentId);
+            }
+        }
+
+        return $cacheElements;
     }
 
     public function purgeAll()
