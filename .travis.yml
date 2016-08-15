@@ -15,8 +15,6 @@ branches:
 
 # setup requirements for running unit tests
 before_script:
-  # Get latests version of composer which is faster (and to attempt to avoid memory issues with legacy package)
-  - travis_retry composer self-update
   # Disable xdebug to speed things up as we don't currently generate coverge on travis
   - if [ $TRAVIS_PHP_VERSION != "hhvm" ]; then phpenv config-rm xdebug.ini ; fi
   # Avoid issues on composer install since we pull in both legacy and platform stack
@@ -29,7 +27,7 @@ before_script:
   - cp config.php-DEVELOPMENT config.php
 
 # execute phpunit as the script command
-script: "./bin/phpunit -d date.timezone='America/New_York' -d memory_limit=-1"
+script: "php -d date.timezone='America/New_York' -d memory_limit=-1 bin/phpunit"
 
 # disable mail notifications
 notifications:
