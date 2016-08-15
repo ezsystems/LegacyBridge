@@ -15,6 +15,22 @@ use eZ\Publish\Core\MVC\Legacy\Event\PreBuildKernelWebHandlerEvent;
 
 class LegacyMapperTest extends LegacyBasedTestCase
 {
+    private $systemErrorLevel;
+
+    protected function setUp()
+    {
+        parent::setUp();
+
+        // Silence E_DEPRECATED to avoid issues with notices from legacy in regards to constructors
+        $this->systemErrorLevel = error_reporting(E_ALL & ~E_DEPRECATED);
+    }
+
+    protected function tearDown()
+    {
+        error_reporting($this->systemErrorLevel);
+        parent::tearDown();
+    }
+
     /**
      * @dataProvider siteAccessMatchProvider
      */
