@@ -8,6 +8,10 @@ php:
   - 5.6
   - 7.0
 
+cache:
+  directories:
+    - $HOME/.composer/cache/files
+
 # test only master (+ Pull requests)
 branches:
   only:
