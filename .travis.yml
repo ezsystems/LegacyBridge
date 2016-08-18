@@ -6,6 +6,11 @@ php:
   - 5.4
   - 5.5
   - 5.6
+  - 7.0
+
+cache:
+  directories:
+    - $HOME/.composer/cache/files
 
 # test only master (+ Pull requests)
 branches:
@@ -14,24 +19,22 @@ branches:
 
 # setup requirements for running unit tests
 before_script:
-  # Get latests version of composer which is faster (and to attempt to avoid memory issues with legacy package)
-  - composer self-update
   # Disable xdebug to speed things up as we don't currently generate coverge on travis
   - if [ $TRAVIS_PHP_VERSION != "hhvm" ]; then phpenv config-rm xdebug.ini ; fi
   # Avoid issues on composer install since we pull in both legacy and platform stack
   - echo "memory_limit=-1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
-  # Setup github key to avoid api rate limit
-  - ./composer_install_github_key.sh
+  # Setup github key to avoid api rate limit (pure auth read only key, no rights, for use in ezsystems repos only)
+  - composer config -g github-oauth.github.com "d0285ed5c8644f30547572ead2ed897431c1fc09"
   # Install packages using composer
-  - composer install --dev --prefer-dist
+  - travis_retry composer install --dev --prefer-dist
   # Copy default test configuration
   - cp config.php-DEVELOPMENT config.php
 
 # execute phpunit as the script command
-script: "./bin/phpunit -d date.timezone='America/New_York' -d memory_limit=-1"
+script: "php -d date.timezone='America/New_York' -d memory_limit=-1 bin/phpunit"
 
 # disable mail notifications
-notification:
+notifications:
   email: false
 
 # reduce depth (history) of git checkout

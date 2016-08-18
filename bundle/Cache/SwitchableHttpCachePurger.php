@@ -24,13 +24,13 @@ class SwitchableHttpCachePurger implements GatewayCachePurger
         $this->gatewayCachePurger = $gatewayCachePurger;
     }
 
-    public function purge($cacheElements)
+    public function purge($locationIds)
     {
         if ($this->isSwitchedOff()) {
-            return $cacheElements;
+            return $locationIds;
         }
 
-        return $this->gatewayCachePurger->purge($cacheElements);
+        return $this->gatewayCachePurger->purge($locationIds);
     }
 
     public function purgeAll()
@@ -42,12 +42,12 @@ class SwitchableHttpCachePurger implements GatewayCachePurger
         $this->gatewayCachePurger->purgeAll();
     }
 
-    public function purgeForContent($contentId)
+    public function purgeForContent($contentId, $locationIds = array())
     {
         if ($this->isSwitchedOff()) {
             return;
         }
 
-        $this->gatewayCachePurger->purgeForContent($contentId);
+        $this->gatewayCachePurger->purgeForContent($contentId, $locationIds);
     }
 }

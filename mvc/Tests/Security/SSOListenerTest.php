@@ -83,7 +83,8 @@ class SSOListenerTest extends PHPUnit_Framework_TestCase
 
         $userId = 123;
         $passwordHash = md5('password');
-        $legacyUser = new eZUser(array('contentobject_id' => $userId));
+        // Specifically silence E_DEPRECATED on constructor name for php7
+        $legacyUser = @new eZUser(array('contentobject_id' => $userId));
         $apiUser = $this
             ->getMockBuilder('eZ\Publish\API\Repository\Values\User\User')
             ->setConstructorArgs(array(array('passwordHash' => $passwordHash)))
