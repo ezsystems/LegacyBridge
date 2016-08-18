@@ -12,6 +12,7 @@
     "require": {
         "ezsystems/ezpublish-legacy": ">=2014.11",
         "ezsystems/ezpublish-kernel": "~6.0@dev",
+        "sensio/distribution-bundle": "^3.0|^4.0",
         "twig/twig": "^1.23 | ^2.0"
     },
     "require-dev": {
