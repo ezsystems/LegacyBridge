@@ -248,6 +248,20 @@ class PersistenceCachePurger implements CacheClearerInterface
     }
 
     /**
+     * Clear object state assignment persistence cache by content id.
+     *
+     * @param int $contentId
+     */
+    public function stateAssign($contentId)
+    {
+        if ($this->allCleared === true || $this->enabled === false) {
+            return;
+        }
+
+        $this->cache->clear('objectstate', 'byContent', $contentId);
+    }
+
+    /**
      * Clear all user persistence cache.
      *
      * @param int|null $id Purges all users cache if null
