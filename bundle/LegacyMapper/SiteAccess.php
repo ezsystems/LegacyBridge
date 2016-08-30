@@ -85,7 +85,21 @@ class SiteAccess implements EventSubscriberInterface
         if ($pathinfo != $semanticPathinfo) {
             $aPathinfo = explode('/', substr($pathinfo, 1));
             $aSemanticPathinfo = explode('/', substr($semanticPathinfo, 1));
-            $uriPart = array_diff($aPathinfo, $aSemanticPathinfo, $this->getFragmentPathItems());
+            $aFragmentPathInfo = $this->getFragmentPathItems();
+            if ($aFragmentPathInfo !== ['_fragment']) {
+                while (count($aFragmentPathInfo) > 0 &&
+                       end($aPathinfo) === end($aFragmentPathInfo)) {
+                    array_pop($aPathinfo);
+                    array_pop($aFragmentPathInfo);
+                }
+            } else {
+                while (count($aSemanticPathinfo) > 0 &&
+                       end($aPathinfo) === end($aSemanticPathinfo)) {
+                    array_pop($aPathinfo);
+                    array_pop($aSemanticPathinfo);
+                }
+            }
+            $uriPart = $aPathinfo;
         }
 
         // Handle host_uri match
