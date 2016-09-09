@@ -81,25 +81,16 @@ class SiteAccess implements EventSubscriberInterface
 
         // uri_part
         $pathinfo = str_replace($request->attributes->get('viewParametersString'), '', rawurldecode($request->getPathInfo()));
-        $semanticPathinfo = $request->attributes->get('semanticPathinfo', $pathinfo);
-        if ($pathinfo != $semanticPathinfo) {
-            $aPathinfo = explode('/', substr($pathinfo, 1));
-            $aSemanticPathinfo = explode('/', substr($semanticPathinfo, 1));
-            $aFragmentPathInfo = $this->getFragmentPathItems();
-            if ($aFragmentPathInfo !== ['_fragment']) {
-                while (count($aFragmentPathInfo) > 0 &&
-                       end($aPathinfo) === end($aFragmentPathInfo)) {
-                    array_pop($aPathinfo);
-                    array_pop($aFragmentPathInfo);
-                }
-            } else {
-                while (count($aSemanticPathinfo) > 0 &&
-                       end($aPathinfo) === end($aSemanticPathinfo)) {
-                    array_pop($aPathinfo);
-                    array_pop($aSemanticPathinfo);
-                }
-            }
-            $uriPart = $aPathinfo;
+        $fragmentPathInfo = implode('/', $this->getFragmentPathItems());
+        if ($fragmentPathInfo !== '_fragment') {
+            $semanticPathinfo = $fragmentPathInfo;
+        } else {
+            $semanticPathinfo = $request->attributes->get('semanticPathinfo', $pathinfo);
+        }
+        $pos = mb_strrpos($pathinfo, $semanticPathinfo);
+        if ($pathinfo != $semanticPathinfo && $pos !== false) {
+            $uriPart = mb_substr($pathinfo, 1, $pos - 1);
+            $uriPart = explode('/', $uriPart);
         }
 
         // Handle host_uri match

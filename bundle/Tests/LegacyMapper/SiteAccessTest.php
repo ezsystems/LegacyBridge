@@ -20,13 +20,25 @@ class SiteAccessTest extends PHPUnit_Framework_TestCase
      */
     private $request;
 
+    private $systemErrorLevel;
+
     protected function setUp()
     {
         parent::setUp();
+
+        // Silence E_DEPRECATED to avoid issues with notices from legacy in regards to constructors
+        $this->systemErrorLevel = error_reporting(E_ALL & ~E_DEPRECATED);
+
         $this->request = $this
             ->getMockBuilder('Symfony\Component\HttpFoundation\Request')
             ->setMethods(['getPathInfo'])
             ->getMock();
+    }
+
+    protected function tearDown()
+    {
+        error_reporting($this->systemErrorLevel);
+        parent::tearDown();
     }
 
     public function buildKernelProvider()
@@ -49,6 +61,30 @@ class SiteAccessTest extends PHPUnit_Framework_TestCase
                 '/Media/Images/EZP-26181',
                 '/Ädmin/Media/Images/EZP-26181',
                 ['Ädmin'],
+            ],
+            [
+                '',
+                '/Admin/Media',
+                '/Admin/Media/Admin/Media',
+                ['Admin', 'Media'],
+            ],
+            [
+                '',
+                '/Admin/Media/Admin/Media',
+                '/Admin/Media/Admin/Media/Admin/Media',
+                ['Admin', 'Media'],
+            ],
+            [
+                '',
+                '/A/B',
+                '/A/B/A/B',
+                ['A', 'B'],
+            ],
+            [
+                '',
+                '/A/B/A/B',
+                '/A/B/A/B',
+                [],
             ],
         ];
     }
