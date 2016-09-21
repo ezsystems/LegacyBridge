@@ -81,11 +81,16 @@ class SiteAccess implements EventSubscriberInterface
 
         // uri_part
         $pathinfo = str_replace($request->attributes->get('viewParametersString'), '', rawurldecode($request->getPathInfo()));
-        $semanticPathinfo = $request->attributes->get('semanticPathinfo', $pathinfo);
-        if ($pathinfo != $semanticPathinfo) {
-            $aPathinfo = explode('/', substr($pathinfo, 1));
-            $aSemanticPathinfo = explode('/', substr($semanticPathinfo, 1));
-            $uriPart = array_diff($aPathinfo, $aSemanticPathinfo, $this->getFragmentPathItems());
+        $fragmentPathInfo = implode('/', $this->getFragmentPathItems());
+        if ($fragmentPathInfo !== '_fragment') {
+            $semanticPathinfo = $fragmentPathInfo;
+        } else {
+            $semanticPathinfo = $request->attributes->get('semanticPathinfo', $pathinfo);
+        }
+        $pos = mb_strrpos($pathinfo, $semanticPathinfo);
+        if ($pathinfo != $semanticPathinfo && $pos !== false) {
+            $uriPart = mb_substr($pathinfo, 1, $pos - 1);
+            $uriPart = explode('/', $uriPart);
         }
 
         // Handle host_uri match
