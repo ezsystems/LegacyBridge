@@ -66,6 +66,14 @@ class Template extends Twig_Template
     /**
      * {@inheritdoc}
      */
+    public function getDebugInfo()
+    {
+        return array();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     protected function doDisplay(array $context, array $blocks = array())
     {
     }
