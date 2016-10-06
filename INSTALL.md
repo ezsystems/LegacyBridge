@@ -101,6 +101,42 @@ define( 'EZP_APP_FOLDER_NAME', 'app' );
 
 If you're using master branch of eZ Publish Legacy, you can skip this step.
 
+### Configure virtual host rewrite rules
+
+To access legacy assests (eZ Publish designs and extension designs), add the following rewrite rules to your Apache virtual host:
+
+```
+# If using cluster, uncomment the following two lines:
+#RewriteRule ^/var/([^/]+/)?storage/images(-versioned)?/.* /index.php [L]
+#RewriteRule ^/var/([^/]+/)?cache/(texttoimage|public)/.* /index_cluster.php [L]
+
+RewriteRule ^/var/([^/]+/)?storage/images(-versioned)?/.* - [L]
+RewriteRule ^/var/([^/]+/)?cache/(texttoimage|public)/.* - [L]
+RewriteRule ^/design/[^/]+/(stylesheets|images|javascript|fonts)/.* - [L]
+RewriteRule ^/share/icons/.* - [L]
+RewriteRule ^/extension/[^/]+/design/[^/]+/(stylesheets|flash|images|lib|javascripts?)/.* - [L]
+RewriteRule ^/packages/styles/.+/(stylesheets|images|javascript)/[^/]+/.* - [L]
+RewriteRule ^/packages/styles/.+/thumbnail/.* - [L]
+RewriteRule ^/var/storage/packages/.* - [L]
+```
+
+Or if using nginx:
+
+```
+# If using cluster, uncomment the following two lines:
+#rewrite "^/var/([^/]+/)?storage/images(-versioned)?/(.*)" "/index.php" break;
+#rewrite "^/var/([^/]+/)?cache/(texttoimage|public)/(.*)" "/index_cluster.php" break;
+
+rewrite "^/var/([^/]+/)?storage/images(-versioned)?/(.*)" "/var/$1storage/images$2/$3" break;
+rewrite "^/var/([^/]+/)?cache/(texttoimage|public)/(.*)" "/var/$1cache/$2/$3" break;
+rewrite "^/design/([^/]+)/(stylesheets|images|javascript|fonts)/(.*)" "/design/$1/$2/$3" break;
+rewrite "^/share/icons/(.*)" "/share/icons/$1" break;
+rewrite "^/extension/([^/]+)/design/([^/]+)/(stylesheets|flash|images|lib|javascripts?)/(.*)" "/extension/$1/design/$2/$3/$4" break;
+rewrite "^/packages/styles/(.+)/(stylesheets|images|javascript)/([^/]+)/(.*)" "/packages/styles/$1/$2/$3/$4" break;
+rewrite "^/packages/styles/(.+)/thumbnail/(.*)" "/packages/styles/$1/thumbnail/$2" break;
+rewrite "^/var/storage/packages/(.*)" "/var/storage/packages/$1" break;
+```
+
 ### Setup Folder Permissions
 
 Last step, if you are on *nix operation system, is to make sure to run 
