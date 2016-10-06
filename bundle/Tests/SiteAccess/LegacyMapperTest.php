@@ -148,6 +148,26 @@ class LegacyMapperTest extends LegacyBasedTestCase
                 ),
             ),
             array(
+                '/foo/',
+                '/',
+                new SiteAccess('foo', 'uri:map'),
+                array(
+                    'name' => 'foo',
+                    'type' => 2,
+                    'uri_part' => array('foo'),
+                ),
+            ),
+            array(
+                '/foo',
+                '/',
+                new SiteAccess('foo', 'uri:map'),
+                array(
+                    'name' => 'foo',
+                    'type' => 2,
+                    'uri_part' => array('foo'),
+                ),
+            ),
+            array(
                 '/urielement/matching',
                 '/urielement/matching',
                 new SiteAccess('foo', 'uri:element'),
@@ -175,6 +195,26 @@ class LegacyMapperTest extends LegacyBasedTestCase
                     'name' => 'foo',
                     'type' => 2,
                     'uri_part' => array('foo', 'bar', 'baz'),
+                ),
+            ),
+            array(
+                '/foo/',
+                '/',
+                new SiteAccess('foo', 'uri:element'),
+                array(
+                    'name' => 'foo',
+                    'type' => 2,
+                    'uri_part' => array('foo'),
+                ),
+            ),
+            array(
+                '/foo',
+                '/',
+                new SiteAccess('foo', 'uri:element'),
+                array(
+                    'name' => 'foo',
+                    'type' => 2,
+                    'uri_part' => array('foo'),
                 ),
             ),
             array(
