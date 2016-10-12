@@ -34,9 +34,11 @@ class LegacyIncludeNode extends Twig_Node
 
     public function compile(Twig_Compiler $compiler)
     {
+        $legacyExtensionClass = 'eZ\Publish\Core\MVC\Legacy\Templating\Twig\Extension\LegacyExtension';
+
         $compiler
             ->addDebugInfo($this)
-            ->write("echo \$this->env->getExtension( 'ezpublish.legacy' )->renderTemplate( ")
+            ->write("echo \$this->env->getExtension( '" . $legacyExtensionClass . "' )->renderTemplate( ")
             ->subcompile($this->getNode('tplPath'))
             ->raw(', ')
             ->subcompile($this->getNode('params'))

@@ -84,7 +84,7 @@ class LegacyExtension extends Twig_Extension implements Twig_Extension_InitRunti
      */
     public function getName()
     {
-        return 'ezpublish.legacy';
+        return get_class($this);
     }
 
     /**
