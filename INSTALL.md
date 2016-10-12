@@ -83,7 +83,7 @@ Edit `composer.json`, and add `"ezpublish-legacy-dir": "ezpublish_legacy"` to th
 
 `ezsystems/legacy-bridge` contains the libraries previous included in `ezsystems/ezpublish-kernel`.
 
-It must be installed using Composer. Take care to use `^1.0.4` as version constraint, since previous versions lack some important fixes for newer versions of eZ Platform. Also, Sensio Distribution Bundle needs to downgrated from current version to versions 3.0.36 and newer, or 4.0.6 and newer:
+It must be installed using Composer. Take care to use `^1.0.4` as version constraint, since previous versions lack some important fixes for newer versions of eZ Platform. Also, Sensio Distribution Bundle needs to be downgraded from current version to versions 3.0.36 and newer or 4.0.6 and newer:
 
 ```
 composer require --update-no-dev "ezsystems/legacy-bridge:^1.0.4" "sensio/distribution-bundle:^3.0.36|^4.0.6"
