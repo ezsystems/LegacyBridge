@@ -89,6 +89,18 @@ It must be installed using Composer. Take care to use `^1.0.4` as version constr
 composer require --update-no-dev "ezsystems/legacy-bridge:^1.0.4" "sensio/distribution-bundle:^3.0.36|^4.0.6"
 ```
 
+### Configuring Symfony app folder in legacy
+
+In eZ Publish 5, Symfony app folder was named `ezpublish`. This was changed in eZ Platform, and now the folder name is `app`, which is Symfony recommended name. eZ Publish Legacy supports both of these folder names, however, `ezpublish` is still the default one in latest tagged release (v2015.01.3). This means that you need to make eZ Publish Legacy aware of the new folder name. You can do this by using `config.php` file which you can place in `ezpublish_legacy` folder with the following content:
+
+```php
+<?php
+
+define( 'EZP_APP_FOLDER_NAME', 'app' );
+```
+
+If you're using master branch of eZ Publish Legacy, you can skip this step.
+
 ### Setup Folder Permissions
 
 Last step, if you are on *nix operation system, is to make sure to run 
