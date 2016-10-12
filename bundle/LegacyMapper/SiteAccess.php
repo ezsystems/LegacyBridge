@@ -89,6 +89,9 @@ class SiteAccess implements EventSubscriberInterface
         }
         $pos = mb_strrpos($pathinfo, $semanticPathinfo);
         if ($pathinfo != $semanticPathinfo && $pos !== false) {
+            if ($pos === 0) {
+                $pos = mb_strlen($pathinfo) + 1;
+            }
             $uriPart = mb_substr($pathinfo, 1, $pos - 1);
             $uriPart = explode('/', $uriPart);
         }
