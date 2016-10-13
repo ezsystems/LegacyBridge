@@ -26,7 +26,8 @@ parameters:
     ezpublish_legacy.website_toolbar.controller.class: eZ\Bundle\EzPublishLegacyBundle\Controller\WebsiteToolbarController
 
     ezpublish_legacy.kernel_handler.cli.class: eZ\Publish\Core\MVC\Legacy\Kernel\CLIHandler
-    ezpublish_legacy.kernel_handler.cli.options: {}
+    ezpublish_legacy.kernel_handler.cli.options:
+        use-modules: true
 
     # See ezpublish_legacy.webconfigurator
     ezpublish_legacy.webconfigurator.factory.class: eZ\Bundle\EzPublishLegacyBundle\SetupWizard\ConfiguratorFactory
