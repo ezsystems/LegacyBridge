@@ -99,7 +99,7 @@ class LegacySetupController extends ContainerAware
                                 'setup.ini' => array(
                                     // checked folders are relative to the ezpublish_legacy folder
                                     'directory_permissions' => array(
-                                        'CheckList' => '../ezpublish/logs;../ezpublish/cache;../ezpublish/config;' .
+                                        'CheckList' => '../app/logs;../app/cache;../app/config;' .
                                         eZINI::instance('setup.ini')->variable('directory_permissions', 'CheckList'),
                                     ),
                                 ),
