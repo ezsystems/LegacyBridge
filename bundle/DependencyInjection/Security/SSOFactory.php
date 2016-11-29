@@ -25,6 +25,7 @@ class SSOFactory extends AbstractFactory
         $container
             ->setDefinition($providerId, new DefinitionDecorator($preAuthProviderId))
             ->replaceArgument(0, new Reference($userProviderId))
+            ->replaceArgument(1, new Reference('security.user_checker.'.$id))
             ->addArgument($id);
 
         return $providerId;
