@@ -10,6 +10,7 @@ namespace eZ\Publish\Core\MVC\Legacy\Templating\Twig;
 
 use Twig_LoaderInterface;
 use Twig_ExistsLoaderInterface;
+use Twig_Source;
 
 /**
  * This loader is supposed to directly load templates as a string, not from FS.
@@ -24,6 +25,14 @@ class LoaderString implements Twig_LoaderInterface, Twig_ExistsLoaderInterface
     public function getSource($name)
     {
         return $name;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSourceContext($name)
+    {
+        return new Twig_Source($name, $name);
     }
 
     /**
