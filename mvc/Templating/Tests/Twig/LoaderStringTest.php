@@ -10,6 +10,7 @@ namespace eZ\Publish\Core\MVC\Legacy\Templating\Tests\Twig;
 
 use eZ\Publish\Core\MVC\Legacy\Templating\Twig\LoaderString;
 use PHPUnit_Framework_TestCase;
+use Twig_Source;
 
 class LoaderStringTest extends PHPUnit_Framework_TestCase
 {
@@ -17,6 +18,12 @@ class LoaderStringTest extends PHPUnit_Framework_TestCase
     {
         $loaderString = new LoaderString();
         $this->assertSame('foo', $loaderString->getSource('foo'));
+    }
+
+    public function testGetSourceContext()
+    {
+        $loaderString = new LoaderString();
+        $this->assertEquals(new Twig_Source('foo', 'foo'), $loaderString->getSourceContext('foo'));
     }
 
     public function testGetCacheKey()
