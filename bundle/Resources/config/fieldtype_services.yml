@@ -4,7 +4,7 @@ parameters:
 
 services:
     ezpublish_legacy.image_alias.cleaner:
-        class: %ezpublish_legacy.image_alias.cleaner.class%
+        class: "%ezpublish_legacy.image_alias.cleaner.class%"
         arguments:
             - "@ezpublish.image_alias.imagine.alias_cleaner"
             - "@ezpublish.core.io.image_fieldtype.legacy_url_redecorator"

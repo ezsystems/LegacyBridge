@@ -5,18 +5,18 @@ parameters:
 
 services:
     ezpublish_legacy.security.login_cleanup_listener:
-        class: %ezpublish_legacy.security.login_cleanup_listener.class%
+        class: "%ezpublish_legacy.security.login_cleanup_listener.class%"
         tags:
             - { name: kernel.event_subscriber }
 
     ezpublish_legacy.security_mapper:
-        class: %ezpublish_legacy.security_mapper.class%
+        class: "%ezpublish_legacy.security_mapper.class%"
         arguments: ["@ezpublish.api.repository", "@ezpublish.config.resolver", "@security.token_storage", "@security.authorization_checker"]
         tags:
             - { name: kernel.event_subscriber }
 
     ezpublish_legacy.security.sso_firewall_listener:
-        class: %ezpublish_legacy.security.sso_firewall_listener.class%
+        class: "%ezpublish_legacy.security.sso_firewall_listener.class%"
         abstract: true
         arguments:
             - "@security.token_storage"
