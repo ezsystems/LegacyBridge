@@ -3,7 +3,7 @@ parameters:
 
 services:
     ezpublish_legacy.debug.templates_collector:
-        class: %ezpublish_legacy.debug.templates_collector.class%
+        class: "%ezpublish_legacy.debug.templates_collector.class%"
         arguments: ["@ezpublish_legacy.kernel"]
         tags:
             -
