@@ -12,6 +12,7 @@ use eZ\Publish\API\Repository\Values\Content\Content as APIContent;
 use eZ\Publish\Core\MVC\Legacy\Templating\LegacyHelper;
 use eZ\Publish\Core\MVC\Legacy\View\Provider;
 use eZ\Publish\Core\MVC\Symfony\RequestStackAware;
+use eZ\Publish\Core\MVC\Symfony\View\LocationValueView;
 use eZ\Publish\Core\MVC\Symfony\View\View;
 use eZ\Publish\Core\MVC\Symfony\View\ViewProvider;
 use eZ\Publish\API\Repository\Values\Content\Location as APILocation;
@@ -33,7 +34,7 @@ class Location extends Provider implements ViewProvider
      */
     public function getView(View $view)
     {
-        if (!$view instanceof ContentView || !$view->getLocation() instanceof APILocation) {
+        if (!$view instanceof LocationValueView || !$view->getLocation() instanceof APILocation) {
             return null;
         }
 
