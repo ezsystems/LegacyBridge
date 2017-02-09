@@ -115,55 +115,6 @@ new folder name. You can do this by editing `config.php` and uncommenting:
 define( 'EZP_APP_FOLDER_NAME', 'app' );
 ```
 
-#### Finalize the installation (as we did --no-scripts before)
-
-```bash
-composer install
-```
-
-#### Configure virtual host rewrite rules
-
-To access legacy assests (eZ Publish designs and extension designs), add the following rewrite rules to your Apache virtual host:
-
-```
-# If using cluster, uncomment the following two lines:
-#RewriteRule ^/var/([^/]+/)?storage/images(-versioned)?/.* /index.php [L]
-#RewriteRule ^/var/([^/]+/)?cache/(texttoimage|public)/.* /index_cluster.php [L]
-
-RewriteRule ^/var/([^/]+/)?cache/(texttoimage|public)/.* - [L]
-RewriteRule ^/design/[^/]+/(stylesheets|images|javascript|fonts)/.* - [L]
-RewriteRule ^/share/icons/.* - [L]
-RewriteRule ^/extension/[^/]+/design/[^/]+/(stylesheets|flash|images|lib|javascripts?)/.* - [L]
-RewriteRule ^/packages/styles/.+/(stylesheets|images|javascript)/[^/]+/.* - [L]
-RewriteRule ^/packages/styles/.+/thumbnail/.* - [L]
-RewriteRule ^/var/storage/packages/.* - [L]
-```
-
-> Please refer to doc/nginx for more information (complete vhost without these rules you need)
-
-Or if using nginx:
-
-```
-# If using cluster, uncomment the following two lines:
-#rewrite "^/var/([^/]+/)?storage/images(-versioned)?/(.*)" "/index.php" break;
-#rewrite "^/var/([^/]+/)?cache/(texttoimage|public)/(.*)" "/index_cluster.php" break;
-
-rewrite "^/var/([^/]+/)?cache/(texttoimage|public)/(.*)" "/var/$1cache/$2/$3" break;
-rewrite "^/design/([^/]+)/(stylesheets|images|javascript|fonts)/(.*)" "/design/$1/$2/$3" break;
-rewrite "^/share/icons/(.*)" "/share/icons/$1" break;
-rewrite "^/extension/([^/]+)/design/([^/]+)/(stylesheets|flash|images|lib|javascripts?)/(.*)" "/extension/$1/design/$2/$3/$4" break;
-rewrite "^/packages/styles/(.+)/(stylesheets|images|javascript)/([^/]+)/(.*)" "/packages/styles/$1/$2/$3/$4" break;
-rewrite "^/packages/styles/(.+)/thumbnail/(.*)" "/packages/styles/$1/thumbnail/$2" break;
-rewrite "^/var/storage/packages/(.*)" "/var/storage/packages/$1" break;
-```
-
-> Please refer to doc/nginx for more information (complete vhost without these rules you need)
-
-
-!! Restart your webserver !!
-
-> Yes, don't forget ;-)
-
 #### Configure you administration siteaccess.
 
 The Legacy Backoffice requires the `legacy_mode` option to be enabled.
@@ -210,6 +161,53 @@ We are providing a template:
 cp -r vendor/ezsystems/legacy-bridge/settings_template/* src/Acme/Bundle/LegacyBundle/legacy_settings
 ```
 
+#### Finalize the installation (as we did --no-scripts before)
+
+```bash
+composer install
+```
+
+#### Configure virtual host rewrite rules
+
+To access legacy assests (eZ Publish designs and extension designs), add the following rewrite rules to your Apache virtual host:
+
+```
+# If using cluster, uncomment the following two lines:
+#RewriteRule ^/var/([^/]+/)?storage/images(-versioned)?/.* /index.php [L]
+#RewriteRule ^/var/([^/]+/)?cache/(texttoimage|public)/.* /index_cluster.php [L]
+
+RewriteRule ^/var/([^/]+/)?cache/(texttoimage|public)/.* - [L]
+RewriteRule ^/design/[^/]+/(stylesheets|images|javascript|fonts)/.* - [L]
+RewriteRule ^/share/icons/.* - [L]
+RewriteRule ^/extension/[^/]+/design/[^/]+/(stylesheets|flash|images|lib|javascripts?)/.* - [L]
+RewriteRule ^/packages/styles/.+/(stylesheets|images|javascript)/[^/]+/.* - [L]
+RewriteRule ^/packages/styles/.+/thumbnail/.* - [L]
+RewriteRule ^/var/storage/packages/.* - [L]
+```
+
+> Please refer to doc/nginx for more information (complete vhost without these rules you need)
+
+Or if using nginx:
+
+```
+# If using cluster, uncomment the following two lines:
+#rewrite "^/var/([^/]+/)?storage/images(-versioned)?/(.*)" "/index.php" break;
+#rewrite "^/var/([^/]+/)?cache/(texttoimage|public)/(.*)" "/index_cluster.php" break;
+
+rewrite "^/var/([^/]+/)?cache/(texttoimage|public)/(.*)" "/var/$1cache/$2/$3" break;
+rewrite "^/design/([^/]+)/(stylesheets|images|javascript|fonts)/(.*)" "/design/$1/$2/$3" break;
+rewrite "^/share/icons/(.*)" "/share/icons/$1" break;
+rewrite "^/extension/([^/]+)/design/([^/]+)/(stylesheets|flash|images|lib|javascripts?)/(.*)" "/extension/$1/design/$2/$3/$4" break;
+rewrite "^/packages/styles/(.+)/(stylesheets|images|javascript)/([^/]+)/(.*)" "/packages/styles/$1/$2/$3/$4" break;
+rewrite "^/packages/styles/(.+)/thumbnail/(.*)" "/packages/styles/$1/thumbnail/$2" break;
+rewrite "^/var/storage/packages/(.*)" "/var/storage/packages/$1" break;
+```
+
+> Please refer to doc/nginx for more information (complete vhost without these rules you need)
+
+!! Restart your webserver !!
+
+> Yes, don't forget ;-)
 
 ### Test !
 
