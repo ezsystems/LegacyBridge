@@ -21,6 +21,7 @@ use ezxFormToken;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use RuntimeException;
+use Exception;
 
 /**
  * Maps configuration parameters to the legacy parameters.
@@ -281,7 +282,16 @@ class Configuration implements EventSubscriberInterface
             return $result;
         }
 
-        $pathPrefix = trim($this->urlAliasGenerator->getPathPrefixByRootLocationId($rootLocationId), '/');
+        $pathPrefix = '';
+
+        try {
+            $pathPrefix = trim($this->urlAliasGenerator->getPathPrefixByRootLocationId($rootLocationId), '/');
+        } catch (Exception $e) {
+            // Ignore any errors
+            // Most probable cause for error is database not being ready yet,
+            // i.e. initial install of the project which includes eZ Publish Legacy
+        }
+
         $pathPrefixExcludeItems = array_map(
             function ($value) {
                 return trim($value, '/');
