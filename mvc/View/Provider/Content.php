@@ -13,6 +13,7 @@ use eZ\Publish\Core\MVC\Legacy\View\Provider;
 use eZ\Publish\Core\MVC\Symfony\View\View;
 use eZ\Publish\Core\MVC\Symfony\View\ViewProvider;
 use eZ\Publish\Core\MVC\Symfony\View\ContentView;
+use eZ\Publish\Core\MVC\Symfony\View\ContentValueView;
 use eZContentObject;
 use eZTemplate;
 use ezpEvent;
@@ -28,7 +29,7 @@ class Content extends Provider implements ViewProvider
      */
     public function getView(View $view)
     {
-        if (!$view instanceof ContentView) {
+        if (!$view instanceof ContentValueView) {
             return null;
         }
 

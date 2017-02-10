@@ -9,7 +9,7 @@
 namespace eZ\Publish\Core\MVC\Legacy\View\Provider;
 
 use eZ\Publish\Core\MVC\Legacy\View\Provider;
-use eZ\Publish\Core\MVC\Symfony\View\BlockView;
+use eZ\Publish\Core\MVC\Symfony\View\BlockValueView;
 use eZ\Publish\Core\MVC\Symfony\View\View;
 use eZ\Publish\Core\MVC\Symfony\View\ViewProvider;
 use eZ\Publish\Core\MVC\Legacy\Templating\Adapter\BlockAdapter;
@@ -42,7 +42,7 @@ class Block extends Provider implements ViewProvider
      */
     public function getView(View $view)
     {
-        if (!$view instanceof BlockView) {
+        if (!$view instanceof BlockValueView) {
             return null;
         }
 
