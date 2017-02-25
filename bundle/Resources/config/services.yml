@@ -77,6 +77,8 @@ parameters:
 
     ezpublish_legacy.setup_listener.class: eZ\Bundle\EzPublishLegacyBundle\EventListener\SetupListener
 
+    ezpublish_legacy.installer.clean_installer.class:  eZ\Bundle\EzPublishLegacyBundle\Installer\CleanInstaller
+
 services:
     ezpublish_legacy.kernel:
         alias: ezpublish_legacy.kernel.lazy
@@ -333,3 +335,10 @@ services:
             - "%ezpublish.siteaccess.default%"
         tags:
             - { name: kernel.event_subscriber }
+
+    ezpublish_legacy.installer.clean_installer:
+        class: "%ezpublish_legacy.installer.clean_installer.class%"
+        parent: ezplatform.installer.db_based_installer
+        tags:
+            - {name: ezplatform.installer, type: legacy_clean}
+
