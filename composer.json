@@ -2,6 +2,7 @@
     "name": "ezsystems/legacy-bridge",
     "description": "eZ Platform bridge to eZ Publish Legacy",
     "license": "GPL-2.0",
+    "type": "ezplatform-bundle",
     "authors": [
         {
             "name": "eZ Systems",
