@@ -103,7 +103,7 @@ If you're using master branch of eZ Publish Legacy, you can skip this step.
 
 ### Configure virtual host rewrite rules
 
-To access legacy assests (eZ Publish designs and extension designs), add the following rewrite rules to your Apache virtual host:
+To access legacy assets (eZ Publish designs and extension designs), add the following rewrite rules to your Apache virtual host:
 
 ```
 # If using cluster, uncomment the following two lines:
