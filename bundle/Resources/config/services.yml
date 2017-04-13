@@ -6,7 +6,6 @@ parameters:
     ezpublish.default_router.legacy_aware_routes: ['_ezpublishLegacyTreeMenu', 'ezpublish_rest_', '_ezpublishPreviewContent', '_wdt', '_profiler', '_assetic']
 
     # Core overrides
-    router.class: eZ\Bundle\EzPublishLegacyBundle\Routing\DefaultRouter
     ezpublish.security.login_listener.class: eZ\Bundle\EzPublishLegacyBundle\Security\SecurityListener
     security.authentication.listener.rememberme.class: eZ\Bundle\EzPublishLegacyBundle\Security\RememberMeListener
 
