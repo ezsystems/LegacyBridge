@@ -29,5 +29,10 @@ class RoutingPass implements CompilerPassInterface
                 'setLegacyAwareRoutes',
                 ['%ezpublish.default_router.legacy_aware_routes%']
             );
+
+        if ($container->hasDefinition('ezpublish_rest.templated_router')) {
+            $container->getDefinition('ezpublish_rest.templated_router')
+                ->setClass('eZ\Bundle\EzPublishLegacyBundle\Routing\DefaultRouter');
+        }
     }
 }
