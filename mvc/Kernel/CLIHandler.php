@@ -6,6 +6,7 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
+
 namespace eZ\Publish\Core\MVC\Legacy\Kernel;
 
 use ezpKernelHandler;
@@ -45,7 +46,7 @@ class CLIHandler implements ezpKernelHandler
      * Additional valid settings for $settings :
      * - injected-settings : INI settings override
      *
-     * @param array $settings Settings to pass to eZScript constructor.
+     * @param array $settings settings to pass to eZScript constructor
      * @param \eZ\Publish\Core\MVC\Symfony\SiteAccess $siteAccess
      * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
      */

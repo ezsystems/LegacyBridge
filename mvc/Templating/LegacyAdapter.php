@@ -6,6 +6,7 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
+
 namespace eZ\Publish\Core\MVC\Legacy\Templating;
 
 /**
@@ -36,7 +37,7 @@ class LegacyAdapter implements LegacyCompatible
     private $getters;
 
     /**
-     * @param mixed $transferredObject Object being passed to the legacy template.
+     * @param mixed $transferredObject object being passed to the legacy template
      */
     public function __construct($transferredObject)
     {

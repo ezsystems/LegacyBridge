@@ -6,6 +6,7 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
+
 namespace eZ\Bundle\EzPublishLegacyBundle\SetupWizard;
 
 use eZ\Publish\Core\MVC\Symfony\ConfigDumperInterface;
@@ -62,7 +63,7 @@ class ConfigurationDumper implements ConfigDumperInterface
     /**
      * Dumps settings contained in $configArray in ezpublish.yml.
      *
-     * @param array $configArray Hash of settings.
+     * @param array $configArray hash of settings
      * @param int $options A binary combination of options. See class OPT_* class constants in {@link \eZ\Publish\Core\MVC\Symfony\ConfigDumperInterface}
      */
     public function dump(array $configArray, $options = ConfigDumperInterface::OPT_DEFAULT)

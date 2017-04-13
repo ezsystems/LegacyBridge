@@ -6,6 +6,7 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
+
 namespace eZ\Bundle\EzPublishLegacyBundle\Tests\LegacyResponse;
 
 use eZ\Bundle\EzPublishLegacyBundle\LegacyResponse\LegacyResponseManager;
@@ -88,10 +89,10 @@ class LegacyResponseManagerTest extends PHPUnit_Framework_TestCase
      *  - Custom layout provided, module_result presents a "pagelayout" entry
      *  - Legacy mode active, no custom layout.
      *
-     * @param string|null $customLayout Custom Twig layout being used, or null if none.
-     * @param bool $legacyMode Whether legacy mode is active or not.
-     * @param bool $moduleResultLayout Whether if module_result from legacy contains a "pagelayout" entry.
-     * @param bool $isLayoutSetModule Whether current request is using /layout/set/ route.
+     * @param string|null $customLayout custom Twig layout being used, or null if none
+     * @param bool $legacyMode whether legacy mode is active or not
+     * @param bool $moduleResultLayout whether if module_result from legacy contains a "pagelayout" entry
+     * @param bool $isLayoutSetModule whether current request is using /layout/set/ route
      *
      * @dataProvider generateResponseNoCustomLayoutProvider
      */

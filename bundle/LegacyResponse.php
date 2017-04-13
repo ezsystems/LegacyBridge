@@ -6,6 +6,7 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
+
 namespace eZ\Bundle\EzPublishLegacyBundle;
 
 use Symfony\Component\HttpFoundation\Response;
@@ -38,7 +39,7 @@ class LegacyResponse extends Response
     /**
      * Gets the module result if it exists.
      *
-     * @return array result or null if it doesn't exist.
+     * @return array result or null if it doesn't exist
      */
     public function getModuleResult()
     {

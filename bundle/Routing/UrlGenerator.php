@@ -6,6 +6,7 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
+
 namespace eZ\Bundle\EzPublishLegacyBundle\Routing;
 
 use eZModule;
@@ -61,7 +62,7 @@ class UrlGenerator extends Generator
 
         // Removing siteaccess parameter
         if (isset($parameters['siteaccess'])) {
-            unset($parameters[ 'siteaccess' ]);
+            unset($parameters['siteaccess']);
         }
 
         list($moduleName, $viewName) = explode('/', $legacyModuleUri);
