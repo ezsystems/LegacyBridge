@@ -22,14 +22,11 @@ class RoutingPass implements CompilerPassInterface
             return;
         }
 
-        $container
-            ->findDefinition('router.default')
-            ->setClass('eZ\Bundle\EzPublishLegacyBundle\Routing\DefaultRouter');
-
-        $defaultRouterDef = $container->getDefinition('router.default');
-        $defaultRouterDef->addMethodCall(
-            'setLegacyAwareRoutes',
-            ['%ezpublish.default_router.legacy_aware_routes%']
-        );
+        $container->getDefinition('router.default')
+            ->setClass('eZ\Bundle\EzPublishLegacyBundle\Routing\DefaultRouter')
+            ->addMethodCall(
+                'setLegacyAwareRoutes',
+                ['%ezpublish.default_router.legacy_aware_routes%']
+            );
     }
 }
