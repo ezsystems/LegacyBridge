@@ -8,7 +8,6 @@
  */
 namespace eZ\Bundle\EzPublishLegacyBundle\DependencyInjection\Compiler;
 
-use eZ\Bundle\EzPublishLegacyBundle\Routing\DefaultRouter as DefaultRouter;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
@@ -25,7 +24,7 @@ class RoutingPass implements CompilerPassInterface
 
         $container
             ->findDefinition('router.default')
-            ->setClass(DefaultRouter::class);
+            ->setClass('eZ\Bundle\EzPublishLegacyBundle\Routing\DefaultRouter');
 
         $defaultRouterDef = $container->getDefinition('router.default');
         $defaultRouterDef->addMethodCall(
