@@ -94,6 +94,7 @@ services:
             - "@?logger"
         calls:
             - [setContainer, ["@service_container"]]
+            - [setRequestStack, ["@request_stack"]]
 
     ezpublish_legacy.rest.kernel_handler:
         class: "%ezpublish_legacy.kernel_handler.rest.class%"

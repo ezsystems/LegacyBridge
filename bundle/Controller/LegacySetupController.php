@@ -87,7 +87,7 @@ class LegacySetupController extends ContainerAware
         $this->kernelFactory->setBuildEventsEnabled(false);
 
         /** @var $request \Symfony\Component\HttpFoundation\ParameterBag */
-        $request = $this->container->get('request')->request;
+        $request = $this->container->get('request_stack')->getCurrentRequest()->request;
 
         // inject the extra ezpublish-community folders we want permissions checked for
         switch ($request->get('eZSetup_current_step')) {
