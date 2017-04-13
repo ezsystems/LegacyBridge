@@ -2,6 +2,7 @@
 /**
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  */
+
 namespace eZ\Bundle\EzPublishLegacyBundle\Rest;
 
 use ezcMvcResultCache;
@@ -10,7 +11,6 @@ use ezcMvcResultStatusObject;
 use ezpKernelRest;
 use ezpKernelResult;
 use ezpRestHttpResponseWriter;
-use Symfony\Component\HttpFoundation\Response;
 
 class ResponseWriter extends ezpRestHttpResponseWriter
 {

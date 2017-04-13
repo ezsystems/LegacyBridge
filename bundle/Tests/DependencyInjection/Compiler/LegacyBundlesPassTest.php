@@ -6,6 +6,7 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
+
 namespace eZ\Bundle\EzPublishLegacyBundle\Tests\DependencyInjection\Compiler;
 
 use eZ\Bundle\EzPublishLegacyBundle\DependencyInjection\Compiler\LegacyBundlesPass;
@@ -16,7 +17,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
 
-class AddFieldTypePassTest extends AbstractCompilerPassTestCase
+class LegacyBundlesPassTest extends AbstractCompilerPassTestCase
 {
     protected $kernelMock;
 

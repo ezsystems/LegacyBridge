@@ -6,6 +6,7 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
+
 namespace eZ\Publish\Core\MVC\Legacy\Kernel;
 
 use eZ\Publish\Core\MVC\Legacy\Event\PostBuildKernelEvent;
@@ -244,7 +245,7 @@ class Loader
     /**
      * Builds the legacy kernel handler for the tree menu in admin interface.
      *
-     * @return \Closure A closure returning an \ezpKernelTreeMenu instance.
+     * @return \Closure a closure returning an \ezpKernelTreeMenu instance
      */
     public function buildLegacyKernelHandlerTreeMenu()
     {
@@ -260,7 +261,7 @@ class Loader
     /**
      * Builds the legacy kernel handler for the tree menu in admin interface.
      *
-     * @return \Closure A closure returning an \ezpKernelTreeMenu instance.
+     * @return \Closure a closure returning an \ezpKernelTreeMenu instance
      */
     public function buildLegacyKernelHandlerRest($mvcConfiguration)
     {

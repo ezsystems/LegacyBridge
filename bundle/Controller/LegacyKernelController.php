@@ -6,6 +6,7 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
+
 namespace eZ\Bundle\EzPublishLegacyBundle\Controller;
 
 use eZ\Bundle\EzPublishLegacyBundle\LegacyResponse\LegacyResponseManager;
@@ -46,7 +47,7 @@ class LegacyKernelController
      */
     private $legacyResponseManager;
 
-    /** @var  \eZ\Publish\Core\MVC\Legacy\Templating\LegacyHelper; */
+    /** @var \eZ\Publish\Core\MVC\Legacy\Templating\LegacyHelper; */
     private $legacyHelper;
 
     /**

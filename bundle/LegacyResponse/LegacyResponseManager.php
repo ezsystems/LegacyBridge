@@ -6,6 +6,7 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
+
 namespace eZ\Bundle\EzPublishLegacyBundle\LegacyResponse;
 
 use eZ\Bundle\EzPublishLegacyBundle\LegacyResponse;
@@ -152,7 +153,7 @@ class LegacyResponseManager
     /**
      * Maps headers sent by the legacy stack to $response.
      *
-     * @param array $headers Array headers.
+     * @param array $headers array headers
      * @param \Symfony\Component\HttpFoundation\Response $response
      *
      * @return \Symfony\Component\HttpFoundation\Response
@@ -177,7 +178,7 @@ class LegacyResponseManager
                 case 'expires':
                     $response->setExpires(new DateTime($headerValue));
                     break;
-                default;
+                default:
                     $response->headers->set($headerName, $headerValue, true);
                     break;
             }

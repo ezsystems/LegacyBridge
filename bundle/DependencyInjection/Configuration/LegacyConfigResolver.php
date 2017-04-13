@@ -6,6 +6,7 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
+
 namespace eZ\Bundle\EzPublishLegacyBundle\DependencyInjection\Configuration;
 
 use eZ\Publish\Core\MVC\ConfigResolverInterface;
@@ -101,7 +102,7 @@ class LegacyConfigResolver implements ConfigResolverInterface
     /**
      * Returns values for $groupName, in $namespace.
      *
-     * @param string $groupName String containing an INI group name.
+     * @param string $groupName string containing an INI group name
      * @param string $namespace The legacy INI file name, without the suffix (i.e. without ".ini").
      * @param string $scope A specific siteaccess to look into. Defaults to the current siteaccess.
      *
@@ -137,8 +138,8 @@ class LegacyConfigResolver implements ConfigResolverInterface
      * Checks if $paramName exists in $namespace.
      *
      * @param string $paramName
-     * @param string $namespace If null, the default namespace should be used.
-     * @param string $scope The scope you need $paramName value for.
+     * @param string $namespace if null, the default namespace should be used
+     * @param string $scope the scope you need $paramName value for
      *
      * @return bool
      */
