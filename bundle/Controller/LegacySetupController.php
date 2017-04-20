@@ -10,7 +10,8 @@
 namespace eZ\Bundle\EzPublishLegacyBundle\Controller;
 
 use eZ\Publish\Core\MVC\Legacy\Kernel\Loader;
-use Symfony\Component\DependencyInjection\ContainerAware;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\HttpFoundation\Response;
 use eZ\Publish\Core\MVC\Symfony\ConfigDumperInterface;
 use eZ\Bundle\EzPublishLegacyBundle\DependencyInjection\Configuration\LegacyConfigResolver;
@@ -18,8 +19,10 @@ use eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger;
 use eZINI;
 use eZCache;
 
-class LegacySetupController extends ContainerAware
+class LegacySetupController implements ContainerAwareInterface
 {
+    use ContainerAwareTrait;
+
     /**
      * The legacy kernel instance (eZ Publish 4).
      *
