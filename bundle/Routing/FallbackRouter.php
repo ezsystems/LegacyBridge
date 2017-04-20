@@ -94,7 +94,7 @@ class FallbackRouter implements RouterInterface, RequestMatcherInterface
      *
      * @param string $name The name of the route
      * @param mixed $parameters An array of parameters
-     * @param bool $absolute Whether to generate an absolute URL
+     * @param int $referenceType The type of reference to be generated (one of the constants)
      *
      * @throws \Symfony\Component\Routing\Exception\RouteNotFoundException
      * @throws \InvalidArgumentException
@@ -103,7 +103,7 @@ class FallbackRouter implements RouterInterface, RequestMatcherInterface
      *
      * @api
      */
-    public function generate($name, $parameters = array(), $absolute = false)
+    public function generate($name, $parameters = array(), $referenceType = self::ABSOLUTE_PATH)
     {
         if ($name === self::ROUTE_NAME) {
             if (!isset($parameters['module_uri'])) {
@@ -113,7 +113,7 @@ class FallbackRouter implements RouterInterface, RequestMatcherInterface
             $moduleUri = $parameters['module_uri'];
             unset($parameters['module_uri']);
 
-            return $this->urlGenerator->generate($moduleUri, $parameters, $absolute);
+            return $this->urlGenerator->generate($moduleUri, $parameters, $referenceType);
         }
 
         throw new RouteNotFoundException();
