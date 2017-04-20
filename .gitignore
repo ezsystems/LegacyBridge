@@ -1,6 +1,7 @@
 /vendor/
 composer.lock
 ezpublish_legacy
+var
 bin
 config.php
 .php_cs.cache
