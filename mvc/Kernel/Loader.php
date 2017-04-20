@@ -21,6 +21,7 @@ use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\ParameterBag;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Legacy kernel loader.
@@ -68,6 +69,11 @@ class Loader
     /** @var ezpKernelHandler */
     private $restHandler;
 
+    /**
+     * @var \Symfony\Component\HttpFoundation\RequestStack
+     */
+    private $requestStack;
+
     public function __construct($legacyRootDir, $webrootDir, EventDispatcherInterface $eventDispatcher, URIHelper $uriHelper, LoggerInterface $logger = null)
     {
         $this->legacyRootDir = $legacyRootDir;
@@ -75,6 +81,14 @@ class Loader
         $this->eventDispatcher = $eventDispatcher;
         $this->uriHelper = $uriHelper;
         $this->logger = $logger;
+    }
+
+    /**
+     * @param \Symfony\Component\HttpFoundation\RequestStack $requestStack
+     */
+    public function setRequestStack(RequestStack $requestStack)
+    {
+        $this->requestStack = $requestStack;
     }
 
     /**
@@ -152,7 +166,7 @@ class Loader
 
                 $legacyParameters = new ParameterBag($defaultLegacyOptions);
                 $legacyParameters->set('service-container', $container);
-                $request = $container->get('request');
+                $request = $this->requestStack->getCurrentRequest();
 
                 if ($that->getBuildEventsEnabled()) {
                     // PRE_BUILD_LEGACY_KERNEL for non request related stuff
@@ -277,7 +291,7 @@ class Loader
                 chdir($legacyRootDir);
 
                 $legacyParameters = new ParameterBag();
-                $request = $container->get('request');
+                $request = $this->requestStack->getCurrentRequest();
 
                 if ($that->getBuildEventsEnabled()) {
                     // PRE_BUILD_LEGACY_KERNEL for non request related stuff
