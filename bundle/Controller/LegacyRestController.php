@@ -36,7 +36,7 @@ class LegacyRestController extends Controller
 
         $result = ezpKernelRest::getResponse();
         if ($result === null) {
-            throw new Exception('Rest Kernel run failed');
+            throw new \Exception('Rest Kernel run failed');
         }
 
         return new Response(

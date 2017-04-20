@@ -19,6 +19,7 @@ return PhpCsFixer\Config::create()
             ->in(__DIR__)
             ->exclude([
                 'vendor',
+                'ezpublish_legacy',
             ])
             ->files()->name('*.php')
     )

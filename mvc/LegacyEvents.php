@@ -25,7 +25,7 @@ final class LegacyEvents
     const PRE_BUILD_LEGACY_KERNEL_WEB = 'ezpublish_legacy.build_kernel_web_handler';
 
     /**
-     * The PRE_BUID_LEGACY_KERNEL occurs right before the build of the legacy handler (whatever the handler is used).
+     * The PRE_BUILD_LEGACY_KERNEL occurs right before the build of the legacy handler (whatever the handler is used).
      * This event allows to inject parameters in the legacy kernel (such as INI settings).
      *
      * The event listener method receives a
