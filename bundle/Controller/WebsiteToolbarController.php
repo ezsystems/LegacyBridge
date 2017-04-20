@@ -14,7 +14,7 @@ use eZ\Publish\API\Repository\LocationService;
 use eZ\Publish\Core\Helper\ContentPreviewHelper;
 use eZ\Publish\Core\MVC\Symfony\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Form\Extension\Csrf\CsrfProvider\CsrfProviderInterface;
+use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Templating\EngineInterface;
@@ -22,8 +22,8 @@ use eZ\Publish\Core\MVC\Symfony\Security\Authorization\Attribute as Authorizatio
 
 class WebsiteToolbarController extends Controller
 {
-    /** @var \Symfony\Component\Form\Extension\Csrf\CsrfProvider\CsrfProviderInterface */
-    private $csrfProvider;
+    /** @var \Symfony\Component\Security\Csrf\CsrfTokenManagerInterface */
+    private $csrfTokenManager;
 
     /** @var \Symfony\Component\Templating\EngineInterface */
     private $legacyTemplateEngine;
@@ -46,13 +46,13 @@ class WebsiteToolbarController extends Controller
         LocationService $locationService,
         AuthorizationCheckerInterface $authChecker,
         ContentPreviewHelper $previewHelper,
-        CsrfProviderInterface $csrfProvider = null
+        CsrfTokenManagerInterface $csrfTokenManager = null
     ) {
         $this->legacyTemplateEngine = $engine;
         $this->contentService = $contentService;
         $this->locationService = $locationService;
         $this->authChecker = $authChecker;
-        $this->csrfProvider = $csrfProvider;
+        $this->csrfTokenManager = $csrfTokenManager;
         $this->previewHelper = $previewHelper;
     }
 
@@ -70,8 +70,8 @@ class WebsiteToolbarController extends Controller
     {
         $response = new Response();
 
-        if (isset($this->csrfProvider)) {
-            $parameters['form_token'] = $this->csrfProvider->generateCsrfToken('legacy');
+        if (isset($this->csrfTokenManager)) {
+            $parameters['form_token'] = $this->csrfTokenManager->getToken('legacy');
         }
 
         if ($this->previewHelper->isPreviewActive()) {
