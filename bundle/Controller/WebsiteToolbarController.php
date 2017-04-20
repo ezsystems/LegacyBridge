@@ -71,7 +71,7 @@ class WebsiteToolbarController extends Controller
         $response = new Response();
 
         if (isset($this->csrfTokenManager)) {
-            $parameters['form_token'] = $this->csrfTokenManager->getToken('legacy');
+            $parameters['form_token'] = $this->csrfTokenManager->getToken('legacy')->getValue();
         }
 
         if ($this->previewHelper->isPreviewActive()) {
