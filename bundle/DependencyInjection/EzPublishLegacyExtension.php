@@ -69,6 +69,10 @@ class EzPublishLegacyExtension extends Extension
                     $contextualizer->setContextualParameter('module_default_layout', $currentScope, $scopeSettings['templating']['module_layout']);
                 }
 
+                if (isset($scopeSettings['not_found_http_conversion'])) {
+                    $contextualizer->setContextualParameter('not_found_http_conversion', $currentScope, $scopeSettings['not_found_http_conversion']);
+                }
+
                 if (isset($scopeSettings['legacy_mode'])) {
                     $container = $contextualizer->getContainer();
                     $container->setParameter("ezsettings.$currentScope.legacy_mode", $scopeSettings['legacy_mode']);

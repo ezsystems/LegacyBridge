@@ -14,6 +14,7 @@ use eZ\Publish\Core\MVC\ConfigResolverInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Templating\EngineInterface;
 use DateTime;
@@ -47,6 +48,13 @@ class LegacyResponseManager
     private $legacyMode;
 
     /**
+     * Flag indicating if we're convert 404 errors into a NotFoundHttpException.
+     *
+     * @var bool
+     */
+    private $notFoundHttpConversion;
+
+    /**
      * @var RequestStack
      */
     private $requestStack;
@@ -55,6 +63,7 @@ class LegacyResponseManager
     {
         $this->templateEngine = $templateEngine;
         $this->legacyLayout = $configResolver->getParameter('module_default_layout', 'ezpublish_legacy');
+        $this->notFoundHttpConversion = $configResolver->getParameter('not_found_http_conversion', 'ezpublish_legacy');
         $this->legacyMode = $configResolver->getParameter('legacy_mode');
         $this->requestStack = $requestStack;
     }
@@ -64,6 +73,7 @@ class LegacyResponseManager
      *
      * @param \ezpKernelResult $result
      *
+     * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
      * @throws \Symfony\Component\Security\Core\Exception\AccessDeniedException
      * @return \eZ\Bundle\EzPublishLegacyBundle\LegacyResponse
      */
@@ -87,11 +97,19 @@ class LegacyResponseManager
 
         // Handling error codes sent by the legacy stack
         if (isset($moduleResult['errorCode'])) {
-            // If having an "Unauthorized" or "Forbidden" error code in non-legacy mode,
-            // we send an AccessDeniedException to be able to trigger redirection to login in Symfony stack.
-            if (!$this->legacyMode && ($moduleResult['errorCode'] == 401 || $moduleResult['errorCode'] == 403)) {
-                $errorMessage = isset($moduleResult['errorMessage']) ? $moduleResult['errorMessage'] : 'Access denied';
-                throw new AccessDeniedException($errorMessage);
+            if (!$this->legacyMode) {
+                // If having an "Unauthorized" or "Forbidden" error code in non-legacy mode,
+                // we send an AccessDeniedException to be able to trigger redirection to login in Symfony stack.
+                if ($moduleResult['errorCode'] == 401 || $moduleResult['errorCode'] == 403) {
+                    $errorMessage = isset($moduleResult['errorMessage']) ? $moduleResult['errorMessage'] : 'Access denied';
+                    throw new AccessDeniedException($errorMessage);
+                }
+                // If having an "Not found" error code in non-legacy mode and conversation is true,
+                // we send an NotFoundHttpException to be able to trigger error page in Symfony stack.
+                if ($this->notFoundHttpConversion && $moduleResult['errorCode'] == 404) {
+                    $errorMessage = isset($moduleResult['errorMessage']) ? $moduleResult['errorMessage'] : 'Not found';
+                    throw new NotFoundHttpException($errorMessage);
+                }
             }
 
             $response->setStatusCode(
