@@ -106,9 +106,16 @@ class LegacyResponseManager
                 }
                 // If having an "Not found" error code in non-legacy mode and conversation is true,
                 // we send an NotFoundHttpException to be able to trigger error page in Symfony stack.
-                if ($this->notFoundHttpConversion && $moduleResult['errorCode'] == 404) {
-                    $errorMessage = isset($moduleResult['errorMessage']) ? $moduleResult['errorMessage'] : 'Not found';
-                    throw new NotFoundHttpException($errorMessage);
+                if ($moduleResult['errorCode'] == 404) {
+                    if ($this->notFoundHttpConversion) {
+                        $errorMessage = isset($moduleResult['errorMessage']) ? $moduleResult['errorMessage'] : 'Not found';
+                        throw new NotFoundHttpException($errorMessage);
+                    }
+                    @trigger_error(
+                        "Legacy 404 error handling is deprecated, and will be removed in legacy-bridge 2.0.\n" .
+                        'Use the not_found_http_conversion setting to use the new behavior and disable this notice.',
+                        E_USER_DEPRECATED
+                    );
                 }
             }
 
