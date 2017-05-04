@@ -2,13 +2,13 @@
 
 namespace eZ\Bundle\EzPublishLegacyBundle\Exception;
 
-use eZ\Bundle\EzPublishLegacyBundle\LegacyResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException as BaseNotFoundHttpException;
 
 class NotFoundHttpException extends BaseNotFoundHttpException
 {
     /**
-     * @var \eZ\Bundle\EzPublishLegacyBundle\LegacyResponse
+     * @var \Symfony\Component\HttpFoundation\Response
      */
     protected $originalResponse;
 
@@ -16,9 +16,9 @@ class NotFoundHttpException extends BaseNotFoundHttpException
      * Constructor.
      *
      * @param string $message
-     * @param \eZ\Bundle\EzPublishLegacyBundle\LegacyResponse $originalResponse
+     * @param \Symfony\Component\HttpFoundation\Response $originalResponse
      */
-    public function __construct($message, LegacyResponse $originalResponse = null)
+    public function __construct($message, Response $originalResponse = null)
     {
         parent::__construct($message);
 
@@ -28,7 +28,7 @@ class NotFoundHttpException extends BaseNotFoundHttpException
     /**
      * Returns the response.
      *
-     * @return \eZ\Bundle\EzPublishLegacyBundle\LegacyResponse
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function getOriginalResponse()
     {
