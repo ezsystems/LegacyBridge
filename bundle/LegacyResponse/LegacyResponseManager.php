@@ -14,7 +14,7 @@ use eZ\Publish\Core\MVC\ConfigResolverInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use eZ\Bundle\EzPublishLegacyBundle\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Templating\EngineInterface;
 use DateTime;
@@ -104,13 +104,15 @@ class LegacyResponseManager
                     $errorMessage = isset($moduleResult['errorMessage']) ? $moduleResult['errorMessage'] : 'Access denied';
                     throw new AccessDeniedException($errorMessage);
                 }
-                // If having an "Not found" error code in non-legacy mode and conversation is true,
+
+                // If having an "Not found" error code in non-legacy mode and conversion is true,
                 // we send an NotFoundHttpException to be able to trigger error page in Symfony stack.
                 if ($moduleResult['errorCode'] == 404) {
                     if ($this->notFoundHttpConversion) {
                         $errorMessage = isset($moduleResult['errorMessage']) ? $moduleResult['errorMessage'] : 'Not found';
-                        throw new NotFoundHttpException($errorMessage);
+                        throw new NotFoundHttpException($errorMessage, $response);
                     }
+
                     @trigger_error(
                         "Legacy 404 error handling is deprecated, and will be removed in legacy-bridge 2.0.\n" .
                         'Use the not_found_http_conversion setting to use the new behavior and disable this notice.',
