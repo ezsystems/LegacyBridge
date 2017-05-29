@@ -6,6 +6,7 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
+
 namespace eZ\Bundle\EzPublishLegacyBundle\Tests\LegacyResponse;
 
 use eZ\Bundle\EzPublishLegacyBundle\LegacyResponse\LegacyResponseManager;
@@ -65,6 +66,51 @@ class LegacyResponseManagerTest extends PHPUnit_Framework_TestCase
         );
     }
 
+    /**
+     * @param bool $legacyMode whether legacy mode is active or not
+     * @param bool $notFoundHttpConversion whether not found http conversion is active or not
+     * @param bool $expectException whether exception is expected
+     * @dataProvider generateResponseNotFoundProvider
+     */
+    public function testGenerateResponseNotFound($legacyMode, $notFoundHttpConversion, $expectException)
+    {
+        $this->configResolver
+            ->expects($this->any())
+            ->method('getParameter')
+            ->will(
+                $this->returnValueMap(
+                    array(
+                        array('legacy_mode', null, null, $legacyMode),
+                        array('not_found_http_conversion', 'ezpublish_legacy', null, $notFoundHttpConversion),
+                    )
+                )
+            );
+        if ($expectException) {
+            $this->setExpectedException('Symfony\Component\HttpKernel\Exception\NotFoundHttpException', 'Not found');
+        }
+        $manager = new LegacyResponseManager($this->templateEngine, $this->configResolver, new RequestStack());
+        $content = 'foobar';
+        $moduleResult = array(
+            'content' => $content,
+            'errorCode' => 404,
+            'errorMessage' => 'Not found',
+        );
+        $kernelResult = new ezpKernelResult($content, array('module_result' => $moduleResult));
+        $response = $manager->generateResponseFromModuleResult($kernelResult);
+        if (!$expectException) {
+            $this->assertSame($moduleResult['errorCode'], $response->getStatusCode());
+        }
+    }
+
+    public function generateResponseNotFoundProvider()
+    {
+        return array(
+            array(true, true, false),
+            array(false, true, true),
+            array(false, false, false),
+        );
+    }
+
     public function testLegacyResultHasLayout()
     {
         $requestStack = new RequestStack();
@@ -88,10 +134,10 @@ class LegacyResponseManagerTest extends PHPUnit_Framework_TestCase
      *  - Custom layout provided, module_result presents a "pagelayout" entry
      *  - Legacy mode active, no custom layout.
      *
-     * @param string|null $customLayout Custom Twig layout being used, or null if none.
-     * @param bool $legacyMode Whether legacy mode is active or not.
-     * @param bool $moduleResultLayout Whether if module_result from legacy contains a "pagelayout" entry.
-     * @param bool $isLayoutSetModule Whether current request is using /layout/set/ route.
+     * @param string|null $customLayout custom Twig layout being used, or null if none
+     * @param bool $legacyMode whether legacy mode is active or not
+     * @param bool $moduleResultLayout whether if module_result from legacy contains a "pagelayout" entry
+     * @param bool $isLayoutSetModule whether current request is using /layout/set/ route
      *
      * @dataProvider generateResponseNoCustomLayoutProvider
      */

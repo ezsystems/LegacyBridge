@@ -6,6 +6,7 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
+
 namespace eZ\Bundle\EzPublishLegacyBundle\DependencyInjection;
 
 use eZ\Bundle\EzPublishCoreBundle\DependencyInjection\Configuration\SiteAccessAware\ConfigurationProcessor;
@@ -66,6 +67,10 @@ class EzPublishLegacyExtension extends Extension
 
                 if (isset($scopeSettings['templating']['module_layout'])) {
                     $contextualizer->setContextualParameter('module_default_layout', $currentScope, $scopeSettings['templating']['module_layout']);
+                }
+
+                if (isset($scopeSettings['not_found_http_conversion'])) {
+                    $contextualizer->setContextualParameter('not_found_http_conversion', $currentScope, $scopeSettings['not_found_http_conversion']);
                 }
 
                 if (isset($scopeSettings['legacy_mode'])) {

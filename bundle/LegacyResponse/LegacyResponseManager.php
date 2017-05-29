@@ -6,6 +6,7 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
+
 namespace eZ\Bundle\EzPublishLegacyBundle\LegacyResponse;
 
 use eZ\Bundle\EzPublishLegacyBundle\LegacyResponse;
@@ -13,6 +14,7 @@ use eZ\Publish\Core\MVC\ConfigResolverInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
+use eZ\Bundle\EzPublishLegacyBundle\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Templating\EngineInterface;
 use DateTime;
@@ -46,6 +48,13 @@ class LegacyResponseManager
     private $legacyMode;
 
     /**
+     * Flag indicating if we're convert 404 errors into a NotFoundHttpException.
+     *
+     * @var bool
+     */
+    private $notFoundHttpConversion;
+
+    /**
      * @var RequestStack
      */
     private $requestStack;
@@ -54,6 +63,7 @@ class LegacyResponseManager
     {
         $this->templateEngine = $templateEngine;
         $this->legacyLayout = $configResolver->getParameter('module_default_layout', 'ezpublish_legacy');
+        $this->notFoundHttpConversion = $configResolver->getParameter('not_found_http_conversion', 'ezpublish_legacy');
         $this->legacyMode = $configResolver->getParameter('legacy_mode');
         $this->requestStack = $requestStack;
     }
@@ -63,6 +73,7 @@ class LegacyResponseManager
      *
      * @param \ezpKernelResult $result
      *
+     * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
      * @throws \Symfony\Component\Security\Core\Exception\AccessDeniedException
      * @return \eZ\Bundle\EzPublishLegacyBundle\LegacyResponse
      */
@@ -86,11 +97,28 @@ class LegacyResponseManager
 
         // Handling error codes sent by the legacy stack
         if (isset($moduleResult['errorCode'])) {
-            // If having an "Unauthorized" or "Forbidden" error code in non-legacy mode,
-            // we send an AccessDeniedException to be able to trigger redirection to login in Symfony stack.
-            if (!$this->legacyMode && ($moduleResult['errorCode'] == 401 || $moduleResult['errorCode'] == 403)) {
-                $errorMessage = isset($moduleResult['errorMessage']) ? $moduleResult['errorMessage'] : 'Access denied';
-                throw new AccessDeniedException($errorMessage);
+            if (!$this->legacyMode) {
+                // If having an "Unauthorized" or "Forbidden" error code in non-legacy mode,
+                // we send an AccessDeniedException to be able to trigger redirection to login in Symfony stack.
+                if ($moduleResult['errorCode'] == 401 || $moduleResult['errorCode'] == 403) {
+                    $errorMessage = isset($moduleResult['errorMessage']) ? $moduleResult['errorMessage'] : 'Access denied';
+                    throw new AccessDeniedException($errorMessage);
+                }
+
+                // If having an "Not found" error code in non-legacy mode and conversion is true,
+                // we send an NotFoundHttpException to be able to trigger error page in Symfony stack.
+                if ($moduleResult['errorCode'] == 404) {
+                    if ($this->notFoundHttpConversion) {
+                        $errorMessage = isset($moduleResult['errorMessage']) ? $moduleResult['errorMessage'] : 'Not found';
+                        throw new NotFoundHttpException($errorMessage, $response);
+                    }
+
+                    @trigger_error(
+                        "Legacy 404 error handling is deprecated, and will be removed in legacy-bridge 2.0.\n" .
+                        'Use the not_found_http_conversion setting to use the new behavior and disable this notice.',
+                        E_USER_DEPRECATED
+                    );
+                }
             }
 
             $response->setStatusCode(
@@ -152,7 +180,7 @@ class LegacyResponseManager
     /**
      * Maps headers sent by the legacy stack to $response.
      *
-     * @param array $headers Array headers.
+     * @param array $headers array headers
      * @param \Symfony\Component\HttpFoundation\Response $response
      *
      * @return \Symfony\Component\HttpFoundation\Response
@@ -177,7 +205,7 @@ class LegacyResponseManager
                 case 'expires':
                     $response->setExpires(new DateTime($headerValue));
                     break;
-                default;
+                default:
                     $response->headers->set($headerName, $headerValue, true);
                     break;
             }

@@ -6,9 +6,7 @@ parameters:
     ezpublish.default_router.legacy_aware_routes: ['_ezpublishLegacyTreeMenu', 'ezpublish_rest_', '_ezpublishPreviewContent', '_wdt', '_profiler', '_assetic']
 
     # Core overrides
-    router.class: eZ\Bundle\EzPublishLegacyBundle\Routing\DefaultRouter
     ezpublish.security.login_listener.class: eZ\Bundle\EzPublishLegacyBundle\Security\SecurityListener
-    security.authentication.listener.rememberme.class: eZ\Bundle\EzPublishLegacyBundle\Security\RememberMeListener
 
     ezpublish_legacy.kernel.lazy_loader.class: eZ\Publish\Core\MVC\Legacy\Kernel\Loader
     ezpublish_legacy.kernel_handler.class: ezpKernelHandler
@@ -96,6 +94,7 @@ services:
             - "@?logger"
         calls:
             - [setContainer, ["@service_container"]]
+            - [setRequestStack, ["@request_stack"]]
 
     ezpublish_legacy.rest.kernel_handler:
         class: "%ezpublish_legacy.kernel_handler.rest.class%"
@@ -174,7 +173,7 @@ services:
             - "@ezpublish.api.service.location"
             - "@security.authorization_checker"
             - "@ezpublish.content_preview_helper"
-            - "@?form.csrf_provider"
+            - "@?security.csrf.token_manager"
 
     ezpublish_legacy.router:
         class: "%ezpublish_legacy.router.class%"

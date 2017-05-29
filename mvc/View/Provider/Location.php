@@ -6,6 +6,7 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
+
 namespace eZ\Publish\Core\MVC\Legacy\View\Provider;
 
 use eZ\Publish\API\Repository\Values\Content\Content as APIContent;
@@ -88,7 +89,7 @@ class Location extends Provider implements ViewProvider
      * Returns published view for $location.
      *
      * @param \eZ\Publish\API\Repository\Values\Content\Location $location
-     * @param string $viewType Variation of display for your content.
+     * @param string $viewType variation of display for your content
      * @param array $params Hash of arbitrary parameters to pass to final view
      * @param \eZ\Publish\Core\MVC\Legacy\Templating\LegacyHelper $legacyHelper
      *

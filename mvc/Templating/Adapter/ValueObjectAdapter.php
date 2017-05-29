@@ -6,6 +6,7 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
+
 namespace eZ\Publish\Core\MVC\Legacy\Templating\Adapter;
 
 use eZ\Publish\Core\MVC\Legacy\Templating\LegacyCompatible;
@@ -31,8 +32,8 @@ class ValueObjectAdapter implements LegacyCompatible
 
     /**
      * @param \eZ\Publish\API\Repository\Values\ValueObject $valueObject The value object to decorate
-     * @param array $attributesMap Hash mapping legacy attribute name (key) to the embedded value object property name (value)
-     *                             Value can also be a closure which would be called directly with the value object as only parameter.
+     * @param array $attributesMap hash mapping legacy attribute name (key) to the embedded value object property name (value)
+     *                             Value can also be a closure which would be called directly with the value object as only parameter
      */
     public function __construct(ValueObject $valueObject, array $attributesMap)
     {

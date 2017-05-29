@@ -6,6 +6,7 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
+
 namespace eZ\Publish\Core\MVC\Legacy\Templating\Tests\Adapter;
 
 use eZ\Publish\Core\MVC\Legacy\Templating\Adapter\ValueObjectAdapter;
@@ -50,8 +51,8 @@ class ValueObjectAdapterTest extends PHPUnit_Framework_TestCase
             'zone_identifier' => 'identifier',
             'all_blocks' => 'blocks',
             'dynamic_prop' => function (ValueObject $valueObject) {
-                    return $valueObject;
-                },
+                return $valueObject;
+            },
         );
         $this->valueObject = $this
             ->getMockBuilder('eZ\\Publish\\Core\\FieldType\\Page\\Parts\\Zone')
@@ -79,7 +80,7 @@ class ValueObjectAdapterTest extends PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider hasAttributeProvider
-     * @covers eZ\Publish\Core\MVC\Legacy\Templating\Adapter\ValueObjectAdapter::hasAttribute
+     * @covers \eZ\Publish\Core\MVC\Legacy\Templating\Adapter\ValueObjectAdapter::hasAttribute
      *
      * @param string$attributeName
      * @param bool $isset
@@ -102,7 +103,7 @@ class ValueObjectAdapterTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers eZ\Publish\Core\MVC\Legacy\Templating\Adapter\ValueObjectAdapter::attributes
+     * @covers \eZ\Publish\Core\MVC\Legacy\Templating\Adapter\ValueObjectAdapter::attributes
      */
     public function testAttributes()
     {
@@ -110,7 +111,7 @@ class ValueObjectAdapterTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers eZ\Publish\Core\MVC\Legacy\Templating\Adapter\ValueObjectAdapter::attribute
+     * @covers \eZ\Publish\Core\MVC\Legacy\Templating\Adapter\ValueObjectAdapter::attribute
      */
     public function testGetAttribute()
     {
@@ -138,7 +139,7 @@ class ValueObjectAdapterTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers eZ\Publish\Core\MVC\Legacy\Templating\Adapter\ValueObjectAdapter::getValueObject
+     * @covers \eZ\Publish\Core\MVC\Legacy\Templating\Adapter\ValueObjectAdapter::getValueObject
      */
     public function testGetValueObject()
     {

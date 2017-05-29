@@ -6,6 +6,7 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
+
 namespace eZ\Bundle\EzPublishLegacyBundle\DependencyInjection\Compiler;
 
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
@@ -22,10 +23,16 @@ class RoutingPass implements CompilerPassInterface
             return;
         }
 
-        $defaultRouterDef = $container->getDefinition('router.default');
-        $defaultRouterDef->addMethodCall(
-            'setLegacyAwareRoutes',
-            ['%ezpublish.default_router.legacy_aware_routes%']
-        );
+        $container->getDefinition('router.default')
+            ->setClass('eZ\Bundle\EzPublishLegacyBundle\Routing\DefaultRouter')
+            ->addMethodCall(
+                'setLegacyAwareRoutes',
+                ['%ezpublish.default_router.legacy_aware_routes%']
+            );
+
+        if ($container->hasDefinition('ezpublish_rest.templated_router')) {
+            $container->getDefinition('ezpublish_rest.templated_router')
+                ->setClass('eZ\Bundle\EzPublishLegacyBundle\Routing\DefaultRouter');
+        }
     }
 }

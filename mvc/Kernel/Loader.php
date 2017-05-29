@@ -6,6 +6,7 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
+
 namespace eZ\Publish\Core\MVC\Legacy\Kernel;
 
 use eZ\Publish\Core\MVC\Legacy\Event\PostBuildKernelEvent;
@@ -20,6 +21,7 @@ use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\ParameterBag;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Legacy kernel loader.
@@ -67,6 +69,11 @@ class Loader
     /** @var ezpKernelHandler */
     private $restHandler;
 
+    /**
+     * @var \Symfony\Component\HttpFoundation\RequestStack
+     */
+    private $requestStack;
+
     public function __construct($legacyRootDir, $webrootDir, EventDispatcherInterface $eventDispatcher, URIHelper $uriHelper, LoggerInterface $logger = null)
     {
         $this->legacyRootDir = $legacyRootDir;
@@ -74,6 +81,14 @@ class Loader
         $this->eventDispatcher = $eventDispatcher;
         $this->uriHelper = $uriHelper;
         $this->logger = $logger;
+    }
+
+    /**
+     * @param \Symfony\Component\HttpFoundation\RequestStack $requestStack
+     */
+    public function setRequestStack(RequestStack $requestStack)
+    {
+        $this->requestStack = $requestStack;
     }
 
     /**
@@ -151,7 +166,7 @@ class Loader
 
                 $legacyParameters = new ParameterBag($defaultLegacyOptions);
                 $legacyParameters->set('service-container', $container);
-                $request = $container->get('request');
+                $request = $this->requestStack->getCurrentRequest();
 
                 if ($that->getBuildEventsEnabled()) {
                     // PRE_BUILD_LEGACY_KERNEL for non request related stuff
@@ -244,7 +259,7 @@ class Loader
     /**
      * Builds the legacy kernel handler for the tree menu in admin interface.
      *
-     * @return \Closure A closure returning an \ezpKernelTreeMenu instance.
+     * @return \Closure a closure returning an \ezpKernelTreeMenu instance
      */
     public function buildLegacyKernelHandlerTreeMenu()
     {
@@ -260,7 +275,7 @@ class Loader
     /**
      * Builds the legacy kernel handler for the tree menu in admin interface.
      *
-     * @return \Closure A closure returning an \ezpKernelTreeMenu instance.
+     * @return \Closure a closure returning an \ezpKernelTreeMenu instance
      */
     public function buildLegacyKernelHandlerRest($mvcConfiguration)
     {
@@ -276,7 +291,7 @@ class Loader
                 chdir($legacyRootDir);
 
                 $legacyParameters = new ParameterBag();
-                $request = $container->get('request');
+                $request = $this->requestStack->getCurrentRequest();
 
                 if ($that->getBuildEventsEnabled()) {
                     // PRE_BUILD_LEGACY_KERNEL for non request related stuff

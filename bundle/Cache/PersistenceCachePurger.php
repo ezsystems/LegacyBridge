@@ -6,6 +6,7 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
+
 namespace eZ\Bundle\EzPublishLegacyBundle\Cache;
 
 use Symfony\Component\HttpKernel\CacheClearer\CacheClearerInterface;
@@ -285,7 +286,7 @@ class PersistenceCachePurger implements CacheClearerInterface
     /**
      * Clears any caches necessary.
      *
-     * @param string $cacheDir The cache directory.
+     * @param string $cacheDir the cache directory
      */
     public function clear($cacheDir)
     {

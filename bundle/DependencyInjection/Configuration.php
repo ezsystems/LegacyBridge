@@ -6,6 +6,7 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
+
 namespace eZ\Bundle\EzPublishLegacyBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\NodeBuilder;
@@ -45,6 +46,9 @@ class Configuration extends SiteAccessConfiguration
     private function addSiteAccessSettings(NodeBuilder $nodeBuilder)
     {
         $nodeBuilder
+            ->booleanNode('not_found_http_conversion')
+                ->info('Whether to use 404 conversion or not. If true, will let symfony handle 404 errors.')
+            ->end()
             ->arrayNode('templating')
                 ->children()
                     ->scalarNode('view_layout')

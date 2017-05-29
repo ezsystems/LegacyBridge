@@ -6,6 +6,7 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
+
 namespace eZ\Publish\Core\MVC\Legacy\Templating\Twig\Extension;
 
 use eZ\Publish\Core\MVC\Legacy\Templating\LegacyHelper;
@@ -26,13 +27,13 @@ class LegacyExtension extends Twig_Extension implements Twig_Extension_InitRunti
      */
     private $legacyEngine;
 
-    /** @var  \eZ\Publish\Core\MVC\Legacy\Templating\LegacyHelper */
+    /** @var \eZ\Publish\Core\MVC\Legacy\Templating\LegacyHelper */
     private $legacyHelper;
 
-    /** @var  string */
+    /** @var string */
     private $jsTemplate;
 
-    /** @var  string */
+    /** @var string */
     private $cssTemplate;
 
     /**

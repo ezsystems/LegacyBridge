@@ -6,6 +6,7 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
+
 namespace eZ\Publish\Core\MVC\Legacy\SignalSlot;
 
 use eZ\Publish\Core\SignalSlot\Signal;
@@ -31,7 +32,7 @@ class LegacyUpdateLocationSlot extends AbstractLegacySlot
         $this->runLegacyKernelCallback(
             function () use ($signal) {
                 eZContentCacheManager::clearContentCacheIfNeeded($signal->contentId);
-                eZContentObject::clearCache();// Clear all object memory cache to free memory
+                eZContentObject::clearCache(); // Clear all object memory cache to free memory
             }
         );
     }

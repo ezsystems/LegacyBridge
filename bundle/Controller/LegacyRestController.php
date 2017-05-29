@@ -6,6 +6,7 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
+
 namespace eZ\Bundle\EzPublishLegacyBundle\Controller;
 
 use eZ\Publish\Core\MVC\Symfony\Controller\Controller;
@@ -35,7 +36,7 @@ class LegacyRestController extends Controller
 
         $result = ezpKernelRest::getResponse();
         if ($result === null) {
-            throw new Exception('Rest Kernel run failed');
+            throw new \Exception('Rest Kernel run failed');
         }
 
         return new Response(

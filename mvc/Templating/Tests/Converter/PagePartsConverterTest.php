@@ -6,6 +6,7 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
+
 namespace eZ\Publish\Core\MVC\Legacy\Templating\Tests\Converter;
 
 use eZ\Publish\Core\MVC\Legacy\Templating\Converter\PagePartsConverter;
@@ -16,7 +17,7 @@ class PagePartsConverterTest extends PHPUnit_Framework_TestCase
 {
     /**
      * @dataProvider convertProvider
-     * @covers eZ\Publish\Core\MVC\Legacy\Templating\Converter\PagePartsConverter::convert
+     * @covers \eZ\Publish\Core\MVC\Legacy\Templating\Converter\PagePartsConverter::convert
      *
      * @param \eZ\Publish\API\Repository\Values\ValueObject $valueObject
      * @param $expectedAdapterClass
@@ -48,9 +49,9 @@ class PagePartsConverterTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException InvalidArgumentException
+     * @expectedException \InvalidArgumentException
      * @dataProvider convertFailNotObjectProvider
-     * @covers eZ\Publish\Core\MVC\Legacy\Templating\Converter\PagePartsConverter::convert
+     * @covers \eZ\Publish\Core\MVC\Legacy\Templating\Converter\PagePartsConverter::convert
      */
     public function testConvertFailNotObject($value)
     {
@@ -70,8 +71,8 @@ class PagePartsConverterTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers eZ\Publish\Core\MVC\Legacy\Templating\Converter\PagePartsConverter::convert
-     * @expectedException InvalidArgumentException
+     * @covers \eZ\Publish\Core\MVC\Legacy\Templating\Converter\PagePartsConverter::convert
+     * @expectedException \InvalidArgumentException
      */
     public function testConvertFailWrongType()
     {

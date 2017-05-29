@@ -6,6 +6,7 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
+
 namespace eZ\Bundle\EzPublishLegacyBundle\Tests\Cache;
 
 use eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger;
@@ -70,8 +71,8 @@ class PersistenceCachePurgerTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger::all
-     * @covers eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger::isAllCleared
+     * @covers \eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger::all
+     * @covers \eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger::isAllCleared
      */
     public function testClearAll()
     {
@@ -85,9 +86,9 @@ class PersistenceCachePurgerTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger::all
-     * @covers eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger::resetAllCleared
-     * @covers eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger::isAllCleared
+     * @covers \eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger::all
+     * @covers \eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger::resetAllCleared
+     * @covers \eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger::isAllCleared
      */
     public function testResetAllCleared()
     {
@@ -99,8 +100,8 @@ class PersistenceCachePurgerTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger::all
-     * @covers eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger::content
+     * @covers \eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger::all
+     * @covers \eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger::content
      */
     public function testClearContentAlreadyCleared()
     {
@@ -112,7 +113,7 @@ class PersistenceCachePurgerTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger::content
+     * @covers \eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger::content
      */
     public function testClearContentDisabled()
     {
@@ -124,8 +125,8 @@ class PersistenceCachePurgerTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger::setEnabled
-     * @covers eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger::all
+     * @covers \eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger::setEnabled
+     * @covers \eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger::all
      */
     public function testClearAllDisabled()
     {
@@ -137,7 +138,7 @@ class PersistenceCachePurgerTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger::content
+     * @covers \eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger::content
      */
     public function testClearAllContent()
     {
@@ -154,7 +155,7 @@ class PersistenceCachePurgerTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger::content
+     * @covers \eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger::content
      */
     public function testClearContent()
     {
@@ -201,7 +202,7 @@ class PersistenceCachePurgerTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger::content
+     * @covers \eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger::content
      */
     public function testClearOneContent()
     {
@@ -248,7 +249,7 @@ class PersistenceCachePurgerTest extends PHPUnit_Framework_TestCase
     /**
      * @expectedException \eZ\Publish\Core\Base\Exceptions\InvalidArgumentType
      *
-     * @covers eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger::content
+     * @covers \eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger::content
      */
     public function testClearContentFail()
     {
@@ -256,7 +257,7 @@ class PersistenceCachePurgerTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger::contentType
+     * @covers \eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger::contentType
      */
     public function testClearContentTypeAll()
     {
@@ -269,7 +270,7 @@ class PersistenceCachePurgerTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger::contentType
+     * @covers \eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger::contentType
      */
     public function testClearContentType()
     {
@@ -284,7 +285,7 @@ class PersistenceCachePurgerTest extends PHPUnit_Framework_TestCase
     /**
      * @expectedException \eZ\Publish\Core\Base\Exceptions\InvalidArgumentType
      *
-     * @covers eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger::contentType
+     * @covers \eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger::contentType
      */
     public function testClearContentTypeFail()
     {
@@ -292,7 +293,7 @@ class PersistenceCachePurgerTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger::contentTypeGroup
+     * @covers \eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger::contentTypeGroup
      */
     public function testClearContentTypeGroupAll()
     {
@@ -312,7 +313,7 @@ class PersistenceCachePurgerTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger::contentTypeGroup
+     * @covers \eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger::contentTypeGroup
      */
     public function testClearContentTypeGroup()
     {
@@ -334,7 +335,7 @@ class PersistenceCachePurgerTest extends PHPUnit_Framework_TestCase
     /**
      * @expectedException \eZ\Publish\Core\Base\Exceptions\InvalidArgumentType
      *
-     * @covers eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger::contentTypeGroup
+     * @covers \eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger::contentTypeGroup
      */
     public function testClearContentTypeGroupFail()
     {
@@ -342,7 +343,7 @@ class PersistenceCachePurgerTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger::section
+     * @covers \eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger::section
      */
     public function testClearSectionAll()
     {
@@ -355,7 +356,7 @@ class PersistenceCachePurgerTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger::section
+     * @covers \eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger::section
      */
     public function testClearSection()
     {
@@ -370,7 +371,7 @@ class PersistenceCachePurgerTest extends PHPUnit_Framework_TestCase
     /**
      * @expectedException \eZ\Publish\Core\Base\Exceptions\InvalidArgumentType
      *
-     * @covers eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger::section
+     * @covers \eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger::section
      */
     public function testClearSectionFail()
     {
@@ -378,7 +379,7 @@ class PersistenceCachePurgerTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger::languages
+     * @covers \eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger::languages
      */
     public function testClearLanguages()
     {
@@ -403,7 +404,7 @@ class PersistenceCachePurgerTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger::languages
+     * @covers \eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger::languages
      */
     public function testClearOneLanguage()
     {
@@ -424,7 +425,7 @@ class PersistenceCachePurgerTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger::user
+     * @covers \eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger::user
      */
     public function testClearUserAll()
     {
@@ -437,7 +438,7 @@ class PersistenceCachePurgerTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger::user
+     * @covers \eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger::user
      */
     public function testClearUser()
     {
@@ -452,7 +453,7 @@ class PersistenceCachePurgerTest extends PHPUnit_Framework_TestCase
     /**
      * @expectedException \eZ\Publish\Core\Base\Exceptions\InvalidArgumentType
      *
-     * @covers eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger::user
+     * @covers \eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger::user
      */
     public function testClearUserFail()
     {

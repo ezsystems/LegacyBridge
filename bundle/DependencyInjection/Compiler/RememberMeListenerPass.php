@@ -6,6 +6,7 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
+
 namespace eZ\Bundle\EzPublishLegacyBundle\DependencyInjection\Compiler;
 
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
@@ -20,7 +21,8 @@ class RememberMeListenerPass implements CompilerPassInterface
             return;
         }
 
-        $listenerDef = $container->findDefinition('security.authentication.listener.rememberme');
-        $listenerDef->addMethodCall('setConfigResolver', array(new Reference('ezpublish.config.resolver')));
+        $container->findDefinition('security.authentication.listener.rememberme')
+            ->setClass('eZ\Bundle\EzPublishLegacyBundle\Security\RememberMeListener')
+            ->addMethodCall('setConfigResolver', array(new Reference('ezpublish.config.resolver')));
     }
 }
