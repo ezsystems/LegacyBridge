@@ -152,7 +152,7 @@ class PersistenceCachePurger implements CacheClearerInterface
 
         if ($allContentCacheClearRequired) {
             $this->cache->clear('content');
-            $this->cache->clear('user', 'role', 'assignments', 'byGroup')
+            $this->cache->clear('user', 'role', 'assignments', 'byGroup');
         }
 
         // clear content related cache as well

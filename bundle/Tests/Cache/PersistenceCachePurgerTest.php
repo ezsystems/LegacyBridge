@@ -243,7 +243,7 @@ class PersistenceCachePurgerTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test case for https://jira.ez.no/browse/EZP-26013
+     * Test case for https://jira.ez.no/browse/EZP-26013.
      */
     public function testClearNonExistingLocation()
     {
