@@ -243,6 +243,37 @@ class PersistenceCachePurgerTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test case for https://jira.ez.no/browse/EZP-26013
+     */
+    public function testClearNonExistingLocation()
+    {
+        $locationId = 1;
+
+        $this->locationHandler
+            ->expects($this->once())
+            ->method('load')
+            ->will($this->throwException(new NotFoundException('location', $locationId)));
+
+        $this->cacheService
+            ->expects($this->at(1))
+            ->method('clear')
+            ->with('content');
+
+        $cacheItem = $this->getMock('Stash\\Interfaces\\ItemInterface');
+        $cacheItem->expects($this->once())
+            ->method('get')
+            ->will($this->returnValue(null));
+
+        $this->cacheService
+            ->expects($this->once())
+            ->method('getItem')
+            ->with('location', $locationId)
+            ->will($this->returnValue($cacheItem));
+
+        $this->cachePurger->content($locationId);
+    }
+
+    /**
      * @param $locationId
      * @param $contentId
      * @return \eZ\Publish\SPI\Persistence\Content\Location
