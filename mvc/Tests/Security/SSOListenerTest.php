@@ -11,6 +11,10 @@ namespace eZ\Publish\Core\MVC\Legacy\Tests\Security;
 
 use eZ\Publish\Core\MVC\Legacy\Security\Firewall\SSOListener;
 use eZ\Publish\Core\MVC\Symfony\Security\User;
+use eZ\Publish\Core\Repository\Values\User\User as CoreUser;
+use eZ\Publish\Core\Repository\Values\Content\Content;
+use eZ\Publish\API\Repository\Values\Content\ContentInfo;
+use eZ\Publish\Core\Repository\Values\Content\VersionInfo;
 use PHPUnit_Framework_TestCase;
 use ReflectionObject;
 use Symfony\Component\HttpFoundation\Request;
@@ -86,10 +90,21 @@ class SSOListenerTest extends PHPUnit_Framework_TestCase
         $passwordHash = md5('password');
         // Specifically silence E_DEPRECATED on constructor name for php7
         $legacyUser = @new eZUser(array('contentobject_id' => $userId));
-        $apiUser = $this
-            ->getMockBuilder('eZ\Publish\API\Repository\Values\User\User')
-            ->setConstructorArgs(array(array('passwordHash' => $passwordHash)))
-            ->getMockForAbstractClass();
+        $apiUser = new CoreUser(
+            array(
+                'passwordHash' => $passwordHash,
+                'content' => new Content(
+                    array(
+                        'versionInfo' => new VersionInfo(
+                            array(
+                                'contentInfo' => new ContentInfo(),
+                            )
+                        ),
+                    )
+                ),
+            )
+        );
+
         $finalUser = new User($apiUser, array('ROLE_USER'));
 
         $this->userService
