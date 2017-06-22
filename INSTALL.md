@@ -1,97 +1,113 @@
 # Installing the eZ Platform legacy bridge
 
 Unlike eZ Publish 5.x, eZ Platform does not include the Legacy stack by default.
-Even though it is not officially supported, eZ Publish Legacy can easily be installed
-on top of Platform using Composer.
+eZ Publish Legacy can easily be installed on top of Platform using Composer.
 
-### Missing legacy extensions
+### eZ Plaftorm installation
 
-Several ezpublish-legacy extensions are no longer installed by default, such as ezfind or eztags.
-They can still be manually added to the root `composer.json`.
+We are assuming you have a fresh [eZ Platform installation here](https://www.ezplatform.com/), 
+that basically you have run:
 
-### Add the composer `legacy post-*-scripts`
-
-Edit `composer.json`, and add those lines to both `post-update-cmd` and `post-install-cmd` blocks at the end:
-
+```bash
+php -d memory_limit=-1 composer create-project ezsystems/ezplatform
+php app/console doctrine:database:create
+php app/console ezplatform:install clean
 ```
+
+At this point you should be able to reach Platform UI at the URL http://{YOURPROJECTHOST}/ez
+
+### Legacy Bridge Installation Steps
+
+#### Adapt your composer.json
+
+Edit `composer.json`, and add those lines to both `post-update-cmd`, `post-install-cmd` and `extra` blocks at the end:
+
+```json
 "scripts": {
     "post-install-cmd": [
         ...,
         "eZ\\Bundle\\EzPublishLegacyBundle\\Composer\\ScriptHandler::installAssets",
         "eZ\\Bundle\\EzPublishLegacyBundle\\Composer\\ScriptHandler::installLegacyBundlesExtensions",
-        "eZ\\Bundle\\EzPublishLegacyBundle\\Composer\\ScriptHandler::generateAutoloads"
+        "Novactive\\EzLegacyToolsBundle\\Composer\\ScriptHandler::installLegacyBundlesSettings",
+        "Novactive\\EzLegacyToolsBundle\\Composer\\ScriptHandler::executeLegacyScripts",
+        "eZ\\Bundle\\EzPublishLegacyBundle\\Composer\\ScriptHandler::generateAutoloads",
+        "eZ\\Bundle\\EzPublishLegacyBundle\\Composer\\ScriptHandler::generateKernelOverrideAutoloads",
     ],
     "post-update-cmd": [
         ...,
         "eZ\\Bundle\\EzPublishLegacyBundle\\Composer\\ScriptHandler::installAssets",
         "eZ\\Bundle\\EzPublishLegacyBundle\\Composer\\ScriptHandler::installLegacyBundlesExtensions",
-        "eZ\\Bundle\\EzPublishLegacyBundle\\Composer\\ScriptHandler::generateAutoloads"
+        "Novactive\\EzLegacyToolsBundle\\Composer\\ScriptHandler::installLegacyBundlesSettings",
+        "Novactive\\EzLegacyToolsBundle\\Composer\\ScriptHandler::executeLegacyScripts",
+        "eZ\\Bundle\\EzPublishLegacyBundle\\Composer\\ScriptHandler::generateAutoloads",
+        "eZ\\Bundle\\EzPublishLegacyBundle\\Composer\\ScriptHandler::generateKernelOverrideAutoloads",
     ],
+    ...,
+    "extra": {
+        ...,
+        "ezpublish-legacy-dir": "ezpublish_legacy",
+        "legacy-settings-install": ["force", "relative"],
+        "legacy-scripts-execution": []
+   } 
 }
 ```
 
-### Enable EzPublishLegacyBundle
-Edit `app/AppKernel.php` (or `ezpublish/EzPublishKernel` before ezplatform 2015.12),
-and add `new eZ\Bundle\EzPublishLegacyBundle\EzPublishLegacyBundle( $this )` at the end of 
-the `$bundles` array. Pay close attention to the `$this` argument. The LegacyBundle is a bit 
-of a spoiled brat, and has high expectations from its collaborators.
+#### Enable the new bundles
 
-### Add legacy routes
-Edit `app/config/routing.yml`, and add the LegacyBundle routes.
+Edit `app/AppKernel.php` (or `ezpublish/EzPublishKernel` before ezplatform 2015.12), and add 
+
+```php
+new Novactive\EzLegacyToolsBundle\NovactiveEzLegacyToolsBundle(),
+new EzSystems\EzPlatformXmlTextFieldTypeBundle\EzSystemsEzPlatformXmlTextFieldTypeBundle(),
+new eZ\Bundle\EzPublishLegacyBundle\EzPublishLegacyBundle( $this )
 
 ```
+at the end of the `$bundles` array. 
+Pay close attention to the `$this` argument. The LegacyBundle is a bit  of a spoiled brat, and has high expectations 
+from its collaborators.
+
+
+#### Add legacy routes
+
+Edit `app/config/routing.yml`, and add the LegacyBundle routes.
+
+```yaml
 _ezpublishLegacyRoutes:
     resource: @EzPublishLegacyBundle/Resources/config/routing.yml
 ```
 
-### Enable legacy_mode for your backoffice siteaccess
-
-The Legacy Backoffice requires the `legacy_mode` option to be enabled.
-This can be done in app/config/config.yml or app/config/ezplatform.yml:
-
-```
-ez_publish_legacy:
-    system:
-        site_admin:
-           legacy_mode: true
-```
-
-### Optional: add security rules for the Setup Wizard
-
-If you intend to run the legacy setup wizard, you need to allow it in `app/config/security.yml`.
-
-```
-ezpublish_setup:
-    pattern: ^/ezsetup
-    security: false
-```
-
-### Configure ezpublish legacy's location in `composer.json`
-
-`ezsystems/ezpublish-legacy` needs to be installed in a particular location to work.
-
-Edit `composer.json`, and add `"ezpublish-legacy-dir": "ezpublish_legacy"` to the `extra` array:
-
-```
-    "extra": {
-        "ezpublish-legacy-dir": "ezpublish_legacy",
-```
-
-### Install `ezsystems/legacy-bridge`
+#### Install the bundles
 
 **Make sure you have set the ezpublish legacy folder in composer.json, as instructed above**
 
-`ezsystems/legacy-bridge` contains the libraries previous included in `ezsystems/ezpublish-kernel`.
-
-It must be installed using Composer. Take care to use `^1.0.4` as version constraint, since previous versions lack some important fixes for newer versions of eZ Platform:
-
-```
-composer require --update-no-dev "ezsystems/legacy-bridge:^1.0.4"
+```bash
+composer require "ezsystems/legacy-bridge:1.1.x" "novactive/ezlegacy-tools-bundle:dev-master" "ezsystems/ezplatform-xmltext-fieldtype" netgen/ngsymfonytools netgen/ezplatformsearch --no-scripts
 ```
 
-### Configuring Symfony app folder in legacy
+#### Create you legacy bundle
 
-In eZ Publish 5, Symfony app folder was named `ezpublish`. This was changed in eZ Platform, and now the folder name is `app`, which is Symfony recommended name. eZ Publish Legacy supports both of these folder names, however, `ezpublish` is still the default one in latest tagged release (v2015.01.3). This means that you need to make eZ Publish Legacy aware of the new folder name. You can do this by using `config.php` file which you can place in `ezpublish_legacy` folder with the following content:
+```bash
+php app/console generate:bundle --namespace=Acme/Bundle/LegacyBundle --format=annotation --bundle-name=AcmeLegacyBundle --dir=src -n
+```
+
+Create 2 folders for legacy
+
+```bash
+cd src/Acme/Bundle/LegacyBundle
+mkdir ezpublish_legacy legacy_settings
+cd -
+```
+
+Copy the config.php-RECOMMENDED in legacy_settings
+
+```bash
+cp ezpublish_legacy/config.php-RECOMMENDED src/Acme/Bundle/LegacyBundle/legacy_settings/config.php
+```
+In eZ Publish 5, Symfony app folder was named `ezpublish`. This was changed in eZ Platform, 
+and now the folder name is `app`, which is Symfony recommended name. 
+eZ Publish Legacy supports both of these folder names, however, `ezpublish` is still the default 
+one in latest tagged release (v2015.01.3). This means that you need to make eZ Publish Legacy aware of the 
+new folder name. You can do this by editing `config.php` and uncommenting:
 
 ```php
 <?php
@@ -99,9 +115,59 @@ In eZ Publish 5, Symfony app folder was named `ezpublish`. This was changed in e
 define( 'EZP_APP_FOLDER_NAME', 'app' );
 ```
 
-If you're using master branch of eZ Publish Legacy, you can skip this step.
+#### Configure you administration siteaccess.
 
-### Configure virtual host rewrite rules
+The Legacy Backoffice requires the `legacy_mode` option to be enabled.
+This can be done in app/config/config.yml or app/config/ezplatform.yml:
+
+We are using here: administration as SiteAccessName
+
+```yaml
+
+# app/config/ezplatform.yml
+
+ezpublish:
+    repositories:
+        default:
+            storage: ~
+            search:
+                engine: %search_engine%
+                connection: default
+    siteaccess:
+        list: [site, administration]
+        groups:
+            site_group: [site, administration]
+        default_siteaccess: site
+        match:
+            URIElement: 1
+
+    system:
+        site_group:
+            cache_pool_name: '%cache_pool%'
+            var_dir: var/site
+            languages: [eng-GB]
+            
+            
+ez_publish_legacy:
+    system:
+        administration:
+           legacy_mode: true
+```
+
+
+Because your are not running the wizard you have to manually create the settings for you legacy siteaccess.
+We are providing a template:
+```bash
+cp -r vendor/ezsystems/legacy-bridge/settings_template/* src/Acme/Bundle/LegacyBundle/legacy_settings
+```
+
+#### Finalize the installation (as we did --no-scripts before)
+
+```bash
+composer install
+```
+
+#### Configure virtual host rewrite rules
 
 To access legacy assets (eZ Publish designs and extension designs), add the following rewrite rules to your Apache virtual host:
 
@@ -110,7 +176,6 @@ To access legacy assets (eZ Publish designs and extension designs), add the foll
 #RewriteRule ^/var/([^/]+/)?storage/images(-versioned)?/.* /index.php [L]
 #RewriteRule ^/var/([^/]+/)?cache/(texttoimage|public)/.* /index_cluster.php [L]
 
-RewriteRule ^/var/([^/]+/)?storage/images(-versioned)?/.* - [L]
 RewriteRule ^/var/([^/]+/)?cache/(texttoimage|public)/.* - [L]
 RewriteRule ^/design/[^/]+/(stylesheets|images|javascript|fonts)/.* - [L]
 RewriteRule ^/share/icons/.* - [L]
@@ -120,6 +185,8 @@ RewriteRule ^/packages/styles/.+/thumbnail/.* - [L]
 RewriteRule ^/var/storage/packages/.* - [L]
 ```
 
+> Please refer to doc/nginx for more information (complete vhost without these rules you need)
+
 Or if using nginx:
 
 ```
@@ -127,7 +194,6 @@ Or if using nginx:
 #rewrite "^/var/([^/]+/)?storage/images(-versioned)?/(.*)" "/index.php" break;
 #rewrite "^/var/([^/]+/)?cache/(texttoimage|public)/(.*)" "/index_cluster.php" break;
 
-rewrite "^/var/([^/]+/)?storage/images(-versioned)?/(.*)" "/var/$1storage/images$2/$3" break;
 rewrite "^/var/([^/]+/)?cache/(texttoimage|public)/(.*)" "/var/$1cache/$2/$3" break;
 rewrite "^/design/([^/]+)/(stylesheets|images|javascript|fonts)/(.*)" "/design/$1/$2/$3" break;
 rewrite "^/share/icons/(.*)" "/share/icons/$1" break;
@@ -137,8 +203,26 @@ rewrite "^/packages/styles/(.+)/thumbnail/(.*)" "/packages/styles/$1/thumbnail/$
 rewrite "^/var/storage/packages/(.*)" "/var/storage/packages/$1" break;
 ```
 
+> Please refer to doc/nginx for more information (complete vhost without these rules you need)
+
+!! Restart your webserver !!
+
+> Yes, don't forget ;-)
+
+### Test !
+
+*/ez* for Plaftform UI
+*/administration* for Legacy Admin
+
+
 ### Setup Folder Permissions
 
 Last step, if you are on *nix operation system, is to make sure to run 
 the appropriate command for setting correct folder permissions, you 
 can find the information you need in installation guide for eZ Publish 5.x.
+
+
+### Missing legacy extensions
+
+Several ezpublish-legacy extensions are no longer installed by default, such as ezfind or eztags.
+They can still be manually added to the root `composer.json`.
