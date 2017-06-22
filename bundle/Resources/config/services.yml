@@ -240,7 +240,10 @@ services:
 
     ezpublish_legacy.persistence_cache_purger:
         class: "%ezpublish_legacy.persistence_cache_purger.class%"
-        arguments: ["@ezpublish.cache_pool.spi.cache.decorator", "@ezpublish.spi.persistence.cache.locationHandler", "@logger"]
+        arguments:
+            - "@ezpublish.cache_pool.spi.cache.decorator"
+            - "@ezpublish.spi.persistence.legacy.location.handler"
+            - "@logger"
         tags:
             - { name: kernel.cache_clearer }
         lazy: true

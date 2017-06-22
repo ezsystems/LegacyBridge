@@ -11,6 +11,7 @@ namespace eZ\Bundle\EzPublishLegacyBundle\Cache;
 
 use Symfony\Component\HttpKernel\CacheClearer\CacheClearerInterface;
 use eZ\Publish\SPI\Persistence\Content\Location\Handler as LocationHandlerInterface;
+use eZ\Publish\SPI\Persistence\Content\Location;
 use eZ\Publish\Core\Base\Exceptions\InvalidArgumentType;
 use eZ\Publish\Core\Base\Exceptions\NotFoundException;
 use eZ\Publish\Core\Persistence\Cache\CacheServiceDecorator;
@@ -120,6 +121,8 @@ class PersistenceCachePurger implements CacheClearerInterface
             $locationIds = array($locationIds);
         }
 
+        $allContentCacheClearRequired = false;
+
         foreach ($locationIds as $id) {
             if (!is_scalar($id)) {
                 throw new InvalidArgumentType('$id', 'int[]|null', $id);
@@ -127,17 +130,29 @@ class PersistenceCachePurger implements CacheClearerInterface
 
             try {
                 $location = $this->locationHandler->load($id);
-                $this->cache->clear('content', $location->contentId);
-                $this->cache->clear('content', 'info', $location->contentId);
-                $this->cache->clear('content', 'info', 'remoteId');
-                $this->cache->clear('content', 'locations', $location->contentId);
-                $this->cache->clear('user', 'role', 'assignments', 'byGroup', $location->contentId);
-                $this->cache->clear('user', 'role', 'assignments', 'byGroup', 'inherited', $location->contentId);
             } catch (NotFoundException $e) {
-                $this->logger->notice(
-                    "Unable to load the location with the id '$id' to clear its cache"
-                );
+                // See if we get it by doing a cache lookup
+                $item = $this->cache->getItem('location', $id);
+                $location = $item->get();
+                if (!$location instanceof Location) {
+                    $this->logger->notice("Unable to load the location with the id '$id' to clear its cache");
+                    // as we can't find given location we need to clear all content cache
+                    $allContentCacheClearRequired = true;
+                    continue;
+                }
             }
+
+            $this->cache->clear('content', $location->contentId);
+            $this->cache->clear('content', 'info', $location->contentId);
+            $this->cache->clear('content', 'info', 'remoteId');
+            $this->cache->clear('content', 'locations', $location->contentId);
+            $this->cache->clear('user', 'role', 'assignments', 'byGroup', $location->contentId);
+            $this->cache->clear('user', 'role', 'assignments', 'byGroup', 'inherited', $location->contentId);
+        }
+
+        if ($allContentCacheClearRequired) {
+            $this->cache->clear('content');
+            $this->cache->clear('user', 'role', 'assignments', 'byGroup');
         }
 
         // clear content related cache as well

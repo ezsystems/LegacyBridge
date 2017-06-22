@@ -63,6 +63,17 @@ class PersistenceCachePurgerTest extends PHPUnit_Framework_TestCase
             ->method('load')
             ->will($this->throwException(new NotFoundException('location', $id)));
 
+        $cacheItem = $this->getMock('Stash\\Item');
+        $cacheItem->expects($this->once())
+            ->method('get')
+            ->will($this->returnValue(null));
+
+        $this->cacheService
+            ->expects($this->once())
+            ->method('getItem')
+            ->with('location', $id)
+            ->will($this->returnValue($cacheItem));
+
         $this->logger
             ->expects($this->once())
             ->method('notice');
@@ -229,6 +240,37 @@ class PersistenceCachePurgerTest extends PHPUnit_Framework_TestCase
             );
 
         $this->assertSame(array($locationId), $this->cachePurger->content($locationId));
+    }
+
+    /**
+     * Test case for https://jira.ez.no/browse/EZP-26013.
+     */
+    public function testClearNonExistingLocation()
+    {
+        $locationId = 1;
+
+        $this->locationHandler
+            ->expects($this->once())
+            ->method('load')
+            ->will($this->throwException(new NotFoundException('location', $locationId)));
+
+        $this->cacheService
+            ->expects($this->at(1))
+            ->method('clear')
+            ->with('content');
+
+        $cacheItem = $this->getMock('Stash\\Interfaces\\ItemInterface');
+        $cacheItem->expects($this->once())
+            ->method('get')
+            ->will($this->returnValue(null));
+
+        $this->cacheService
+            ->expects($this->once())
+            ->method('getItem')
+            ->with('location', $locationId)
+            ->will($this->returnValue($cacheItem));
+
+        $this->cachePurger->content($locationId);
     }
 
     /**
