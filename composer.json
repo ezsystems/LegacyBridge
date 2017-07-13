@@ -13,7 +13,7 @@
     "require": {
         "ezsystems/ezpublish-legacy-installer": "^2.0.4",
         "ezsystems/ezpublish-legacy": ">=2017.08",
-        "ezsystems/ezpublish-kernel": "~6.0@dev",
+        "ezsystems/ezpublish-kernel": "^6.11@dev",
         "sensio/distribution-bundle": "^3.0.36|^4.0.6|^5.0.6",
         "twig/twig": "^1.27 | ^2.0"
     },
@@ -35,7 +35,7 @@
     "extra": {
         "ezpublish-legacy-dir": "ezpublish_legacy",
         "branch-alias": {
-            "dev-master": "1.2.x-dev"
+            "dev-master": "2.0.x-dev"
         }
     }
 }
