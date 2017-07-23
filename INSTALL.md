@@ -72,10 +72,10 @@ ezpublish_setup:
 
 `ezsystems/legacy-bridge` contains the libraries previous included in `ezsystems/ezpublish-kernel`.
 
-It must be installed using Composer. Take care to use `^2.0.0` as version constraint, since previous versions lack some important fixes for newer versions of eZ Platform:
+It must be installed using Composer. Take care to use `^1.3.0` as version constraint, since previous versions lack some important fixes for newer versions of eZ Platform:
 
 ```
-composer require --update-no-dev "ezsystems/legacy-bridge:^2.0.0"
+composer require --update-no-dev "ezsystems/legacy-bridge:^1.3.0"
 ```
 
 ### Configure virtual host rewrite rules
