@@ -37,7 +37,7 @@ the `$bundles` array. Pay close attention to the `$this` argument. The LegacyBun
 of a spoiled brat, and has high expectations from its collaborators.
 
 ### Add legacy routes
-Edit `app/config/routing.yml`, and add the LegacyBundle routes.
+Edit `app/config/routing.yml`, and add the LegacyBundle routes at the end of the file.
 
 ```
 _ezpublishLegacyRoutes:
