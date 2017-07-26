@@ -257,26 +257,10 @@ class LegacyResponseManagerTest extends PHPUnit_Framework_TestCase
         $kernelRedirect = new ezpKernelRedirect($uri, $redirectStatus, $content);
         $manager = new LegacyResponseManager($this->templateEngine, $this->configResolver, new RequestStack());
         $response = $manager->generateRedirectResponse($kernelRedirect);
-        $uriInContent = htmlspecialchars($uri);
-        $expectedContent = <<<EOT
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8" />
-        <meta http-equiv="refresh" content="1;url=$uriInContent" />
-
-        <title>Redirecting to $uriInContent</title>
-    </head>
-    <body>
-        Redirecting to <a href="$uriInContent">$uriInContent</a>.
-    </body>
-</html>
-EOT;
 
         $this->assertInstanceOf('Symfony\Component\HttpFoundation\RedirectResponse', $response);
         $this->assertSame($uri, $response->getTargetUrl());
         $this->assertSame($expectedStatusCode, $response->getStatusCode());
-        $this->assertSame($expectedContent, $response->getContent());
     }
 
     public function generateRedirectResponseProvider()
