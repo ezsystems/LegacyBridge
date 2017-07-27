@@ -91,12 +91,12 @@ It must be installed using Composer. Take care to use `^1.0.4` as version constr
 composer require --update-no-dev "ezsystems/legacy-bridge:^1.0.4"
 ```
 
-Alternativly, for eZ Platform EE users you should make sure to ask for the latests 5.4 version of legacy to recive support, this can be done like so for now:
+Alternativly, for eZ Platform EE users you should make sure to ask for the latests 5.4 version of legacy to recive full support, this can be done like so for now:
 ```
 composer require --update-with-dependencies "ezsystems/ezpublish-legacy:5.4.10 as 2017.07.x-dev" "ezsystems/legacy-bridge:^1.0.4"
 ```
 
-_NOTE: This step will not be needed in future versions, make sure to update and remove the alias once 5.4.11 is out, or update the alias in `composer.json`._
+_NOTE: This step will not be needed in future versions, make sure to remove the alias in `composer.json` once Legacy Bridge 1.3 is out, to make sure you recive updates for legacy in the future._
 
 ### Configuring Symfony app folder in legacy
 
