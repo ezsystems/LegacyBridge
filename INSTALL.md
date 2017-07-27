@@ -40,6 +40,8 @@ of a spoiled brat, and has high expectations from its collaborators.
 Edit `app/config/routing.yml`, and add the LegacyBundle routes at the end of the file.
 
 ```
+# NOTE: Always keep at the end of the file so native symfony routes always have precedent, to avoid legacy
+# REST pattern overrides possible eZ Platform REST routes. 
 _ezpublishLegacyRoutes:
     resource: @EzPublishLegacyBundle/Resources/config/routing.yml
 ```
