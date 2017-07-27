@@ -91,7 +91,7 @@ It must be installed using Composer. Take care to use `^1.0.4` as version constr
 composer require --update-no-dev "ezsystems/legacy-bridge:^1.0.4"
 ```
 
-Alternativly, for eZ Platform EE users you should make sure to ask for the latests 5.4 version of legacy to recive full support, this can be done like so for now:
+Alternatively, for eZ Platform EE users you should make sure to ask for the latests 5.4 version of legacy to recive full support, this can be done like so for now:
 ```
 composer require --update-with-dependencies "ezsystems/ezpublish-legacy:5.4.10 as 2017.07.x-dev" "ezsystems/legacy-bridge:^1.0.4"
 ```
