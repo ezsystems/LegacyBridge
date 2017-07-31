@@ -78,6 +78,11 @@ It must be installed using Composer. Take care to use `^1.0.4` as version constr
 composer require --update-no-dev "ezsystems/legacy-bridge:^1.0.4"
 ```
 
+Alternatively, for eZ Platform EE users you should make sure to use the latest 5.4 version of legacy to receive full support:
+```
+composer require --update-with-dependencies "ezsystems/ezpublish-legacy:5.4.10" "ezsystems/legacy-bridge:^1.0.4"
+```
+
 ### Configuring Symfony app folder in legacy
 
 _Step not needed with version >= 5.4.7 (ee) and >= 2016.10 (community forks)_.
