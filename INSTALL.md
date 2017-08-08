@@ -85,7 +85,7 @@ composer require --update-with-dependencies "ezsystems/ezpublish-legacy:5.4.10" 
 
 ### Configuring Symfony app folder in legacy
 
-_Step not needed with version >= 5.4.7 (ee) and >= 2016.10 (community forks)_.
+_Step not needed with version >= 5.4.7 (ee) and >= 2016.10_.
 
 In eZ Publish 5, Symfony app folder was named `ezpublish`. This was changed in eZ Platform, and now the folder name is `app`, which is Symfony recommended name. eZ Publish Legacy supports both of these folder names, however, `ezpublish` is still the default one in latest tagged release (v2015.01.3). This means that you need to make eZ Publish Legacy aware of the new folder name. You can do this by using `config.php` file which you can place in `ezpublish_legacy` folder with the following content:
 
