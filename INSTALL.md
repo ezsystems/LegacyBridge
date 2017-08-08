@@ -68,20 +68,7 @@ ezpublish_setup:
     security: false
 ```
 
-### Configure ezpublish legacy's location in `composer.json`
-
-`ezsystems/ezpublish-legacy` needs to be installed in a particular location to work.
-
-Edit `composer.json`, and add `"ezpublish-legacy-dir": "ezpublish_legacy"` to the `extra` array:
-
-```
-    "extra": {
-        "ezpublish-legacy-dir": "ezpublish_legacy",
-```
-
 ### Install `ezsystems/legacy-bridge`
-
-**Make sure you have set the ezpublish legacy folder in composer.json, as instructed above**
 
 `ezsystems/legacy-bridge` contains the libraries previous included in `ezsystems/ezpublish-kernel`.
 
@@ -91,7 +78,14 @@ It must be installed using Composer. Take care to use `^1.0.4` as version constr
 composer require --update-no-dev "ezsystems/legacy-bridge:^1.0.4"
 ```
 
+Alternatively, for eZ Platform EE users you should make sure to use the latest 5.4 version of legacy to receive full support:
+```
+composer require --update-with-dependencies "ezsystems/ezpublish-legacy:5.4.10" "ezsystems/legacy-bridge:^1.0.4"
+```
+
 ### Configuring Symfony app folder in legacy
+
+_Step not needed with version >= 5.4.7 (ee) and >= 2016.10_.
 
 In eZ Publish 5, Symfony app folder was named `ezpublish`. This was changed in eZ Platform, and now the folder name is `app`, which is Symfony recommended name. eZ Publish Legacy supports both of these folder names, however, `ezpublish` is still the default one in latest tagged release (v2015.01.3). This means that you need to make eZ Publish Legacy aware of the new folder name. You can do this by using `config.php` file which you can place in `ezpublish_legacy` folder with the following content:
 
