@@ -69,7 +69,7 @@ ezpublish_setup:
 
 ### Install `ezsystems/legacy-bridge`
 
-`ezsystems/legacy-bridge` contains the libraries previous included in `ezsystems/ezpublish-kernel` in version 5.x.
+`ezsystems/legacy-bridge` contains the libraries previously included in `ezsystems/ezpublish-kernel` in version 5.x.
 
 It must be installed using Composer. Take care to use `^1.3.0` as version constraint, since previous versions lack some important fixes for newer versions of eZ Platform:
 
