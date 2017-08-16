@@ -14,10 +14,10 @@ See [INSTALL.md](INSTALL.md) for the installation procedure.
 
 ### Reporting issues
 
-As Legacy Bridge is co-maintained by the community and eZ Engineering *(as active community members)*, issues found can be reported directly here on Github. There is no SLA on fixes, this is all on voluntary basis, and we welcome you in contributing to issues in any form you you are cable of.
+As Legacy Bridge is co-maintained by the community and eZ Engineering *(as active community members)*, issues found can be reported directly here on Github. There is no SLA on fixes, this is all on voluntary basis, and we welcome you in contributing to issues in any form you you are capable of.
 
 
 ##### For Enterprise Customers
 
 As of version 1.3.0 you can optionally report issues via [normal support channels](https://support.ez.no) as well where you do have an SLA on response time.
-But as always if you know a possible fix, proposing a PR as well here can speed up the issue identification and fixing a lot so we also encourages eZ Partners to actively participate whenever they can, as it benefits themselves as well as the customer.
+But as always if you know a possible fix, proposing a PR as well here can speed up the issue identification and fixing a lot so we encourage eZ Partners to actively participate whenever they can, as it benefits themselves as well as the customer.
