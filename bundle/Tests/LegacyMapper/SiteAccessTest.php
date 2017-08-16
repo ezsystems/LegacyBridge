@@ -122,7 +122,7 @@ class SiteAccessTest extends PHPUnit_Framework_TestCase
         $siteAccessMapper->onBuildKernelWebHandler($event);
         $this->assertSame(
             $uriPart,
-            $event->getParameters()->get('siteaccess[uri_part]', null, true)
+            $event->getParameters()->get('siteaccess')['uri_part']
         );
     }
 }
