@@ -1,8 +1,9 @@
 # Installing the eZ Platform legacy bridge
 
 Unlike eZ Publish 5.x, eZ Platform does not include the Legacy stack by default.
-Even though it is not officially supported, eZ Publish Legacy can easily be installed
-on top of Platform using Composer.
+
+Even though it is not recommended for use on new installs, eZ Publish Legacy can easily be installed
+on top of Platform using Composer to provide a more up-to-date platform to migrate your code to eZ Platform with.
 
 ### Missing legacy extensions
 
@@ -68,9 +69,7 @@ ezpublish_setup:
 
 ### Install `ezsystems/legacy-bridge`
 
-**Make sure you have set the ezpublish legacy folder in composer.json, as instructed above**
-
-`ezsystems/legacy-bridge` contains the libraries previous included in `ezsystems/ezpublish-kernel`.
+`ezsystems/legacy-bridge` contains the libraries previous included in `ezsystems/ezpublish-kernel` in version 5.x.
 
 It must be installed using Composer. Take care to use `^1.3.0` as version constraint, since previous versions lack some important fixes for newer versions of eZ Platform:
 
@@ -118,4 +117,4 @@ rewrite "^/var/storage/packages/(.*)" "/var/storage/packages/$1" break;
 
 Last step, if you are on *nix operation system, is to make sure to run 
 the appropriate command for setting correct folder permissions, you 
-can find the information you need in installation guide for eZ Publish 5.x.
+can find the information you need in [installation guide for eZ Publish 5.x](https://doc.ez.no/display/EZP/Installation).
