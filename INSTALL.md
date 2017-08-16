@@ -1,8 +1,9 @@
 # Installing the eZ Platform legacy bridge
 
 Unlike eZ Publish 5.x, eZ Platform does not include the Legacy stack by default.
-Even though it is not officially supported, eZ Publish Legacy can easily be installed
-on top of Platform using Composer.
+
+Even though it is not recommended for use on new installs, eZ Publish Legacy can easily be installed
+on top of Platform using Composer to provide a more up-to-date platform to migrate your code to eZ Platform with.
 
 ### Missing legacy extensions
 
@@ -68,40 +69,15 @@ ezpublish_setup:
     security: false
 ```
 
-### Configure ezpublish legacy's location in `composer.json`
-
-`ezsystems/ezpublish-legacy` needs to be installed in a particular location to work.
-
-Edit `composer.json`, and add `"ezpublish-legacy-dir": "ezpublish_legacy"` to the `extra` array:
-
-```
-    "extra": {
-        "ezpublish-legacy-dir": "ezpublish_legacy",
-```
-
 ### Install `ezsystems/legacy-bridge`
 
-**Make sure you have set the ezpublish legacy folder in composer.json, as instructed above**
+`ezsystems/legacy-bridge` contains the libraries previously included in `ezsystems/ezpublish-kernel` in version 5.x.
 
-`ezsystems/legacy-bridge` contains the libraries previous included in `ezsystems/ezpublish-kernel`.
-
-It must be installed using Composer. Take care to use `^1.0.4` as version constraint, since previous versions lack some important fixes for newer versions of eZ Platform:
+It must be installed using Composer. Take care to use `^1.3.0` as version constraint, since previous versions lack some important fixes for newer versions of eZ Platform:
 
 ```
-composer require --update-no-dev "ezsystems/legacy-bridge:^1.0.4"
+composer require --update-no-dev "ezsystems/legacy-bridge:^1.3.0"
 ```
-
-### Configuring Symfony app folder in legacy
-
-In eZ Publish 5, Symfony app folder was named `ezpublish`. This was changed in eZ Platform, and now the folder name is `app`, which is Symfony recommended name. eZ Publish Legacy supports both of these folder names, however, `ezpublish` is still the default one in latest tagged release (v2015.01.3). This means that you need to make eZ Publish Legacy aware of the new folder name. You can do this by using `config.php` file which you can place in `ezpublish_legacy` folder with the following content:
-
-```php
-<?php
-
-define( 'EZP_APP_FOLDER_NAME', 'app' );
-```
-
-If you're using master branch of eZ Publish Legacy, you can skip this step.
 
 ### Configure virtual host rewrite rules
 
@@ -143,4 +119,4 @@ rewrite "^/var/storage/packages/(.*)" "/var/storage/packages/$1" break;
 
 Last step, if you are on *nix operation system, is to make sure to run 
 the appropriate command for setting correct folder permissions, you 
-can find the information you need in installation guide for eZ Publish 5.x.
+can find the information you need in [installation guide for eZ Publish 5.x](https://doc.ez.no/display/EZP/Installation).
