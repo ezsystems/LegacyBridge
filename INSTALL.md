@@ -27,10 +27,9 @@ Edit `composer.json`, and add those lines to both `post-update-cmd` and `post-in
 ```
 
 ### Enable EzPublishLegacyBundle
-Edit `app/AppKernel.php` (or `ezpublish/EzPublishKernel` before ezplatform 2015.12),
-and add `new eZ\Bundle\EzPublishLegacyBundle\EzPublishLegacyBundle( $this )` at the end of 
-the `$bundles` array. Pay close attention to the `$this` argument. The LegacyBundle is a bit 
-of a spoiled brat, and has high expectations from its collaborators.
+Edit `app/AppKernel.php`, and add `new eZ\Bundle\EzPublishLegacyBundle\EzPublishLegacyBundle( $this ),`
+at the end of  the `$bundles` array. Pay close attention to the `$this` argument, LegacyBundle is a bit 
+spoiled and has high expectations from its collaborators ;)
 
 ### Add legacy routes
 Edit `app/config/routing.yml`, and add the LegacyBundle routes at the end of the file.
