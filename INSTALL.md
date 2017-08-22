@@ -5,11 +5,6 @@ Unlike eZ Publish 5.x, eZ Platform does not include the Legacy stack by default.
 Even though it is not recommended for use on new installs, eZ Publish Legacy can easily be installed
 on top of Platform using Composer to provide a more up-to-date platform to migrate your code to eZ Platform with.
 
-### Missing legacy extensions
-
-Several ezpublish-legacy extensions are no longer installed by default, such as ezfind or eztags.
-They can still be manually added to the root `composer.json`.
-
 ### Add the composer `legacy post-*-scripts`
 
 Edit `composer.json`, and add those lines to both `post-update-cmd` and `post-install-cmd` blocks at the end:
@@ -78,6 +73,19 @@ It must be installed using Composer. Take care to use `^1.3.0` as version constr
 ```
 composer require --update-no-dev "ezsystems/legacy-bridge:^1.3.0"
 ```
+
+### Optional: Add missing legacy extensions
+
+Several ezpublish-legacy extensions are no longer installed by default with ezpublish-legacy package, such as ezfind or eztags.
+They can still be manually added to the root `composer.json` of your eZ Platform installation.
+
+Previusly bundled extensions, and their composer package names for installing:
+- ezsystems/ezscriptmonitor-ls
+- ezsystems/ezsi-ls
+- ezsystems/ezfind-ls
+- ezsystems/eztags-ls
+
+To add the package(s) you want, add them with: `composer require --update-no-dev <package>...`
 
 ### Configure virtual host rewrite rules
 
