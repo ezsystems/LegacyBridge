@@ -297,4 +297,17 @@ class LegacyResponseManagerTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(new DateTime($dateForCache), $responseMappedHeaders->getLastModified());
         $this->assertEquals(new DateTime($dateForCache), $responseMappedHeaders->getExpires());
     }
+
+    public function testEmptyHeaderValueShouldNotRaiseNotice()
+    {
+        $manager = $this->getMockBuilder('eZ\Bundle\EzPublishLegacyBundle\LegacyResponse\LegacyResponseManager')
+            ->setConstructorArgs(array($this->templateEngine, $this->configResolver, new RequestStack()))
+            ->setMethods(array('removeHeader'))
+            ->getMock();
+        /** @var \eZ\Bundle\EzPublishLegacyBundle\LegacyResponse\LegacyResponseManager|\PHPUnit_Framework_MockObject_MockObject $manager */
+        $headers = array('X-Foo: Bar', 'Pragma:');
+        $response = new LegacyResponse();
+
+        $manager->mapHeaders($headers, $response);
+    }
 }

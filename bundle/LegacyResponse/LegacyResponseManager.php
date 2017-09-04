@@ -188,9 +188,9 @@ class LegacyResponseManager
     public function mapHeaders(array $headers, Response $response)
     {
         foreach ($headers as $header) {
-            $headerArray = explode(': ', $header, 2);
+            $headerArray = explode(':', $header, 2);
             $headerName = strtolower($headerArray[0]);
-            $headerValue = $headerArray[1];
+            $headerValue = trim($headerArray[1]);
             // Removing existing header to avoid duplicate values
             $this->removeHeader($headerName);
 
