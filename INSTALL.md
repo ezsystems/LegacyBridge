@@ -11,17 +11,19 @@ Edit `composer.json`, and add those lines to both `post-update-cmd` and `post-in
 
 ```
 "scripts": {
-    "post-install-cmd": [
-        ...,
+    "legacy-scripts": [
         "eZ\\Bundle\\EzPublishLegacyBundle\\Composer\\ScriptHandler::installAssets",
         "eZ\\Bundle\\EzPublishLegacyBundle\\Composer\\ScriptHandler::installLegacyBundlesExtensions",
-        "eZ\\Bundle\\EzPublishLegacyBundle\\Composer\\ScriptHandler::generateAutoloads"
+        "eZ\\Bundle\\EzPublishLegacyBundle\\Composer\\ScriptHandler::generateAutoloads",
+        "eZ\\Bundle\\EzPublishLegacyBundle\\Composer\\ScriptHandler::symlinkLegacySrcFiles"
+    ],
+    "post-install-cmd": [
+        ...,
+        "@legacy-scripts"
     ],
     "post-update-cmd": [
         ...,
-        "eZ\\Bundle\\EzPublishLegacyBundle\\Composer\\ScriptHandler::installAssets",
-        "eZ\\Bundle\\EzPublishLegacyBundle\\Composer\\ScriptHandler::installLegacyBundlesExtensions",
-        "eZ\\Bundle\\EzPublishLegacyBundle\\Composer\\ScriptHandler::generateAutoloads"
+        "@legacy-scripts"
     ],
 }
 ```

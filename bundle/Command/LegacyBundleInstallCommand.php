@@ -29,8 +29,8 @@ class LegacyBundleInstallCommand extends ContainerAwareCommand
             ->setDescription('Installs legacy extensions (default: symlink) defined in Symfony bundles into ezpublish_legacy/extensions')
             ->setHelp(
                 <<<EOT
-The command <info>%command.name%</info> installs <info>legacy extensions</info> stored in a Symfony 2 bundle
-into the ezpublish_legacy folder.
+The command <info>%command.name%</info> installs <info>legacy extensions</info> stored in a Symfony bundle
+into the ezpublish_legacy/extension folder.
 EOT
             );
     }
