@@ -48,7 +48,7 @@ class LegacyResponseManagerTest extends TestCase
     public function testGenerateResponseAccessDenied($errorCode, $errorMessage)
     {
         $this->expectException(AccessDeniedException::class);
-        if (!is_null($errorMessage)) {
+        if (null !== $errorMessage) {
             $this->expectExceptionMessage($errorMessage);
         }
 

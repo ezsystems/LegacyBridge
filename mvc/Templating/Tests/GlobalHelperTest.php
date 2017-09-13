@@ -25,8 +25,7 @@ class GlobalHelperTest extends BaseGlobalHelperTest
         parent::setUp();
         $this->legacyHelper = $this->getMockBuilder(LegacyHelper::class)
             ->setConstructorArgs([
-                function() {
-
+                function () {
                 },
             ])
             ->setMethods([])
