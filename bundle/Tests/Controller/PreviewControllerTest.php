@@ -14,6 +14,7 @@ use eZ\Publish\API\Repository\Values\Content\Content;
 use eZ\Publish\API\Repository\Values\Content\Location;
 use eZ\Publish\Core\MVC\Symfony\Controller\Tests\Controller\Content\PreviewControllerTest as BasePreviewControllerTest;
 use eZ\Publish\Core\MVC\Symfony\SiteAccess;
+use eZ\Publish\Core\MVC\ConfigResolverInterface;
 
 class PreviewControllerTest extends BasePreviewControllerTest
 {
@@ -25,7 +26,7 @@ class PreviewControllerTest extends BasePreviewControllerTest
     protected function setUp()
     {
         parent::setUp();
-        $this->configResolver = $this->getMock('eZ\Publish\Core\MVC\ConfigResolverInterface');
+        $this->configResolver = $this->createMock(ConfigResolverInterface::class);
     }
 
     /**

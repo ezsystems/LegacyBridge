@@ -9,13 +9,22 @@
 
 namespace eZ\Bundle\EzPublishLegacyBundle\Tests\EventListener;
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
+use eZ\Publish\API\Repository\Repository;
+use eZ\Publish\API\Repository\UserService;
+use eZ\Publish\API\Repository\Values\User\User;
 use eZ\Bundle\EzPublishLegacyBundle\EventListener\RequestListener;
+use eZ\Publish\Core\MVC\ConfigResolverInterface;
+use eZ\Publish\Core\MVC\Symfony\Security\User as CoreUser;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-class RequestListenerTest extends PHPUnit_Framework_TestCase
+class RequestListenerTest extends TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
@@ -35,9 +44,9 @@ class RequestListenerTest extends PHPUnit_Framework_TestCase
     protected function setUp()
     {
         parent::setUp();
-        $this->configResolver = $this->getMock('eZ\Publish\Core\MVC\ConfigResolverInterface');
-        $this->repository = $this->getMock('eZ\Publish\API\Repository\Repository');
-        $this->tokenStorage = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface');
+        $this->configResolver = $this->createMock(ConfigResolverInterface::class);
+        $this->repository = $this->createMock(Repository::class);
+        $this->tokenStorage = $this->createMock(TokenStorageInterface::class);
     }
 
     public function testGetSubscribedEvents()
@@ -57,14 +66,14 @@ class RequestListenerTest extends PHPUnit_Framework_TestCase
             ->method('getParameter')
             ->with('legacy_mode')
             ->will($this->returnValue(true));
-        $userService = $this->getMock('eZ\Publish\API\Repository\UserService');
+        $userService = $this->createMock(UserService::class);
         $this->repository
             ->expects($this->once())
             ->method('getUserService')
             ->will($this->returnValue($userService));
 
         $userId = 123;
-        $apiUser = $this->getMock('eZ\Publish\API\Repository\Values\User\User');
+        $apiUser = $this->createMock(User::class);
         $userService
             ->expects($this->once())
             ->method('loadUser')
@@ -75,8 +84,11 @@ class RequestListenerTest extends PHPUnit_Framework_TestCase
             ->method('setCurrentUser')
             ->with($apiUser);
 
-        $session = $this->getMock('Symfony\Component\HttpFoundation\Session\SessionInterface');
-        $request = $this->getMock('Symfony\Component\HttpFoundation\Request', array('getSession'));
+        $session = $this->createMock(SessionInterface::class);
+        $request = $this->getMockBuilder(Request::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getSession'])
+            ->getMock();
         $request
             ->expects($this->any())
             ->method('getSession')
@@ -96,7 +108,7 @@ class RequestListenerTest extends PHPUnit_Framework_TestCase
             ->with('eZUserLoggedInID')
             ->will($this->returnValue($userId));
 
-        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $token = $this->createMock(TokenInterface::class);
         $this->tokenStorage
             ->expects($this->once())
             ->method('getToken')
@@ -106,10 +118,10 @@ class RequestListenerTest extends PHPUnit_Framework_TestCase
         $token
             ->expects($this->once())
             ->method('setUser')
-            ->with($this->isInstanceOf('eZ\Publish\Core\MVC\Symfony\Security\User'));
+            ->with($this->isInstanceOf(CoreUser::class));
 
         $event = new GetResponseEvent(
-            $this->getMock('Symfony\Component\HttpKernel\HttpKernelInterface'),
+            $this->createMock(HttpKernelInterface::class),
             $request,
             HttpKernelInterface::MASTER_REQUEST
         );

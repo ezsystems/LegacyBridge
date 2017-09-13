@@ -10,10 +10,11 @@
 namespace eZ\Bundle\EzPublishLegacyBundle\Tests\DependencyInjection\Configuration;
 
 use eZ\Bundle\EzPublishLegacyBundle\DependencyInjection\Configuration\LegacyConfigResolver;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use eZ\Publish\Core\MVC\Exception\ParameterNotFoundException;
+use ezpKernelHandler;
 
-class LegacyConfigResolverTest extends PHPUnit_Framework_TestCase
+class LegacyConfigResolverTest extends TestCase
 {
     const DEFAULT_NAMESPACE = 'site';
 
@@ -30,7 +31,7 @@ class LegacyConfigResolverTest extends PHPUnit_Framework_TestCase
     protected function setUp()
     {
         parent::setUp();
-        $legacyKernel = $this->legacyKernel = $this->getMock('ezpKernelHandler');
+        $legacyKernel = $this->legacyKernel = $this->createMock(ezpKernelHandler::class);
         $kernelClosure = function () use ($legacyKernel) {
             return $legacyKernel;
         };

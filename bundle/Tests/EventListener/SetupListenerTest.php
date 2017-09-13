@@ -11,11 +11,14 @@ namespace eZ\Bundle\EzPublishLegacyBundle\Tests\EventListener;
 use eZ\Bundle\EzPublishLegacyBundle\EventListener\SetupListener;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
+use Symfony\Component\Routing\RequestContext;
+use PHPUnit\Framework\TestCase;
 
-class SetupListenerTest extends \PHPUnit_Framework_TestCase
+class SetupListenerTest extends TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|\Symfony\Component\Routing\RouterInterface
@@ -25,7 +28,7 @@ class SetupListenerTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         parent::setUp();
-        $this->router = $this->getMock('Symfony\Component\Routing\RouterInterface');
+        $this->router = $this->createMock(RouterInterface::class);
     }
 
     public function testSubscribedEvents()
@@ -67,7 +70,7 @@ class SetupListenerTest extends \PHPUnit_Framework_TestCase
         $this->router
             ->expects($this->once())
             ->method('getContext')
-            ->will($this->returnValue($this->getMock('Symfony\Component\Routing\RequestContext')));
+            ->will($this->returnValue($this->createMock(RequestContext::class)));
 
         $event = $this->createEvent('/setup');
         $this->getListener('setup')->onKernelRequestSetup($event);
@@ -84,14 +87,14 @@ class SetupListenerTest extends \PHPUnit_Framework_TestCase
         $this->router
             ->expects($this->once())
             ->method('getContext')
-            ->will($this->returnValue($this->getMock('Symfony\Component\Routing\RequestContext')));
+            ->will($this->returnValue($this->createMock(RequestContext::class)));
 
         $event = $this->createEvent('/foo/bar');
         $this->getListener('setup')->onKernelRequestSetup($event);
         $this->assertTrue($event->hasResponse());
         /** @var RedirectResponse $response */
         $response = $event->getResponse();
-        $this->assertInstanceOf('Symfony\Component\HttpFoundation\RedirectResponse', $response);
+        $this->assertInstanceOf(RedirectResponse::class, $response);
         $this->assertSame('/setup', $response->getTargetUrl());
     }
 
@@ -102,7 +105,7 @@ class SetupListenerTest extends \PHPUnit_Framework_TestCase
     private function createEvent($uri = null, $requestType = HttpKernelInterface::MASTER_REQUEST)
     {
         return new GetResponseEvent(
-            $this->getMock('Symfony\\Component\\HttpKernel\\HttpKernelInterface'),
+            $this->createMock(HttpKernelInterface::class),
             $uri !== null ? Request::create($uri) : new Request(),
             $requestType
         );

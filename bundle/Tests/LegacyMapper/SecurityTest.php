@@ -17,9 +17,9 @@ use eZ\Publish\Core\Repository\Values\User\User;
 use eZ\Bundle\EzPublishLegacyBundle\LegacyMapper\Security;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
-class SecurityTest extends PHPUnit_Framework_TestCase
+class SecurityTest extends TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|\eZ\Publish\API\Repository\Repository

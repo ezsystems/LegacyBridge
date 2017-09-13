@@ -66,7 +66,7 @@ class LegacyBundlesPassTest extends AbstractCompilerPassTestCase
     protected function getKernelMock()
     {
         if (!isset($this->kernelMock)) {
-            $this->kernelMock = $this->getMock('Symfony\Component\HttpKernel\KernelInterface');
+            $this->kernelMock = $this->createMock(KernelInterface::class);
         }
 
         return $this->kernelMock;
@@ -77,7 +77,7 @@ class LegacyBundlesPassTest extends AbstractCompilerPassTestCase
      */
     protected function createBundleMock($name)
     {
-        $mock = $this->getMock('Symfony\Component\HttpKernel\Bundle\BundleInterface');
+        $mock = $this->createMock(BundleInterface::class);
         $mock
             ->expects($this->any())
             ->method('getName')
@@ -92,7 +92,7 @@ class LegacyBundlesPassTest extends AbstractCompilerPassTestCase
     protected function getLocatorMock()
     {
         if (!isset($this->locatorMock)) {
-            $this->locatorMock = $this->getMock('eZ\Bundle\EzPublishLegacyBundle\LegacyBundles\LegacyExtensionsLocatorInterface');
+            $this->locatorMock = $this->createMock(LegacyExtensionsLocatorInterface::class);
         }
 
         return $this->locatorMock;
