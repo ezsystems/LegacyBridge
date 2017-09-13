@@ -11,9 +11,13 @@ namespace eZ\Publish\Core\MVC\Legacy\Templating\Tests\Converter;
 
 use eZ\Publish\Core\MVC\Legacy\Templating\Converter\PagePartsConverter;
 use eZ\Publish\API\Repository\Values\ValueObject;
-use PHPUnit_Framework_TestCase;
+use eZ\Publish\Core\MVC\Legacy\Templating\Adapter\BlockAdapter;
+use eZ\Publish\Core\FieldType\Page\Parts\Block;
+use eZ\Publish\Core\FieldType\Page\Parts\Zone;
+use eZ\Publish\Core\MVC\Legacy\Templating\Adapter\ZoneAdapter;
+use PHPUnit\Framework\TestCase;
 
-class PagePartsConverterTest extends PHPUnit_Framework_TestCase
+class PagePartsConverterTest extends TestCase
 {
     /**
      * @dataProvider convertProvider
@@ -33,17 +37,17 @@ class PagePartsConverterTest extends PHPUnit_Framework_TestCase
         return array(
             array(
                 $this
-                    ->getMockBuilder('eZ\\Publish\\Core\\FieldType\\Page\\Parts\\Block')
+                    ->getMockBuilder(Block::class)
                     ->disableOriginalConstructor()
                     ->getMock(),
-                'eZ\\Publish\\Core\\MVC\\Legacy\\Templating\\Adapter\\BlockAdapter',
+                BlockAdapter::class,
             ),
             array(
                 $this
-                    ->getMockBuilder('eZ\\Publish\\Core\\FieldType\\Page\\Parts\\Zone')
+                    ->getMockBuilder(Zone::class)
                     ->disableOriginalConstructor()
                     ->getMock(),
-                'eZ\\Publish\\Core\\MVC\\Legacy\\Templating\\Adapter\\ZoneAdapter',
+                ZoneAdapter::class,
             ),
         );
     }
@@ -77,6 +81,6 @@ class PagePartsConverterTest extends PHPUnit_Framework_TestCase
     public function testConvertFailWrongType()
     {
         $converter = new PagePartsConverter();
-        $converter->convert($this->getMock('eZ\\Publish\\API\\Repository\\Values\\ValueObject'));
+        $converter->convert($this->createMock(ValueObject::class));
     }
 }

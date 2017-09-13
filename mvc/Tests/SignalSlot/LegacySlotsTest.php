@@ -10,12 +10,15 @@
 namespace eZ\Publish\Core\MVC\Legacy\Tests\SignalSlot;
 
 use eZ\Publish\Core\SignalSlot;
-use PHPUnit_Framework_TestCase;
+use eZ\Publish\Core\MVC\Legacy\SignalSlot\AbstractLegacySlot;
+use eZ\Bundle\EzPublishLegacyBundle\Cache\Switchable;
+use PHPUnit\Framework\TestCase;
+use ezpKernelHandler;
 
 /**
  * @group signalSlot
  */
-class LegacySlotsTest extends PHPUnit_Framework_TestCase
+class LegacySlotsTest extends TestCase
 {
     const SIGNAL_SLOT_NS = 'eZ\Publish\Core\SignalSlot';
     const LEGACY_SIGNAL_SLOT_NS = 'eZ\Publish\Core\MVC\Legacy\SignalSlot';
@@ -33,10 +36,10 @@ class LegacySlotsTest extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->ezpKernelHandlerMock = $this->getMock('\ezpKernelHandler');
+        $this->ezpKernelHandlerMock = $this->createMock(ezpKernelHandler::class);
 
-        $this->persistenceCachePurgerMock = $this->getMockForTrait('eZ\Bundle\EzPublishLegacyBundle\Cache\Switchable');
-        $this->httpCachePurgerMock = $this->getMockForTrait('eZ\Bundle\EzPublishLegacyBundle\Cache\Switchable');
+        $this->persistenceCachePurgerMock = $this->getMockForTrait(Switchable::class);
+        $this->httpCachePurgerMock = $this->getMockForTrait(Switchable::class);
 
         parent::setUp();
     }
@@ -48,19 +51,16 @@ class LegacySlotsTest extends PHPUnit_Framework_TestCase
     {
         $ezpKernelHandlerMock = $this->ezpKernelHandlerMock;
 
-        $legacySlotMock = $this->getMock(
-            'eZ\Publish\Core\MVC\Legacy\SignalSlot\AbstractLegacySlot',
-            // methods
-            array(),
-            // ctor arguments
-            array(
+        $legacySlotMock = $this->getMockBuilder(AbstractLegacySlot::class)
+            ->setConstructorArgs([
                 $ezpKernelHandlerMock,
                 $this->persistenceCachePurgerMock,
                 $this->httpCachePurgerMock,
-            )
-        );
+            ])
+            ->setMethods([])
+            ->getMock();
 
-        $reflectionProperty = new \ReflectionProperty('eZ\Publish\Core\MVC\Legacy\SignalSlot\AbstractLegacySlot', 'legacyKernel');
+        $reflectionProperty = new \ReflectionProperty(AbstractLegacySlot::class, 'legacyKernel');
         $reflectionProperty->setAccessible(true);
 
         $this->assertSame($ezpKernelHandlerMock, $reflectionProperty->getValue($legacySlotMock));
@@ -145,7 +145,7 @@ class LegacySlotsTest extends PHPUnit_Framework_TestCase
         /**
          * @var \eZ\Publish\Core\SignalSlot\Signal
          */
-        $signal = $this->getMock(self::SIGNAL_SLOT_NS . '\\Signal');
+        $signal = $this->createMock(self::SIGNAL_SLOT_NS . '\\Signal');
         $slot->receive($signal);
     }
 }

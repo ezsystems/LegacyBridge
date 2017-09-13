@@ -10,9 +10,11 @@
 namespace eZ\Publish\Core\MVC\Legacy\Tests\Image;
 
 use eZ\Publish\Core\MVC\Legacy\Image\AliasCleaner;
-use PHPUnit_Framework_TestCase;
+use eZ\Publish\Core\FieldType\Image\AliasCleanerInterface;
+use eZ\Publish\Core\IO\UrlRedecoratorInterface;
+use PHPUnit\Framework\TestCase;
 
-class AliasCleanerTest extends PHPUnit_Framework_TestCase
+class AliasCleanerTest extends TestCase
 {
     /**
      * @var \eZ\Publish\Core\MVC\Legacy\Image\AliasCleaner
@@ -32,8 +34,8 @@ class AliasCleanerTest extends PHPUnit_Framework_TestCase
     protected function setUp()
     {
         parent::setUp();
-        $this->innerAliasCleaner = $this->getMock('eZ\Publish\Core\FieldType\Image\AliasCleanerInterface');
-        $this->urlRedecorator = $this->getMock('eZ\Publish\Core\IO\UrlRedecoratorInterface');
+        $this->innerAliasCleaner = $this->createMock(AliasCleanerInterface::class);
+        $this->urlRedecorator = $this->createMock(UrlRedecoratorInterface::class);
         $this->aliasCleaner = new AliasCleaner($this->innerAliasCleaner, $this->urlRedecorator);
     }
 

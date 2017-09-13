@@ -10,15 +10,17 @@
 namespace eZ\Publish\Core\MVC\Legacy\Tests\Event;
 
 use eZ\Publish\Core\MVC\Legacy\Event\PostBuildKernelEvent;
-use PHPUnit_Framework_TestCase;
+use eZ\Publish\Core\MVC\Legacy\Kernel;
+use PHPUnit\Framework\TestCase;
+use ezpKernelHandler;
 
-class PostBuildKernelEventTest extends PHPUnit_Framework_TestCase
+class PostBuildKernelEventTest extends TestCase
 {
     public function testConstruct()
     {
-        $kernelHandler = $this->getMock('ezpKernelHandler');
+        $kernelHandler = $this->createMock(ezpKernelHandler::class);
         $legacyKernel = $this
-            ->getMockBuilder('eZ\Publish\Core\MVC\Legacy\Kernel')
+            ->getMockBuilder(Kernel::class)
             ->setConstructorArgs(array($kernelHandler, 'foo', 'bar'))
             ->getMock();
         $event = new PostBuildKernelEvent($legacyKernel, $kernelHandler);

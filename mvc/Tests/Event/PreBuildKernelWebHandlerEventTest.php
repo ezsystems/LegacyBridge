@@ -10,11 +10,11 @@
 namespace eZ\Publish\Core\MVC\Legacy\Tests\Event;
 
 use eZ\Publish\Core\MVC\Legacy\Event\PreBuildKernelWebHandlerEvent;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
 
-class PreBuildKernelWebHandlerEventTest extends PHPUnit_Framework_TestCase
+class PreBuildKernelWebHandlerEventTest extends TestCase
 {
     public function testConstruct()
     {

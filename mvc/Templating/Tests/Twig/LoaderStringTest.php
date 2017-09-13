@@ -10,10 +10,10 @@
 namespace eZ\Publish\Core\MVC\Legacy\Templating\Tests\Twig;
 
 use eZ\Publish\Core\MVC\Legacy\Templating\Twig\LoaderString;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Twig_Source;
 
-class LoaderStringTest extends PHPUnit_Framework_TestCase
+class LoaderStringTest extends TestCase
 {
     public function testGetSource()
     {

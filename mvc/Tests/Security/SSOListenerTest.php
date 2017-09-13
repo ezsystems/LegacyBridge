@@ -9,18 +9,23 @@
 
 namespace eZ\Publish\Core\MVC\Legacy\Tests\Security;
 
+use eZ\Publish\API\Repository\UserService;
 use eZ\Publish\Core\MVC\Legacy\Security\Firewall\SSOListener;
 use eZ\Publish\Core\MVC\Symfony\Security\User;
 use eZ\Publish\Core\Repository\Values\User\User as CoreUser;
 use eZ\Publish\Core\Repository\Values\Content\Content;
 use eZ\Publish\API\Repository\Values\Content\ContentInfo;
 use eZ\Publish\Core\Repository\Values\Content\VersionInfo;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use ReflectionObject;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Authentication\AuthenticationManagerInterface;
 use eZUser;
+use ezpKernelHandler;
+use Closure;
 
-class SSOListenerTest extends PHPUnit_Framework_TestCase
+class SSOListenerTest extends TestCase
 {
     /**
      * @var \eZ\Publish\Core\MVC\Legacy\Security\Firewall\SSOListener
@@ -47,17 +52,17 @@ class SSOListenerTest extends PHPUnit_Framework_TestCase
         parent::setUp();
 
         $this->ssoListener = new SSOListener(
-            $this->getMock('Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface'),
-            $this->getMock('Symfony\Component\Security\Core\Authentication\AuthenticationManagerInterface'),
+            $this->createMock(TokenStorageInterface::class),
+            $this->createMock(AuthenticationManagerInterface::class),
             'firewall_key'
         );
 
-        $legacyKernel = $this->legacyKernel = $this->getMock('ezpKernelHandler');
+        $legacyKernel = $this->legacyKernel = $this->createMock(ezpKernelHandler::class);
         $this->legacyKernelClosure = function () use ($legacyKernel) {
             return $legacyKernel;
         };
 
-        $this->userService = $this->getMock('eZ\Publish\API\Repository\UserService');
+        $this->userService = $this->createMock(UserService::class);
     }
 
     public function testGetPreAuthenticatedDataNoUser()
@@ -72,7 +77,7 @@ class SSOListenerTest extends PHPUnit_Framework_TestCase
         $this->legacyKernel
             ->expects($this->once())
             ->method('runCallback')
-            ->with($this->isInstanceOf('\Closure'), false)
+            ->with($this->isInstanceOf(Closure::class), false)
             ->will($this->returnValue(null));
 
         $refListener = new ReflectionObject($this->ssoListener);

@@ -10,13 +10,14 @@
 namespace eZ\Publish\Core\MVC\Legacy\Templating\Tests\Adapter;
 
 use eZ\Publish\API\Repository\Values\ValueObject;
+use eZ\Publish\Core\MVC\Legacy\Templating\Adapter\DefinitionBasedAdapter;
 
 class DefinitionBasedAdapterTest extends ValueObjectAdapterTest
 {
     protected function getAdapter(ValueObject $valueObject, array $map)
     {
         $adapter = $this
-            ->getMockBuilder('eZ\\Publish\\Core\\MVC\\Legacy\\Templating\\Adapter\\DefinitionBasedAdapter')
+            ->getMockBuilder(DefinitionBasedAdapter::class)
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
         $adapter

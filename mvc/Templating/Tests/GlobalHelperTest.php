@@ -11,6 +11,7 @@ namespace eZ\Publish\Core\MVC\Legacy\Templating\Tests;
 
 use eZ\Publish\Core\MVC\Legacy\Templating\GlobalHelper;
 use eZ\Publish\Core\MVC\Symfony\Templating\Tests\GlobalHelperTest as BaseGlobalHelperTest;
+use eZ\Publish\Core\MVC\Legacy\Templating\LegacyHelper;
 
 class GlobalHelperTest extends BaseGlobalHelperTest
 {
@@ -22,14 +23,15 @@ class GlobalHelperTest extends BaseGlobalHelperTest
     protected function setUp()
     {
         parent::setUp();
-        $this->legacyHelper = $this->getMock(
-            'eZ\\Publish\\Core\\MVC\\Legacy\\Templating\\LegacyHelper',
-            array(),
-            array(
-                function () {
+        $this->legacyHelper = $this->getMockBuilder(LegacyHelper::class)
+            ->setConstructorArgs([
+                function() {
+
                 },
-            )
-        );
+            ])
+            ->setMethods([])
+            ->getMock();
+
         // Force to use Legacy GlobalHelper
         $this->helper = new GlobalHelper($this->configResolver, $this->locationService, $this->router, $this->translationHelper);
         $this->helper->setLegacyHelper($this->legacyHelper);

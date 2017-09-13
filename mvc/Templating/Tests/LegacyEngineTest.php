@@ -10,9 +10,10 @@
 namespace eZ\Publish\Core\MVC\Legacy\Templating\Tests;
 
 use eZ\Publish\Core\MVC\Legacy\Templating\LegacyEngine;
-use PHPUnit_Framework_TestCase;
+use eZ\Publish\Core\MVC\Legacy\Templating\Converter\MultipleObjectConverter;
+use PHPUnit\Framework\TestCase;
 
-class LegacyEngineTest extends PHPUnit_Framework_TestCase
+class LegacyEngineTest extends TestCase
 {
     /**
      * @var \eZ\Publish\Core\MVC\Legacy\Templating\LegacyEngine
@@ -25,7 +26,7 @@ class LegacyEngineTest extends PHPUnit_Framework_TestCase
         $this->engine = new LegacyEngine(
             function () {
             },
-            $this->getMock('eZ\\Publish\\Core\\MVC\\Legacy\\Templating\\Converter\\MultipleObjectConverter')
+            $this->createMock(MultipleObjectConverter::class)
         );
     }
 

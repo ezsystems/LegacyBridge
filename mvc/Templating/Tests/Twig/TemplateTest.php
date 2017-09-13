@@ -10,9 +10,11 @@
 namespace eZ\Publish\Core\MVC\Legacy\Templating\Tests\Twig;
 
 use eZ\Publish\Core\MVC\Legacy\Templating\Twig\Template;
-use PHPUnit_Framework_TestCase;
+use eZ\Publish\Core\MVC\Legacy\Templating\LegacyEngine;
+use eZ\Publish\Core\MVC\Legacy\Templating\Twig\Environment;
+use PHPUnit\Framework\TestCase;
 
-class TemplateTest extends PHPUnit_Framework_TestCase
+class TemplateTest extends TestCase
 {
     const TEMPLATE_NAME = 'design:hello_world.tpl';
 
@@ -34,11 +36,11 @@ class TemplateTest extends PHPUnit_Framework_TestCase
     protected function setUp()
     {
         parent::setUp();
-        $this->legacyEngine = $this->getMockBuilder('eZ\\Publish\\Core\\MVC\\Legacy\\Templating\\LegacyEngine')
+        $this->legacyEngine = $this->getMockBuilder(LegacyEngine::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->twigEnv = $this->getMockBuilder('eZ\\Publish\\Core\\MVC\\Legacy\\Templating\\Twig\\Environment')
+        $this->twigEnv = $this->getMockBuilder(Environment::class)
             ->disableOriginalConstructor()
             ->getMock();
 
