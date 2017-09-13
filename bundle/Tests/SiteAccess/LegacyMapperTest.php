@@ -13,6 +13,9 @@ use eZ\Publish\Core\MVC\Legacy\Tests\LegacyBasedTestCase;
 use eZ\Bundle\EzPublishLegacyBundle\LegacyMapper\SiteAccess as LegacyMapper;
 use eZ\Publish\Core\MVC\Symfony\SiteAccess;
 use eZ\Publish\Core\MVC\Legacy\Event\PreBuildKernelWebHandlerEvent;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\ParameterBag;
+use Symfony\Component\HttpFoundation\Request;
 
 class LegacyMapperTest extends LegacyBasedTestCase
 {
@@ -53,7 +56,7 @@ class LegacyMapperTest extends LegacyBasedTestCase
 
         $mapper = new LegacyMapper();
         $mapper->setContainer($container);
-        $bag = new \Symfony\Component\HttpFoundation\ParameterBag();
+        $bag = new ParameterBag();
         $mapper->onBuildKernelWebHandler(
             new PreBuildKernelWebHandlerEvent(
                 $bag,
@@ -337,7 +340,7 @@ class LegacyMapperTest extends LegacyBasedTestCase
     private function getRequestMock(array $methodsToMock = array())
     {
         return $this
-            ->getMockBuilder('Symfony\\Component\\HttpFoundation\\Request')
+            ->getMockBuilder(Request::class)
             ->setMethods(array_merge(array('getPathInfo'), $methodsToMock))
             ->getMock();
     }
@@ -350,7 +353,7 @@ class LegacyMapperTest extends LegacyBasedTestCase
     private function getContainerMock(array $methodsToMock = array())
     {
         return $this
-            ->getMockBuilder('Symfony\\Component\\DependencyInjection\\ContainerInterface')
+            ->getMockBuilder(ContainerInterface::class)
             ->setMethods($methodsToMock)
             ->getMock();
     }

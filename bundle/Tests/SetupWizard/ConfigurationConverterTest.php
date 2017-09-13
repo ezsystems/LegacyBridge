@@ -10,20 +10,24 @@
 namespace eZ\Bundle\EzPublishLegacyBundle\Tests\SetupWizard;
 
 use eZ\Publish\Core\MVC\Legacy\Tests\LegacyBasedTestCase;
+use eZ\Bundle\EzPublishLegacyBundle\SetupWizard\ConfigurationConverter;
+use eZ\Publish\Core\Base\Exceptions\InvalidArgumentException;
+use eZ\Publish\Core\MVC\Legacy\Kernel;
+use eZ\Bundle\EzPublishLegacyBundle\DependencyInjection\Configuration\LegacyConfigResolver;
 use Exception;
+use ezpKernelResult;
 
 class ConfigurationConverterTest extends LegacyBasedTestCase
 {
     protected function getConfigurationConverterMock(array $constructorParams)
     {
-        return $this->getMock(
-            'eZ\\Bundle\\EzPublishLegacyBundle\\SetupWizard\\ConfigurationConverter',
-            array(
+        return $this->getMockBuilder(ConfigurationConverter::class)
+            ->setConstructorArgs($constructorParams)
+            ->setMethods([
                 'getParameter',
                 'getGroup',
-            ),
-            $constructorParams
-        );
+            ])
+            ->getMock();
     }
 
     /**
@@ -179,7 +183,7 @@ class ConfigurationConverterTest extends LegacyBasedTestCase
             ),
         );
 
-        $exceptionType = 'eZ\\Publish\\Core\\Base\\Exceptions\\InvalidArgumentException';
+        $exceptionType = InvalidArgumentException::class;
 
         $commonMockParameters = array(
             'getParameter' => array(
@@ -399,7 +403,7 @@ class ConfigurationConverterTest extends LegacyBasedTestCase
     protected function getLegacyConfigResolverMock(array $methodsToMock = array())
     {
         $mock = $this
-            ->getMockBuilder('eZ\\Bundle\\EzPublishLegacyBundle\\DependencyInjection\\Configuration\\LegacyConfigResolver')
+            ->getMockBuilder(LegacyConfigResolver::class)
             ->setMethods(array_merge($methodsToMock, array('getParameter', 'getGroup')))
             ->disableOriginalConstructor()
             ->getMock();
@@ -413,7 +417,7 @@ class ConfigurationConverterTest extends LegacyBasedTestCase
     protected function getLegacyKernelMock()
     {
         $legacyKernelMock = $this
-            ->getMockBuilder('eZ\\Publish\\Core\\MVC\\Legacy\\Kernel')
+            ->getMockBuilder(Kernel::class)
             ->setMethods(array('runCallback'))
             ->disableOriginalConstructor()
             ->getMock();
@@ -421,7 +425,7 @@ class ConfigurationConverterTest extends LegacyBasedTestCase
         $legacyKernelMock
             ->expects($this->any())
             ->method('runCallback')
-            ->will($this->returnValue('ezpKernelResult'));
+            ->will($this->returnValue(ezpKernelResult::class));
 
         $closureMock = function () use ($legacyKernelMock) {
             return $legacyKernelMock;

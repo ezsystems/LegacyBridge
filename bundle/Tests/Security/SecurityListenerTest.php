@@ -31,7 +31,7 @@ class SecurityListenerTest extends BaseTest
     public function testOnKernelRequestLegacyMode()
     {
         $event = new GetResponseEvent(
-            $this->getMock('Symfony\Component\HttpKernel\HttpKernelInterface'),
+            $this->createMock(HttpKernelInterface::class),
             new Request(),
             HttpKernelInterface::MASTER_REQUEST
         );
@@ -54,7 +54,7 @@ class SecurityListenerTest extends BaseTest
     public function testOnKernelRequestSubRequestFragment()
     {
         $event = new GetResponseEvent(
-            $this->getMock('Symfony\Component\HttpKernel\HttpKernelInterface'),
+            $this->createMock(HttpKernelInterface::class),
             Request::create('/_fragment'),
             HttpKernelInterface::MASTER_REQUEST
         );
