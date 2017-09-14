@@ -11,12 +11,13 @@ namespace eZ\Bundle\EzPublishLegacyBundle\Tests\Routing\DefaultRouterTest;
 
 use eZ\Bundle\EzPublishCoreBundle\Tests\Routing\DefaultRouterTest as BaseTest;
 use Symfony\Component\HttpFoundation\Request;
+use eZ\Bundle\EzPublishLegacyBundle\Routing\DefaultRouter;
 
 class DefaultRouterTest extends BaseTest
 {
     protected function getRouterClass()
     {
-        return 'eZ\Bundle\EzPublishLegacyBundle\Routing\DefaultRouter';
+        return DefaultRouter::class;
     }
 
     /**

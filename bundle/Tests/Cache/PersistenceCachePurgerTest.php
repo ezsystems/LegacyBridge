@@ -11,10 +11,13 @@ namespace eZ\Bundle\EzPublishLegacyBundle\Tests\Cache;
 
 use eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger;
 use eZ\Publish\SPI\Persistence\Content\Location;
+use eZ\Publish\SPI\Persistence\Content\Location\Handler;
 use eZ\Publish\Core\Base\Exceptions\NotFoundException;
-use PHPUnit_Framework_TestCase;
+use eZ\Publish\Core\Persistence\Cache\CacheServiceDecorator;
+use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 
-class PersistenceCachePurgerTest extends PHPUnit_Framework_TestCase
+class PersistenceCachePurgerTest extends TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
@@ -39,13 +42,9 @@ class PersistenceCachePurgerTest extends PHPUnit_Framework_TestCase
     protected function setUp()
     {
         parent::setUp();
-        $this->cacheService = $this
-            ->getMockBuilder('eZ\\Publish\\Core\\Persistence\\Cache\\CacheServiceDecorator')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->locationHandler = $this->getMock('eZ\\Publish\\SPI\\Persistence\\Content\\Location\\Handler');
-        $this->logger = $this->getMock('Psr\\Log\\LoggerInterface');
+        $this->cacheService = $this->createMock(CacheServiceDecorator::class);
+        $this->locationHandler = $this->createMock(Handler::class);
+        $this->logger = $this->createMock(LoggerInterface::class);
 
         $this->cachePurger = new PersistenceCachePurger(
             $this->cacheService, $this->locationHandler, $this->logger

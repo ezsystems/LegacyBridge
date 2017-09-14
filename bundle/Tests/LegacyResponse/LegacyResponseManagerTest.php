@@ -12,15 +12,18 @@ namespace eZ\Bundle\EzPublishLegacyBundle\Tests\LegacyResponse;
 use eZ\Bundle\EzPublishLegacyBundle\LegacyResponse\LegacyResponseManager;
 use eZ\Bundle\EzPublishLegacyBundle\LegacyResponse;
 use eZ\Publish\Core\MVC\ConfigResolverInterface;
-use PHPUnit_Framework_TestCase;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Templating\EngineInterface;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use ezpKernelResult;
 use ezpKernelRedirect;
 use DateTime;
+use PHPUnit\Framework\TestCase;
 
-class LegacyResponseManagerTest extends PHPUnit_Framework_TestCase
+class LegacyResponseManagerTest extends TestCase
 {
     /**
      * @var EngineInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -35,8 +38,8 @@ class LegacyResponseManagerTest extends PHPUnit_Framework_TestCase
     protected function setUp()
     {
         parent::setUp();
-        $this->templateEngine = $this->getMock('Symfony\Component\Templating\EngineInterface');
-        $this->configResolver = $this->getMock('eZ\Publish\Core\MVC\ConfigResolverInterface');
+        $this->templateEngine = $this->createMock(EngineInterface::class);
+        $this->configResolver = $this->createMock(ConfigResolverInterface::class);
     }
 
     /**
@@ -44,7 +47,11 @@ class LegacyResponseManagerTest extends PHPUnit_Framework_TestCase
      */
     public function testGenerateResponseAccessDenied($errorCode, $errorMessage)
     {
-        $this->setExpectedException('Symfony\Component\Security\Core\Exception\AccessDeniedException', $errorMessage);
+        $this->expectException(AccessDeniedException::class);
+        if (null !== $errorMessage) {
+            $this->expectExceptionMessage($errorMessage);
+        }
+
         $manager = new LegacyResponseManager($this->templateEngine, $this->configResolver, new RequestStack());
         $content = 'foobar';
         $moduleResult = array(
@@ -86,7 +93,8 @@ class LegacyResponseManagerTest extends PHPUnit_Framework_TestCase
                 )
             );
         if ($expectException) {
-            $this->setExpectedException('Symfony\Component\HttpKernel\Exception\NotFoundHttpException', 'Not found');
+            $this->expectException(NotFoundHttpException::class);
+            $this->expectExceptionMessage('Not found');
         }
         $manager = new LegacyResponseManager($this->templateEngine, $this->configResolver, new RequestStack());
         $content = 'foobar';
@@ -178,7 +186,7 @@ class LegacyResponseManagerTest extends PHPUnit_Framework_TestCase
         $kernelResult = new ezpKernelResult($content, array('module_result' => $moduleResult));
 
         $response = $manager->generateResponseFromModuleResult($kernelResult);
-        $this->assertInstanceOf('eZ\Bundle\EzPublishLegacyBundle\LegacyResponse', $response);
+        $this->assertInstanceOf(LegacyResponse::class, $response);
         $this->assertSame($content, $response->getContent());
         $this->assertSame($moduleResult['errorCode'], $response->getStatusCode());
     }
@@ -230,7 +238,7 @@ class LegacyResponseManagerTest extends PHPUnit_Framework_TestCase
         $kernelResult = new ezpKernelResult($content, array('module_result' => $moduleResult));
 
         $response = $manager->generateResponseFromModuleResult($kernelResult);
-        $this->assertInstanceOf('eZ\Bundle\EzPublishLegacyBundle\LegacyResponse', $response);
+        $this->assertInstanceOf(LegacyResponse::class, $response);
         $this->assertSame($contentWithLayout, $response->getContent());
         $this->assertSame($moduleResult['errorCode'], $response->getStatusCode());
         $this->assertSame($moduleResult, $response->getModuleResult());
@@ -258,7 +266,7 @@ class LegacyResponseManagerTest extends PHPUnit_Framework_TestCase
         $manager = new LegacyResponseManager($this->templateEngine, $this->configResolver, new RequestStack());
         $response = $manager->generateRedirectResponse($kernelRedirect);
 
-        $this->assertInstanceOf('Symfony\Component\HttpFoundation\RedirectResponse', $response);
+        $this->assertInstanceOf(RedirectResponse::class, $response);
         $this->assertSame($uri, $response->getTargetUrl());
         $this->assertSame($expectedStatusCode, $response->getStatusCode());
     }
@@ -281,7 +289,7 @@ class LegacyResponseManagerTest extends PHPUnit_Framework_TestCase
         $headers = array('X-Foo: Bar', "Etag: $etag", "Last-Modified: $dateForCache", "Expires: $dateForCache");
 
         // Partially mock the manager to simulate calls to header_remove()
-        $manager = $this->getMockBuilder('eZ\Bundle\EzPublishLegacyBundle\LegacyResponse\LegacyResponseManager')
+        $manager = $this->getMockBuilder(LegacyResponseManager::class)
             ->setConstructorArgs(array($this->templateEngine, $this->configResolver, new RequestStack()))
             ->setMethods(array('removeHeader'))
             ->getMock();
@@ -300,7 +308,7 @@ class LegacyResponseManagerTest extends PHPUnit_Framework_TestCase
 
     public function testEmptyHeaderValueShouldNotRaiseNotice()
     {
-        $manager = $this->getMockBuilder('eZ\Bundle\EzPublishLegacyBundle\LegacyResponse\LegacyResponseManager')
+        $manager = $this->getMockBuilder(LegacyResponseManager::class)
             ->setConstructorArgs(array($this->templateEngine, $this->configResolver, new RequestStack()))
             ->setMethods(array('removeHeader'))
             ->getMock();

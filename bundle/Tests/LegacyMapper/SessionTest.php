@@ -12,11 +12,14 @@ namespace eZ\Bundle\EzPublishLegacyBundle\Tests\LegacyMapper;
 use eZ\Bundle\EzPublishLegacyBundle\LegacyMapper\Session as SessionMapper;
 use eZ\Publish\Core\MVC\Legacy\Event\PreBuildKernelEvent;
 use eZ\Publish\Core\MVC\Legacy\LegacyEvents;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Session\Storage\SessionStorageInterface;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
-class SessionTest extends PHPUnit_Framework_TestCase
+class SessionTest extends TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
@@ -41,10 +44,10 @@ class SessionTest extends PHPUnit_Framework_TestCase
     protected function setUp()
     {
         parent::setUp();
-        $this->sessionStorage = $this->getMock('Symfony\Component\HttpFoundation\Session\Storage\SessionStorageInterface');
-        $this->session = $this->getMock('Symfony\Component\HttpFoundation\Session\SessionInterface');
+        $this->sessionStorage = $this->createMock(SessionStorageInterface::class);
+        $this->session = $this->createMock(SessionInterface::class);
         $this->request = $this
-            ->getMockBuilder('Symfony\Component\HttpFoundation\Request')
+            ->getMockBuilder(Request::class)
             ->setMethods(array('hasPreviousSession'))
             ->getMock();
         $this->requestStack = new RequestStack();

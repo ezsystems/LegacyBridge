@@ -12,9 +12,10 @@ namespace eZ\Bundle\EzPublishLegacyBundle\Tests\SetupWizard;
 use eZ\Bundle\EzPublishLegacyBundle\SetupWizard\ConfigurationDumper;
 use eZ\Publish\Core\MVC\Symfony\ConfigDumperInterface;
 use Symfony\Component\Yaml\Yaml;
-use PHPUnit_Framework_TestCase;
+use Symfony\Component\Filesystem\Filesystem;
+use PHPUnit\Framework\TestCase;
 
-class ConfigurationDumperTest extends PHPUnit_Framework_TestCase
+class ConfigurationDumperTest extends TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
@@ -33,7 +34,7 @@ class ConfigurationDumperTest extends PHPUnit_Framework_TestCase
     protected function setUp()
     {
         parent::setUp();
-        $this->fs = $this->getMock('Symfony\\Component\\Filesystem\\Filesystem');
+        $this->fs = $this->createMock(Filesystem::class);
         $this->cacheDir = __DIR__ . '/cache';
         $this->configDir = __DIR__ . '/config';
         @mkdir($this->configDir);

@@ -13,10 +13,10 @@ use Exception;
 use eZ\Publish\Core\MVC\Legacy\Kernel;
 use ezpKernelHandler;
 use PHPUnit_Framework_MockObject_MockObject;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
-class KernelTest extends PHPUnit_Framework_TestCase
+class KernelTest extends TestCase
 {
     /** @var ezpKernelHandler|PHPUnit_Framework_MockObject_MockObject */
     protected $kernelHandlerMock;
@@ -62,7 +62,7 @@ class KernelTest extends PHPUnit_Framework_TestCase
     protected function getKernelHandlerMock()
     {
         if (!isset($this->kernelHandlerMock)) {
-            $this->kernelHandlerMock = $this->getMock('ezpKernelHandler');
+            $this->kernelHandlerMock = $this->createMock(ezpKernelHandler::class);
         }
 
         return $this->kernelHandlerMock;

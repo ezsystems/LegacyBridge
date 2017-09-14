@@ -10,9 +10,12 @@
 namespace eZ\Publish\Core\MVC\Legacy\Templating\Tests\Twig;
 
 use eZ\Publish\Core\MVC\Legacy\Templating\Twig\Environment;
-use PHPUnit_Framework_TestCase;
+use eZ\Publish\Core\MVC\Legacy\Templating\LegacyEngine;
+use eZ\Publish\Core\MVC\Legacy\Templating\Twig\Template;
+use PHPUnit\Framework\TestCase;
+use Twig_LoaderInterface;
 
-class EnvironmentTest extends PHPUnit_Framework_TestCase
+class EnvironmentTest extends TestCase
 {
     /**
      * @covers \eZ\Publish\Core\MVC\Legacy\Templating\Twig\Environment::loadTemplate
@@ -20,9 +23,7 @@ class EnvironmentTest extends PHPUnit_Framework_TestCase
      */
     public function testLoadTemplateLegacy()
     {
-        $legacyEngine = $this->getMockBuilder('eZ\\Publish\\Core\\MVC\\Legacy\\Templating\\LegacyEngine')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $legacyEngine = $this->createMock(LegacyEngine::class);
 
         $templateName = 'design:test/helloworld.tpl';
         $legacyEngine->expects($this->any())
@@ -35,10 +36,10 @@ class EnvironmentTest extends PHPUnit_Framework_TestCase
             ->with($templateName)
             ->will($this->returnValue(true));
 
-        $twigEnv = new Environment($this->getMock('Twig_LoaderInterface'));
+        $twigEnv = new Environment($this->createMock(Twig_LoaderInterface::class));
         $twigEnv->setEzLegacyEngine($legacyEngine);
         $template = $twigEnv->loadTemplate($templateName);
-        $this->assertInstanceOf('eZ\\Publish\\Core\\MVC\\Legacy\\Templating\\Twig\\Template', $template);
+        $this->assertInstanceOf(Template::class, $template);
         $this->assertSame($templateName, $template->getTemplateName());
 
         // Calling loadTemplate a 2nd time with the same template name should return the very same Template object.
@@ -53,9 +54,7 @@ class EnvironmentTest extends PHPUnit_Framework_TestCase
      */
     public function testLoadNonExistingTemplateLegacy()
     {
-        $legacyEngine = $this->getMockBuilder('eZ\\Publish\\Core\\MVC\\Legacy\\Templating\\LegacyEngine')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $legacyEngine = $this->createMock(LegacyEngine::class);
 
         $templateName = 'design:test/helloworld.tpl';
         $legacyEngine->expects($this->any())
@@ -68,8 +67,8 @@ class EnvironmentTest extends PHPUnit_Framework_TestCase
             ->with($templateName)
             ->will($this->returnValue(false));
 
-        $twigEnv = new Environment($this->getMock('Twig_LoaderInterface'));
+        $twigEnv = new Environment($this->createMock(Twig_LoaderInterface::class));
         $twigEnv->setEzLegacyEngine($legacyEngine);
-        $template = $twigEnv->loadTemplate($templateName);
+        $twigEnv->loadTemplate($templateName);
     }
 }

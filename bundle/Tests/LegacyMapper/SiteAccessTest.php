@@ -10,11 +10,14 @@ namespace eZ\Bundle\EzPublishLegacyBundle\Tests\LegacyMapper;
 
 use eZ\Bundle\EzPublishLegacyBundle\LegacyMapper\SiteAccess as SiteAccessMapper;
 use eZ\Publish\Core\MVC\Legacy\Event\PreBuildKernelWebHandlerEvent;
+use eZ\Publish\Core\MVC\Symfony\SiteAccess;
 use eZSiteAccess;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\ParameterBag;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class SiteAccessTest extends PHPUnit_Framework_TestCase
+class SiteAccessTest extends TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|\Symfony\Component\HttpFoundation\Request
@@ -31,7 +34,7 @@ class SiteAccessTest extends PHPUnit_Framework_TestCase
         $this->systemErrorLevel = error_reporting(E_ALL & ~E_DEPRECATED);
 
         $this->request = $this
-            ->getMockBuilder('Symfony\Component\HttpFoundation\Request')
+            ->getMockBuilder(Request::class)
             ->setMethods(['getPathInfo'])
             ->getMock();
     }
@@ -104,11 +107,11 @@ class SiteAccessTest extends PHPUnit_Framework_TestCase
             ->will($this->returnValue($pathInfo));
 
         $siteAccess = $this
-            ->getMockBuilder('eZ\Publish\Core\MVC\Symfony\SiteAccess')
+            ->getMockBuilder(SiteAccess::class)
             ->setConstructorArgs(['Admin', eZSiteAccess::TYPE_URI, null])
             ->getMock();
 
-        $containerMock = $this->getMock('Symfony\\Component\\DependencyInjection\\ContainerInterface');
+        $containerMock = $this->createMock(ContainerInterface::class);
         $containerMock
             ->expects($this->once())
             ->method('get')

@@ -9,12 +9,12 @@
 
 namespace eZ\Publish\Core\MVC\Legacy\Tests;
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Base test case for legacy based tests.
  */
-abstract class LegacyBasedTestCase extends PHPUnit_Framework_TestCase
+abstract class LegacyBasedTestCase extends TestCase
 {
     protected function setUp()
     {

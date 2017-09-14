@@ -9,17 +9,27 @@
 
 namespace eZ\Bundle\EzPublishLegacyBundle\Tests\LegacyMapper;
 
+use eZ\Publish\API\Repository\Values\Content\Content;
+use eZ\Publish\API\Repository\Values\Content\VersionInfo;
 use eZ\Publish\API\Repository\Values\Content\ContentInfo;
+use eZ\Publish\API\Repository\Repository;
 use eZ\Publish\Core\MVC\Legacy\Event\PostBuildKernelEvent;
 use eZ\Publish\Core\MVC\Legacy\Event\PreBuildKernelWebHandlerEvent;
+use eZ\Publish\Core\MVC\ConfigResolverInterface;
 use eZ\Publish\Core\MVC\Legacy\LegacyEvents;
+use eZ\Publish\Core\MVC\Legacy\Kernel;
 use eZ\Publish\Core\Repository\Values\User\User;
 use eZ\Bundle\EzPublishLegacyBundle\LegacyMapper\Security;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
-use PHPUnit_Framework_TestCase;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use PHPUnit\Framework\TestCase;
+use ezpKernelHandler;
+use ezpWebBasedKernelHandler;
 
-class SecurityTest extends PHPUnit_Framework_TestCase
+class SecurityTest extends TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|\eZ\Publish\API\Repository\Repository
@@ -44,10 +54,10 @@ class SecurityTest extends PHPUnit_Framework_TestCase
     protected function setUp()
     {
         parent::setUp();
-        $this->repository = $this->getMock('eZ\Publish\API\Repository\Repository');
-        $this->configResolver = $this->getMock('eZ\Publish\Core\MVC\ConfigResolverInterface');
-        $this->tokenStorage = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface');
-        $this->authChecker = $this->getMock('Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface');
+        $this->repository = $this->createMock(Repository::class);
+        $this->configResolver = $this->createMock(ConfigResolverInterface::class);
+        $this->tokenStorage = $this->createMock(TokenStorageInterface::class);
+        $this->authChecker = $this->createMock(AuthorizationCheckerInterface::class);
     }
 
     public function testGetSubscribedEvents()
@@ -63,9 +73,9 @@ class SecurityTest extends PHPUnit_Framework_TestCase
 
     public function testOnKernelBuiltNotWebBasedHandler()
     {
-        $kernelHandler = $this->getMock('ezpKernelHandler');
+        $kernelHandler = $this->createMock(ezpKernelHandler::class);
         $legacyKernel = $this
-            ->getMockBuilder('eZ\Publish\Core\MVC\Legacy\Kernel')
+            ->getMockBuilder(Kernel::class)
             ->setConstructorArgs(array($kernelHandler, 'foo', 'bar'))
             ->getMock();
         $event = new PostBuildKernelEvent($legacyKernel, $kernelHandler);
@@ -83,9 +93,9 @@ class SecurityTest extends PHPUnit_Framework_TestCase
 
     public function testOnKernelBuiltWithLegacyMode()
     {
-        $kernelHandler = $this->getMock('ezpWebBasedKernelHandler');
+        $kernelHandler = $this->createMock(ezpWebBasedKernelHandler::class);
         $legacyKernel = $this
-            ->getMockBuilder('eZ\Publish\Core\MVC\Legacy\Kernel')
+            ->getMockBuilder(Kernel::class)
             ->setConstructorArgs(array($kernelHandler, 'foo', 'bar'))
             ->getMock();
         $event = new PostBuildKernelEvent($legacyKernel, $kernelHandler);
@@ -108,9 +118,9 @@ class SecurityTest extends PHPUnit_Framework_TestCase
 
     public function testOnKernelBuiltDisabled()
     {
-        $kernelHandler = $this->getMock('ezpWebBasedKernelHandler');
+        $kernelHandler = $this->createMock(ezpWebBasedKernelHandler::class);
         $legacyKernel = $this
-            ->getMockBuilder('eZ\Publish\Core\MVC\Legacy\Kernel')
+            ->getMockBuilder(Kernel::class)
             ->setConstructorArgs(array($kernelHandler, 'foo', 'bar'))
             ->getMock();
         $event = new PostBuildKernelEvent($legacyKernel, $kernelHandler);
@@ -129,9 +139,9 @@ class SecurityTest extends PHPUnit_Framework_TestCase
 
     public function testOnKerneBuiltNotAuthenticated()
     {
-        $kernelHandler = $this->getMock('ezpWebBasedKernelHandler');
+        $kernelHandler = $this->createMock(ezpWebBasedKernelHandler::class);
         $legacyKernel = $this
-            ->getMockBuilder('eZ\Publish\Core\MVC\Legacy\Kernel')
+            ->getMockBuilder(Kernel::class)
             ->setConstructorArgs(array($kernelHandler, 'foo', 'bar'))
             ->getMock();
         $event = new PostBuildKernelEvent($legacyKernel, $kernelHandler);
@@ -146,7 +156,7 @@ class SecurityTest extends PHPUnit_Framework_TestCase
             ->method('getToken')
             ->will(
                 $this->returnValue(
-                    $this->getMock('\Symfony\Component\Security\Core\Authentication\Token\TokenInterface')
+                    $this->createMock(TokenInterface::class)
                 )
             );
         $this->authChecker
@@ -167,9 +177,9 @@ class SecurityTest extends PHPUnit_Framework_TestCase
 
     public function testOnKernelBuilt()
     {
-        $kernelHandler = $this->getMock('ezpWebBasedKernelHandler');
+        $kernelHandler = $this->createMock(ezpWebBasedKernelHandler::class);
         $legacyKernel = $this
-            ->getMockBuilder('eZ\Publish\Core\MVC\Legacy\Kernel')
+            ->getMockBuilder(Kernel::class)
             ->setConstructorArgs(array($kernelHandler, 'foo', 'bar'))
             ->getMock();
         $event = new PostBuildKernelEvent($legacyKernel, $kernelHandler);
@@ -184,7 +194,7 @@ class SecurityTest extends PHPUnit_Framework_TestCase
             ->method('getToken')
             ->will(
                 $this->returnValue(
-                    $this->getMock('\Symfony\Component\Security\Core\Authentication\Token\TokenInterface')
+                    $this->createMock(TokenInterface::class)
                 )
             );
         $this->authChecker
@@ -215,12 +225,12 @@ class SecurityTest extends PHPUnit_Framework_TestCase
      */
     private function generateUser($userId)
     {
-        $versionInfo = $this->getMockForAbstractClass('eZ\Publish\API\Repository\Values\Content\VersionInfo');
+        $versionInfo = $this->getMockForAbstractClass(VersionInfo::class);
         $versionInfo
             ->expects($this->any())
             ->method('getContentInfo')
             ->will($this->returnValue(new ContentInfo(array('id' => $userId))));
-        $content = $this->getMockForAbstractClass('eZ\Publish\API\Repository\Values\Content\Content');
+        $content = $this->getMockForAbstractClass(Content::class);
         $content
             ->expects($this->any())
             ->method('getVersionInfo')

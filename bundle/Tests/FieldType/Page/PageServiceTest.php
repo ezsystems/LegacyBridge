@@ -10,10 +10,11 @@
 namespace eZ\Bundle\EzPublishLegacyBundle\Tests\FieldType\Page;
 
 use eZ\Publish\Core\FieldType\Tests\Page\PageServiceTest as BaseTest;
+use eZ\Bundle\EzPublishLegacyBundle\FieldType\Page\PageService;
 
 class PageServiceTest extends BaseTest
 {
-    const PAGESERVICE_CLASS = 'eZ\\Bundle\\EzPublishLegacyBundle\\FieldType\\Page\\PageService';
+    const PAGESERVICE_CLASS = PageService::class;
 
     protected function getZoneDefinition()
     {
