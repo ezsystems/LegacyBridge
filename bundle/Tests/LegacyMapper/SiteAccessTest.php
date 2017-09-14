@@ -106,7 +106,6 @@ class SiteAccessTest extends TestCase
             ->method('getPathInfo')
             ->will($this->returnValue($pathInfo));
 
-
         $siteAccess = $this
             ->getMockBuilder(SiteAccess::class)
             ->setConstructorArgs(['Admin', eZSiteAccess::TYPE_URI, null])
