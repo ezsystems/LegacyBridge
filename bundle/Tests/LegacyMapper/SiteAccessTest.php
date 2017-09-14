@@ -10,6 +10,7 @@ namespace eZ\Bundle\EzPublishLegacyBundle\Tests\LegacyMapper;
 
 use eZ\Bundle\EzPublishLegacyBundle\LegacyMapper\SiteAccess as SiteAccessMapper;
 use eZ\Publish\Core\MVC\Legacy\Event\PreBuildKernelWebHandlerEvent;
+use eZ\Publish\Core\MVC\Symfony\SiteAccess;
 use eZSiteAccess;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\ParameterBag;
@@ -105,8 +106,9 @@ class SiteAccessTest extends TestCase
             ->method('getPathInfo')
             ->will($this->returnValue($pathInfo));
 
+
         $siteAccess = $this
-            ->getMockBuilder('eZ\Publish\Core\MVC\Symfony\SiteAccess')
+            ->getMockBuilder(SiteAccess::class)
             ->setConstructorArgs(['Admin', eZSiteAccess::TYPE_URI, null])
             ->getMock();
 

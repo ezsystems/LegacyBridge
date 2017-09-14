@@ -85,10 +85,7 @@ class RequestListenerTest extends TestCase
             ->with($apiUser);
 
         $session = $this->createMock(SessionInterface::class);
-        $request = $this->getMockBuilder(Request::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['getSession'])
-            ->getMock();
+        $request = $this->createMock(Request::class);
         $request
             ->expects($this->any())
             ->method('getSession')

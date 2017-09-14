@@ -36,14 +36,8 @@ class TemplateTest extends TestCase
     protected function setUp()
     {
         parent::setUp();
-        $this->legacyEngine = $this->getMockBuilder(LegacyEngine::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->twigEnv = $this->getMockBuilder(Environment::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $this->legacyEngine = $this->createMock(LegacyEngine::class);
+        $this->twigEnv = $this->createMock(Environment::class);
         $this->template = new Template(self::TEMPLATE_NAME, $this->twigEnv, $this->legacyEngine);
     }
 

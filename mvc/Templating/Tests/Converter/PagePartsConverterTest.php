@@ -36,17 +36,11 @@ class PagePartsConverterTest extends TestCase
     {
         return array(
             array(
-                $this
-                    ->getMockBuilder(Block::class)
-                    ->disableOriginalConstructor()
-                    ->getMock(),
+                $this->createMock(Block::class),
                 BlockAdapter::class,
             ),
             array(
-                $this
-                    ->getMockBuilder(Zone::class)
-                    ->disableOriginalConstructor()
-                    ->getMock(),
+                $this->createMock(Zone::class),
                 ZoneAdapter::class,
             ),
         );

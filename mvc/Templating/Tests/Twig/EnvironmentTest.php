@@ -23,9 +23,7 @@ class EnvironmentTest extends TestCase
      */
     public function testLoadTemplateLegacy()
     {
-        $legacyEngine = $this->getMockBuilder(LegacyEngine::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $legacyEngine = $this->createMock(LegacyEngine::class);
 
         $templateName = 'design:test/helloworld.tpl';
         $legacyEngine->expects($this->any())
@@ -56,9 +54,7 @@ class EnvironmentTest extends TestCase
      */
     public function testLoadNonExistingTemplateLegacy()
     {
-        $legacyEngine = $this->getMockBuilder(LegacyEngine::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $legacyEngine = $this->createMock(LegacyEngine::class);
 
         $templateName = 'design:test/helloworld.tpl';
         $legacyEngine->expects($this->any())

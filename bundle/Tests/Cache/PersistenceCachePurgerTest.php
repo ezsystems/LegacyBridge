@@ -42,11 +42,7 @@ class PersistenceCachePurgerTest extends TestCase
     protected function setUp()
     {
         parent::setUp();
-        $this->cacheService = $this
-            ->getMockBuilder(CacheServiceDecorator::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $this->cacheService = $this->createMock(CacheServiceDecorator::class);
         $this->locationHandler = $this->createMock(Handler::class);
         $this->logger = $this->createMock(LoggerInterface::class);
 

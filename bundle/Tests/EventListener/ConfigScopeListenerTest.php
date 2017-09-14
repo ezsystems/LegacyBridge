@@ -43,8 +43,6 @@ class ConfigScopeListenerTest extends TestCase
 
     private function getKernelLoaderMock()
     {
-        return $this->getMockBuilder(Loader::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        return $this->createMock(Loader::class);
     }
 }

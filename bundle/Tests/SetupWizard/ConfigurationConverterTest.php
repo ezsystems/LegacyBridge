@@ -416,12 +416,7 @@ class ConfigurationConverterTest extends LegacyBasedTestCase
      */
     protected function getLegacyKernelMock()
     {
-        $legacyKernelMock = $this
-            ->getMockBuilder(Kernel::class)
-            ->setMethods(array('runCallback'))
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $legacyKernelMock = $this->createMock(Kernel::class);
         $legacyKernelMock
             ->expects($this->any())
             ->method('runCallback')
