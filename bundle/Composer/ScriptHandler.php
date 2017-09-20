@@ -91,7 +91,7 @@ class ScriptHandler extends DistributionBundleScriptHandler
         static::executeCommand($event, $appDir, 'ezpublish:legacy:script bin/php/ezpgenerateautoloads.php -o');
     }
 
-    public static function symlinkLegacySrcFiles(Event $event)
+    public static function symlinkLegacyFiles(Event $event)
     {
         $options = self::getOptions($event);
         $appDir = $options['symfony-app-dir'];
@@ -105,7 +105,7 @@ class ScriptHandler extends DistributionBundleScriptHandler
             return;
         }
 
-        static::executeCommand($event, $appDir, 'ezpublish:legacy:symlink_src -c ' . $srcFolder);
+        static::executeCommand($event, $appDir, 'ezpublish:legacy:symlink -c ' . $srcFolder);
     }
 
     private static function isDir($dir, $composerSetting)

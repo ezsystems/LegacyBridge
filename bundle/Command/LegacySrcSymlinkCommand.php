@@ -21,14 +21,14 @@ class LegacySrcSymlinkCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setName('ezpublish:legacy:symlink_src')
+            ->setName('ezpublish:legacy:symlink')
             ->setDefinition(
                 array(
                     new InputArgument('src', InputArgument::OPTIONAL, 'The src directory for legacy files', 'src/legacy_files'),
                 )
             )
-            ->addOption('create', 'c', InputOption::VALUE_NONE, 'Create src folder structure if it does not exists')
-            ->addOption('force', 'f', InputOption::VALUE_NONE, 'Symlink folders even if target already exists')
+            ->addOption('create', 'c', InputOption::VALUE_NONE, 'Create "src" directory structure if it does not exist')
+            ->addOption('force', 'f', InputOption::VALUE_NONE, 'Symlink folders even if target already exist')
             ->setDescription('Installs legacy project settings and design files from "src" to corresponding folders in ezpublish_legacy/')
             ->setHelp(
                 <<<EOT
@@ -72,7 +72,7 @@ EOT
         $output->writeln(<<<EOT
 
 If you create or move additional design or siteaccess folders to '$srcArg' from previous install, then
-re-run <info>ezpublish:legacy:symlink_src</info> to setup symlinks to eZ Publish legacy folder for them also.
+re-run <info>ezpublish:legacy:symlink</info> to setup symlinks to eZ Publish legacy folder for them also.
 
 EOT
 );
@@ -115,7 +115,11 @@ EOT
         $symlinks = [];
         $legacyRootDir = rtrim($this->getContainer()->getParameter('ezpublish_legacy.root_dir'), '/');
 
-        if ($force || !$filesystem->exists("$legacyRootDir/settings/override")) {
+        // first handle override folder if it exists
+        if (
+            $filesystem->exists("$srcArg/settings/override") &&
+            ($force || !$filesystem->exists("$legacyRootDir/settings/override"))
+        ) {
             $filesystem->symlink(
                 $filesystem->makePathRelative(
                     realpath("$srcArg/settings/override"),
@@ -126,7 +130,8 @@ EOT
             $symlinks[] = "$legacyRootDir/settings/override";
         }
 
-        $directories = ['design', 'settings/override'];
+        // secondly handle sub folders in design and settings/siteaccess
+        $directories = ['design', 'settings/siteaccess'];
         foreach ($directories as $directory) {
             foreach (Finder::create()->directories()->in(["$srcArg/$directory"]) as $folder) {
                 $folderName = $folder->getFilename();
