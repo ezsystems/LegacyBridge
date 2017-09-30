@@ -7,17 +7,11 @@ on top of Platform using Composer to provide a more up-to-date platform to migra
 
 ### Add the composer `legacy post-*-scripts`
 
-Edit `composer.json`, and add those lines to both `post-update-cmd` and `post-install-cmd` blocks at the end:
+Edit `composer.json`, and add those lines to `build` block at the end:
 
 ```
 "scripts": {
-    "post-install-cmd": [
-        ...,
-        "eZ\\Bundle\\EzPublishLegacyBundle\\Composer\\ScriptHandler::installAssets",
-        "eZ\\Bundle\\EzPublishLegacyBundle\\Composer\\ScriptHandler::installLegacyBundlesExtensions",
-        "eZ\\Bundle\\EzPublishLegacyBundle\\Composer\\ScriptHandler::generateAutoloads"
-    ],
-    "post-update-cmd": [
+    "build": [
         ...,
         "eZ\\Bundle\\EzPublishLegacyBundle\\Composer\\ScriptHandler::installAssets",
         "eZ\\Bundle\\EzPublishLegacyBundle\\Composer\\ScriptHandler::installLegacyBundlesExtensions",
