@@ -105,7 +105,7 @@ class ScriptHandler extends DistributionBundleScriptHandler
             return;
         }
 
-        static::executeCommand($event, $appDir, 'ezpublish:legacy:symlink -c ' . $srcFolder);
+        static::executeCommand($event, $appDir, 'ezpublish:legacy:symlink ' . $srcFolder);
     }
 
     private static function isDir($dir, $composerSetting)

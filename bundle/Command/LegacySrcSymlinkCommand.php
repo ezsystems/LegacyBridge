@@ -35,7 +35,13 @@ class LegacySrcSymlinkCommand extends ContainerAwareCommand
 The command <info>%command.name%</info> setups and symlinks <info>src/legacy_files</info> stored in your root project for
 any design/settings project files, and symlinks these into <info>ezpublish_legacy/</info> which is installed by composer.
 
-<comment>NOTE: Look towards 'ezpublish:legacybundles:install_extensions' command for how you handle extensions.</comment>
+The benefit of this is:
+1. Being able to version your design/config files in git withouth versing legacy itself
+2. A predefined convention for where to place these files when migrating from older versions
+3. Placing these files directly in ezpublish_legacy folder will lead to them getting removed in some cases when composer
+   needs to completely replace ezpublish-legacy package for different reasons.
+
+<comment>NOTE: Look towards 'ezpublish:legacybundles:install_extensions' command for how you handle legacy extensions.</comment>
 EOT
             );
     }
@@ -52,13 +58,34 @@ EOT
         $filesystem = $this->getContainer()->get('filesystem');
 
         if (!$filesystem->exists($srcArg)) {
-            if ($create) {
-                $this->createSrcFolderStructure($filesystem, $srcArg);
-                $output->writeln("<comment>Empty legacy src folder was created in '$srcArg'.</comment>");
-                // No break, continue so setup symlink settings/override
-            } else {
-                throw new \InvalidArgumentException(sprintf('The src directory "%s" does not exist.', $srcArg));
+            if (!$create) {
+                $output->writeln(<<<EOT
+Aborting: The src directory "$srcArg" does not exist.
+
+You can create the directory by running <info>ezpublish:legacy:symlink -c</info>, OR by creating the folders you need
+manually among the once supported by this command:
+- $srcArg/design
+- $srcArg/settings/override
+- $srcArg/settings/siteaccess
+
+TIP: It is recommended that you likewise setup symlink for var/[site/]storage to a folder outside ezpublish_legacy/.
+
+EOT
+, OutputInterface::VERBOSITY_QUIET
+);
+
+                return;
             }
+
+            $filesystem->mkdir([
+                $srcArg,
+                "$srcArg/design",
+                "$srcArg/settings",
+                "$srcArg/settings/override",
+                "$srcArg/settings/siteaccess",
+            ]);
+
+            $output->writeln("<comment>Empty legacy src folder was created in '$srcArg'.</comment>");
         }
 
         $symlinkFolderStr = implode(' ,', $this->linkSrcFolders($filesystem, $srcArg, $force));
@@ -71,34 +98,11 @@ EOT
 
         $output->writeln(<<<EOT
 
-If you create or move additional design or siteaccess folders to '$srcArg' from previous install, then
+NOTE: If you create or move additional design or siteaccess folders to '$srcArg' from previous install, then
 re-run <info>ezpublish:legacy:symlink</info> to setup symlinks to eZ Publish legacy folder for them also.
 
 EOT
 );
-    }
-
-    /**
-     * Create legacy src folder structure.
-     *
-     * src/legacy_files:
-     * - design
-     * - settings:
-     *   - override
-     *   - siteaccess
-     *
-     * @param Filesystem $filesystem
-     * @param string $srcArg
-     */
-    protected function createSrcFolderStructure(Filesystem $filesystem, $srcArg)
-    {
-        $filesystem->mkdir([
-            $srcArg,
-            "$srcArg/design",
-            "$srcArg/settings",
-            "$srcArg/settings/override",
-            "$srcArg/settings/siteaccess",
-        ]);
     }
 
     /**
