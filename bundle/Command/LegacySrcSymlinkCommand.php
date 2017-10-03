@@ -63,7 +63,7 @@ EOT
 Aborting: The src directory "$srcArg" does not exist.
 
 You can create the directory by running <info>ezpublish:legacy:symlink -c</info>, OR by creating the folders you need
-manually among the once supported by this command:
+manually among the ones supported by this command:
 - $srcArg/design
 - $srcArg/settings/override
 - $srcArg/settings/siteaccess
@@ -93,7 +93,7 @@ EOT
         if ($symlinkFolderStr) {
             $output->writeln("The following folders where symlinked: '$symlinkFolderStr'.");
         } else {
-            $output->writeln('No folders where symlinked, use force option if they need to be re-created.');
+            $output->writeln('No folders where symlinked, use <info>--force</info> option if they need to be re-created.');
         }
 
         $output->writeln(<<<EOT
