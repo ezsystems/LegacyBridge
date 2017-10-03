@@ -36,7 +36,7 @@ The command <info>%command.name%</info> setups and symlinks <info>src/legacy_fil
 any design/settings project files, and symlinks these into <info>ezpublish_legacy/</info> which is installed by composer.
 
 The benefit of this is:
-1. Being able to version your design/config files in git withouth versing legacy itself
+1. Being able to version your design/config files in git without versioning legacy itself
 2. A predefined convention for where to place these files when migrating from older versions
 3. Placing these files directly in ezpublish_legacy folder will lead to them getting removed in some cases when composer
    needs to completely replace ezpublish-legacy package for different reasons.
