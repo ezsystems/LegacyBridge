@@ -28,7 +28,7 @@ class LegacySrcSymlinkCommand extends ContainerAwareCommand
                 )
             )
             ->addOption('create', 'c', InputOption::VALUE_NONE, 'Create "src" directory structure if it does not exist')
-            ->addOption('force', 'f', InputOption::VALUE_NONE, 'Symlink folders even if target already exist')
+            ->addOption('force', null, InputOption::VALUE_NONE, 'Force symlinking folders even if target already exist')
             ->setDescription('Installs legacy project settings and design files from "src" to corresponding folders in ezpublish_legacy/')
             ->setHelp(
                 <<<EOT
