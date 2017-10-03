@@ -30,6 +30,7 @@ class LegacyWrapperInstallCommand extends ContainerAwareCommand
             )
             ->addOption('symlink', null, InputOption::VALUE_NONE, 'Symlinks the assets instead of copying it')
             ->addOption('relative', null, InputOption::VALUE_NONE, 'Make relative symlinks')
+            ->addOption('force', null, InputOption::VALUE_NONE, 'Force overwriting of existing directory (will be removed)')
             ->setDescription('Installs assets from eZ Publish legacy installation and wrapper scripts for front controllers (like index_cluster.php).')
             ->setHelp(
                 <<<EOT
@@ -56,10 +57,28 @@ EOT
 
         $output->writeln(sprintf("Installing eZ Publish legacy assets from $legacyRootDir using the <comment>%s</comment> option", $input->getOption('symlink') ? 'symlink' : 'hard copy'));
         $symlink = $input->getOption('symlink');
+        $force = (bool)$input->getOption('force');
 
         foreach (array('design', 'extension', 'share', 'var') as $folder) {
             $targetDir = "$targetArg/$folder";
             $originDir = "$legacyRootDir/$folder";
+
+            // Check if directory exists (not link) and is not empty to avoid removing things that should be backend up
+            if (!$force && !is_link($targetDir) && is_dir($targetDir) && count(glob("$targetDir/*", GLOB_NOSORT)) > 0) {
+                $output->writeln(<<<EOT
+Skipping: The folder  "$targetDir" already exists and seems to contain content!
+
+Make sure to backup this content and move it into corresponding legacy folder which is will be setup to symlink / copy
+to this folder before you remove it, then re-run this command.
+
+If this folder and the other "$targetArg" directories can be safly overwritten, run this command with <info>--force</info> option.
+
+EOT
+, OutputInterface::VERBOSITY_QUIET
+);
+                continue;
+            }
+
             $filesystem->remove($targetDir);
             if ($symlink) {
                 if ($input->getOption('relative')) {
