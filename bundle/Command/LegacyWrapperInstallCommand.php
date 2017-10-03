@@ -66,12 +66,12 @@ EOT
             // Check if directory exists (not link) and is not empty to avoid removing things that should be backend up
             if (!$force && !is_link($targetDir) && is_dir($targetDir) && count(glob("$targetDir/*", GLOB_NOSORT)) > 0) {
                 $output->writeln(<<<EOT
-Skipping: The folder  "$targetDir" already exists and seems to contain content!
+Skipping: The folder "$targetDir" already exists and seems to contain content!
 
 Make sure to backup this content and move it into corresponding legacy folder which is will be setup to symlink / copy
 to this folder before you remove it, then re-run this command.
 
-If this folder and the other "$targetArg" directories can be safly overwritten, run this command with <info>--force</info> option.
+If this folder and the other "$targetArg" directories can be safely overwritten, run this command with <info>--force</info> option.
 
 EOT
 , OutputInterface::VERBOSITY_QUIET
