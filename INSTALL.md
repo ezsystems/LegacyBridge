@@ -7,24 +7,54 @@ on top of Platform using Composer to provide a more up-to-date platform to migra
 
 ### Add the composer `legacy post-*-scripts`
 
-Edit `composer.json`, and add those lines to both `post-update-cmd` and `post-install-cmd` blocks at the end:
-
+Edit `composer.json`, and add those lines to both `post-update-cmd` and `post-install-cmd` blocks at the end, but before
+`eZ\Bundle\EzPublishCoreBundle\Composer\ScriptHandler::dumpAssets`:
 ```
 "scripts": {
-    "post-install-cmd": [
-        ...,
+    "legacy-scripts": [
         "eZ\\Bundle\\EzPublishLegacyBundle\\Composer\\ScriptHandler::installAssets",
         "eZ\\Bundle\\EzPublishLegacyBundle\\Composer\\ScriptHandler::installLegacyBundlesExtensions",
-        "eZ\\Bundle\\EzPublishLegacyBundle\\Composer\\ScriptHandler::generateAutoloads"
+        "eZ\\Bundle\\EzPublishLegacyBundle\\Composer\\ScriptHandler::generateAutoloads",
+        "eZ\\Bundle\\EzPublishLegacyBundle\\Composer\\ScriptHandler::symlinkLegacyFiles"
+    ],
+    "post-install-cmd": [
+        ...,
+        "@legacy-scripts"
     ],
     "post-update-cmd": [
         ...,
-        "eZ\\Bundle\\EzPublishLegacyBundle\\Composer\\ScriptHandler::installAssets",
-        "eZ\\Bundle\\EzPublishLegacyBundle\\Composer\\ScriptHandler::installLegacyBundlesExtensions",
-        "eZ\\Bundle\\EzPublishLegacyBundle\\Composer\\ScriptHandler::generateAutoloads"
+        "@legacy-scripts"
     ],
 }
 ```
+
+Example: In the case of stock eZ Platform 1.11 and higher that would specifically be:
+```
+"scripts": {
+    "legacy-scripts": [
+        "eZ\\Bundle\\EzPublishLegacyBundle\\Composer\\ScriptHandler::installAssets",
+        "eZ\\Bundle\\EzPublishLegacyBundle\\Composer\\ScriptHandler::installLegacyBundlesExtensions",
+        "eZ\\Bundle\\EzPublishLegacyBundle\\Composer\\ScriptHandler::generateAutoloads",
+        "eZ\\Bundle\\EzPublishLegacyBundle\\Composer\\ScriptHandler::symlinkLegacyFiles"
+    ],
+    "symfony-scripts": [
+        "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters",
+        "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::buildBootstrap",
+        "eZ\\Bundle\\EzPublishCoreBundle\\Composer\\ScriptHandler::clearCache",
+        "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installAssets",
+        "@legacy-scripts"
+        "eZ\\Bundle\\EzPublishCoreBundle\\Composer\\ScriptHandler::dumpAssets",
+        "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installRequirementsFile"
+    ],
+    "post-install-cmd": [
+        "@symfony-scripts"
+    ],
+    "post-update-cmd": [
+        "@symfony-scripts"
+    ],
+    (...)
+```
+
 
 ### Enable EzPublishLegacyBundle
 Edit `app/AppKernel.php`, and add `new eZ\Bundle\EzPublishLegacyBundle\EzPublishLegacyBundle( $this ),`

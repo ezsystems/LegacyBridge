@@ -39,15 +39,11 @@ class ScriptHandler extends DistributionBundleScriptHandler
             $symlink = '--symlink --relative ';
         }
 
-        if (!is_dir($appDir)) {
-            echo 'The symfony-app-dir (' . $appDir . ') specified in composer.json was not found in ' . getcwd() . ', can not install assets.' . PHP_EOL;
-
+        if (!self::isDir($appDir, 'symfony-app-dir')) {
             return;
         }
 
-        if (!is_dir($webDir)) {
-            echo 'The symfony-web-dir (' . $webDir . ') specified in composer.json was not found in ' . getcwd() . ', can not install assets.' . PHP_EOL;
-
+        if (!self::isDir($webDir, 'symfony-web-dir')) {
             return;
         }
 
@@ -64,9 +60,7 @@ class ScriptHandler extends DistributionBundleScriptHandler
             $symlink = '--relative ';
         }
 
-        if (!is_dir($appDir)) {
-            echo 'The symfony-app-dir (' . $appDir . ') specified in composer.json was not found in ' . getcwd() . ', can not install assets.' . PHP_EOL;
-
+        if (!self::isDir($appDir, 'symfony-app-dir')) {
             return;
         }
 
@@ -78,9 +72,7 @@ class ScriptHandler extends DistributionBundleScriptHandler
         $options = self::getOptions($event);
         $appDir = $options['symfony-app-dir'];
 
-        if (!is_dir($appDir)) {
-            echo 'The symfony-app-dir (' . $appDir . ') specified in composer.json was not found in ' . getcwd() . ', can not generate autoloads.' . PHP_EOL;
-
+        if (!self::isDir($appDir, 'symfony-app-dir')) {
             return;
         }
 
@@ -92,12 +84,40 @@ class ScriptHandler extends DistributionBundleScriptHandler
         $options = self::getOptions($event);
         $appDir = $options['symfony-app-dir'];
 
-        if (!is_dir($appDir)) {
-            echo 'The symfony-app-dir (' . $appDir . ') specified in composer.json was not found in ' . getcwd() . ', can not generate kernel override autoloads.' . PHP_EOL;
-
+        if (!self::isDir($appDir, 'symfony-app-dir')) {
             return;
         }
 
         static::executeCommand($event, $appDir, 'ezpublish:legacy:script bin/php/ezpgenerateautoloads.php -o');
+    }
+
+    public static function symlinkLegacyFiles(Event $event)
+    {
+        $options = self::getOptions($event);
+        $appDir = $options['symfony-app-dir'];
+
+        $srcFolder = '';
+        if (isset($options['legacy-src-folder'])) {
+            $srcFolder = $options['legacy-src-folder'];
+        }
+
+        if (!self::isDir($appDir, 'symfony-app-dir')) {
+            return;
+        }
+
+        static::executeCommand($event, $appDir, 'ezpublish:legacy:symlink ' . $srcFolder);
+    }
+
+    private static function isDir($dir, $composerSetting)
+    {
+        if (is_dir($dir)) {
+            return true;
+        }
+
+        $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 1);
+        echo "The ${composerSetting} (${dir}) specified in composer.json was not found in " . getcwd();
+        echo ', can not execute: ' . $trace[0]['function'] . PHP_EOL;
+
+        return false;
     }
 }
