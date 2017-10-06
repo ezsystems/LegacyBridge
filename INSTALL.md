@@ -122,7 +122,7 @@ To access legacy assets (eZ Publish designs and extension designs), add the foll
 
 ```
 # If using cluster, uncomment the following two lines:
-#RewriteRule ^/var/([^/]+/)?storage/images(-versioned)?/.* /index.php [L]
+#RewriteRule ^/var/([^/]+/)?storage/images(-versioned)?/.* /app.php [L]
 #RewriteRule ^/var/([^/]+/)?cache/(texttoimage|public)/.* /index_cluster.php [L]
 
 RewriteRule ^/var/([^/]+/)?storage/images(-versioned)?/.* - [L]
@@ -139,7 +139,7 @@ Or if using nginx:
 
 ```
 # If using cluster, uncomment the following two lines:
-#rewrite "^/var/([^/]+/)?storage/images(-versioned)?/(.*)" "/index.php" break;
+#rewrite "^/var/([^/]+/)?storage/images(-versioned)?/(.*)" "/app.php" break;
 #rewrite "^/var/([^/]+/)?cache/(texttoimage|public)/(.*)" "/index_cluster.php" break;
 
 rewrite "^/var/([^/]+/)?storage/images(-versioned)?/(.*)" "/var/$1storage/images$2/$3" break;
