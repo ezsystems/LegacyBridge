@@ -29,7 +29,7 @@ class ScriptHandler extends DistributionBundleScriptHandler
     public static function installAssets(Event $event)
     {
         $options = self::getOptions($event);
-        $appDir = $options['symfony-app-dir'];
+        $consoleDir = static::getConsoleDir($event, 'install assets');
         $webDir = $options['symfony-web-dir'];
 
         $symlink = '';
@@ -39,7 +39,7 @@ class ScriptHandler extends DistributionBundleScriptHandler
             $symlink = '--symlink --relative ';
         }
 
-        if (!self::isDir($appDir, 'symfony-app-dir')) {
+        if (null === $consoleDir) {
             return;
         }
 
@@ -47,65 +47,63 @@ class ScriptHandler extends DistributionBundleScriptHandler
             return;
         }
 
-        static::executeCommand($event, $appDir, 'ezpublish:legacy:assets_install ' . $symlink . escapeshellarg($webDir));
+        static::executeCommand($event, $consoleDir, 'ezpublish:legacy:assets_install ' . $symlink . escapeshellarg($webDir));
     }
 
     public static function installLegacyBundlesExtensions(Event $event)
     {
         $options = self::getOptions($event);
-        $appDir = $options['symfony-app-dir'];
+        $consoleDir = static::getConsoleDir($event, 'install legacy bundles');
 
         $symlink = '';
         if ($options['symfony-assets-install'] === 'relative') {
             $symlink = '--relative ';
         }
 
-        if (!self::isDir($appDir, 'symfony-app-dir')) {
+        if (null === $consoleDir) {
             return;
         }
 
-        static::executeCommand($event, $appDir, 'ezpublish:legacybundles:install_extensions ' . $symlink);
+        static::executeCommand($event, $consoleDir, 'ezpublish:legacybundles:install_extensions ' . $symlink);
     }
 
     public static function generateAutoloads(Event $event)
     {
-        $options = self::getOptions($event);
-        $appDir = $options['symfony-app-dir'];
+        $consoleDir = static::getConsoleDir($event, 'generate autoloads');
 
-        if (!self::isDir($appDir, 'symfony-app-dir')) {
+        if (null === $consoleDir) {
             return;
         }
 
-        static::executeCommand($event, $appDir, 'ezpublish:legacy:script bin/php/ezpgenerateautoloads.php');
+        static::executeCommand($event, $consoleDir, 'ezpublish:legacy:script bin/php/ezpgenerateautoloads.php');
     }
 
     public static function generateKernelOverrideAutoloads(Event $event)
     {
-        $options = self::getOptions($event);
-        $appDir = $options['symfony-app-dir'];
+        $consoleDir = static::getConsoleDir($event, 'generate override autoloads');
 
-        if (!self::isDir($appDir, 'symfony-app-dir')) {
+        if (null === $consoleDir) {
             return;
         }
 
-        static::executeCommand($event, $appDir, 'ezpublish:legacy:script bin/php/ezpgenerateautoloads.php -o');
+        static::executeCommand($event, $consoleDir, 'ezpublish:legacy:script bin/php/ezpgenerateautoloads.php -o');
     }
 
     public static function symlinkLegacyFiles(Event $event)
     {
         $options = self::getOptions($event);
-        $appDir = $options['symfony-app-dir'];
+        $consoleDir = static::getConsoleDir($event, 'symlink legacy files');
 
         $srcFolder = '';
         if (isset($options['legacy-src-folder'])) {
             $srcFolder = $options['legacy-src-folder'];
         }
 
-        if (!self::isDir($appDir, 'symfony-app-dir')) {
+        if (null === $consoleDir) {
             return;
         }
 
-        static::executeCommand($event, $appDir, 'ezpublish:legacy:symlink ' . $srcFolder);
+        static::executeCommand($event, $consoleDir, 'ezpublish:legacy:symlink ' . $srcFolder);
     }
 
     private static function isDir($dir, $composerSetting)
