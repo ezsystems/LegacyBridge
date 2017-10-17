@@ -6,7 +6,6 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Bundle\EzPublishLegacyBundle\Composer;
 
 use Sensio\Bundle\DistributionBundle\Composer\ScriptHandler as DistributionBundleScriptHandler;
@@ -39,7 +38,7 @@ class ScriptHandler extends DistributionBundleScriptHandler
             $symlink = '--symlink --relative ';
         }
 
-        if (null === $consoleDir) {
+        if ($consoleDir === null) {
             return;
         }
 
@@ -60,7 +59,7 @@ class ScriptHandler extends DistributionBundleScriptHandler
             $symlink = '--relative ';
         }
 
-        if (null === $consoleDir) {
+        if ($consoleDir === null) {
             return;
         }
 
@@ -71,7 +70,7 @@ class ScriptHandler extends DistributionBundleScriptHandler
     {
         $consoleDir = static::getConsoleDir($event, 'generate autoloads');
 
-        if (null === $consoleDir) {
+        if ($consoleDir === null) {
             return;
         }
 
@@ -82,7 +81,7 @@ class ScriptHandler extends DistributionBundleScriptHandler
     {
         $consoleDir = static::getConsoleDir($event, 'generate override autoloads');
 
-        if (null === $consoleDir) {
+        if ($consoleDir === null) {
             return;
         }
 
@@ -99,7 +98,7 @@ class ScriptHandler extends DistributionBundleScriptHandler
             $srcFolder = $options['legacy-src-folder'];
         }
 
-        if (null === $consoleDir) {
+        if ($consoleDir === null) {
             return;
         }
 

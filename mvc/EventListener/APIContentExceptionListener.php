@@ -6,7 +6,6 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Publish\Core\MVC\Legacy\EventListener;
 
 use eZ\Publish\Core\MVC\Symfony\Event\APIContentExceptionEvent;

@@ -6,7 +6,6 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Publish\Core\MVC\Legacy\View\Provider;
 
 use eZ\Publish\Core\FieldType\XmlText\Converter\EmbedToHtml5;
