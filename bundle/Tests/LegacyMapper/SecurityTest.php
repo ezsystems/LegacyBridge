@@ -6,7 +6,6 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Bundle\EzPublishLegacyBundle\Tests\LegacyMapper;
 
 use eZ\Publish\API\Repository\Values\Content\Content;
