@@ -93,6 +93,10 @@ ezpublish_setup:
     security: false
 ```
 
+_Tip:_
+> Enabling Setup wizard is only needed if you intend to perform a new install with legacy demo data, you can also install Plaform data _(clean, demo)_ and afterwards when everything is setup use Platform UI to change Richtext FieldTypes to XmlText _(using [ezplatform-xmltext-fieldtype](https://github.com/ezsystems/ezplatform-xmltext-fieldtype))_, or install [Netgen RichTextDataType Bundle for legacy](https://github.com/netgen/NetgenRichTextDataTypeBundle) to make legacy allow raw editing of these. If you install eZ Platform Enterprise and it's demo data, there will also be Landing Page field type to handle in similar way _(contributions to Legacy Bridge on this more than welcome ;))_
+
+
 ### Install `ezsystems/legacy-bridge`
 
 `ezsystems/legacy-bridge` contains the libraries previously included in `ezsystems/ezpublish-kernel` in version 5.x.
