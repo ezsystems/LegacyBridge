@@ -94,11 +94,7 @@ ezpublish_setup:
 ```
 
 Tip:
-    Enabling Setup wizard is only needed if you intend to perform a new install with legacy demo data, you can also install Plaform data _(clean, demo)_ and afterwards when everything is setup use Platform UI to change Richtext FieldTypes to XmlText _(note: own [composer package](https://github.com/ezsystems/ezplatform-xmltext-fieldtype))_. If you install eZ Platform Enterprise and it's demo data, there will also be Landing Page field type to handle. 
-    
-    
-Note:    
-    If you create a simple legacy field type for these Platform FieldTypes in order to make sure legacy admin does not throw errors on them, then please share. Such a thing cound be part of this bundle even ;)
+    Enabling Setup wizard is only needed if you intend to perform a new install with legacy demo data, you can also install Plaform data _(clean, demo)_ and afterwards when everything is setup use Platform UI to change Richtext FieldTypes to XmlText _(note: own [composer package](https://github.com/ezsystems/ezplatform-xmltext-fieldtype))_, or install [Netgen RichTextDataType Bundle for legacy](https://github.com/netgen/NetgenRichTextDataTypeBundle) to make legacy at least not error on these. If you install eZ Platform Enterprise and it's demo data, there will also be Landing Page field type to handle in similar way.
 
 
 ### Install `ezsystems/legacy-bridge`
