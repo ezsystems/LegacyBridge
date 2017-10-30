@@ -8,6 +8,7 @@
  */
 namespace eZ\Bundle\EzPublishLegacyBundle;
 
+use eZ\Bundle\EzPublishLegacyBundle\DependencyInjection\Compiler\HttpCachePass;
 use eZ\Bundle\EzPublishLegacyBundle\DependencyInjection\Compiler\RememberMeListenerPass;
 use eZ\Bundle\EzPublishLegacyBundle\DependencyInjection\Compiler\LegacyBundlesPass;
 use eZ\Bundle\EzPublishLegacyBundle\DependencyInjection\Compiler\LegacySessionPass;
@@ -55,6 +56,7 @@ class EzPublishLegacyBundle extends Bundle
         $container->addCompilerPass(new RoutingPass());
         $container->addCompilerPass(new LegacySessionPass());
         $container->addCompilerPass(new RememberMeListenerPass());
+        $container->addCompilerPass(new HttpCachePass());
 
         /** @var \Symfony\Bundle\SecurityBundle\DependencyInjection\SecurityExtension $securityExtension */
         $securityExtension = $container->getExtension('security');
