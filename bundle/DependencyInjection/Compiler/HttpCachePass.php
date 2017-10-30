@@ -6,7 +6,6 @@
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  * @version //autogentag//
  */
-
 namespace eZ\Bundle\EzPublishLegacyBundle\DependencyInjection\Compiler;
 
 use eZ\Bundle\EzPublishCoreBundle\Cache\Http\InstantCachePurger;
@@ -28,7 +27,7 @@ class HttpCachePass implements CompilerPassInterface
 
         $container->addDefinitions([
             'ezplatform.http_cache.purger' => new Definition(InstantCachePurger::class,
-                [new Reference('ezplatform.http_cache.purge_client')])
+                [new Reference('ezplatform.http_cache.purge_client')]),
         ]);
 
         $container->getDefinition('ezpublish_legacy.switchable_http_cache_purger')
