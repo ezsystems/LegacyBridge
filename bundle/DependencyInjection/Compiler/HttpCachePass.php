@@ -27,7 +27,12 @@ class HttpCachePass implements CompilerPassInterface
 
         $container->addDefinitions([
             'ezplatform.http_cache.purger' => new Definition(InstantCachePurger::class,
-                [new Reference('ezplatform.http_cache.purge_client')]),
+                [
+                    new Reference('ezplatform.http_cache.purge_client'),
+                    new Reference('ezpublish.api.service.inner_content'),
+                    new Reference('ezpublish.http_cache.event_dispatcher'),
+                ]
+            ),
         ]);
 
         $container->getDefinition('ezpublish_legacy.switchable_http_cache_purger')
