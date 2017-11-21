@@ -42,7 +42,7 @@ Example: In the case of stock eZ Platform 1.11 and higher that would specificall
         "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::buildBootstrap",
         "eZ\\Bundle\\EzPublishCoreBundle\\Composer\\ScriptHandler::clearCache",
         "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installAssets",
-        "@legacy-scripts"
+        "@legacy-scripts",
         "eZ\\Bundle\\EzPublishCoreBundle\\Composer\\ScriptHandler::dumpAssets",
         "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installRequirementsFile"
     ],
