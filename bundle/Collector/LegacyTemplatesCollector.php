@@ -46,4 +46,9 @@ class LegacyTemplatesCollector extends DataCollector
     {
         return $this->data['legacyTemplates'];
     }
+
+    public function reset()
+    {
+        $this->data = ['legacyTemplates' => []];
+    }
 }
