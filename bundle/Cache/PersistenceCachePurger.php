@@ -8,11 +8,11 @@
  */
 namespace eZ\Bundle\EzPublishLegacyBundle\Cache;
 
+use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
 use Symfony\Component\HttpKernel\CacheClearer\CacheClearerInterface;
 use eZ\Publish\SPI\Persistence\Content\Location\Handler as LocationHandlerInterface;
 use eZ\Publish\Core\Base\Exceptions\InvalidArgumentType;
 use eZ\Publish\Core\Base\Exceptions\NotFoundException;
-use eZ\Publish\Core\Persistence\Cache\CacheServiceDecorator;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -23,7 +23,7 @@ class PersistenceCachePurger implements CacheClearerInterface
     use Switchable;
 
     /**
-     * @var \eZ\Publish\Core\Persistence\Cache\CacheServiceDecorator
+     * @var \Symfony\Component\Cache\Adapter\TagAwareAdapterInterface
      */
     protected $cache;
 
@@ -33,7 +33,7 @@ class PersistenceCachePurger implements CacheClearerInterface
     protected $locationHandler;
 
     /**
-     * Avoid clearing sub elements if all cache is already cleared, avoids redundant calls to Stash.
+     * Avoid clearing sub elements if all cache is already cleared, avoids redundant calls to cache.
      *
      * @var bool
      */
@@ -47,11 +47,11 @@ class PersistenceCachePurger implements CacheClearerInterface
     /**
      * Setups current handler with everything needed.
      *
-     * @param \eZ\Publish\Core\Persistence\Cache\CacheServiceDecorator $cache
+     * @param \Symfony\Component\Cache\Adapter\TagAwareAdapterInterface $cache
      * @param \eZ\Publish\SPI\Persistence\Content\Location\Handler $locationHandler
      * @param \Psr\Log\LoggerInterface $logger
      */
-    public function __construct(CacheServiceDecorator $cache, LocationHandlerInterface $locationHandler, LoggerInterface $logger)
+    public function __construct(TagAwareAdapterInterface $cache, LocationHandlerInterface $locationHandler, LoggerInterface $logger)
     {
         $this->cache = $cache;
         $this->locationHandler = $locationHandler;
@@ -69,7 +69,7 @@ class PersistenceCachePurger implements CacheClearerInterface
             return;
         }
 
-        $this->cache->clear();
+        //$this->cache->clear();
         $this->allCleared = true;
     }
 
@@ -113,7 +113,7 @@ class PersistenceCachePurger implements CacheClearerInterface
         }
 
         if ($locationIds === null) {
-            $this->cache->clear('content');
+            //$this->cache->clear('content');
             goto relatedCache;
         } elseif (!is_array($locationIds)) {
             $locationIds = array($locationIds);
@@ -126,12 +126,12 @@ class PersistenceCachePurger implements CacheClearerInterface
 
             try {
                 $location = $this->locationHandler->load($id);
-                $this->cache->clear('content', $location->contentId);
-                $this->cache->clear('content', 'info', $location->contentId);
-                $this->cache->clear('content', 'info', 'remoteId');
-                $this->cache->clear('content', 'locations', $location->contentId);
-                $this->cache->clear('user', 'role', 'assignments', 'byGroup', $location->contentId);
-                $this->cache->clear('user', 'role', 'assignments', 'byGroup', 'inherited', $location->contentId);
+                $this->cache->invalidateTags(['content-' . $location->contentId]);
+                //$this->cache->clear('content', 'info', $location->contentId);
+                //$this->cache->clear('content', 'info', 'remoteId');
+                //$this->cache->clear('content', 'locations', $location->contentId);
+                //$this->cache->clear('user', 'role', 'assignments', 'byGroup', $location->contentId);
+                //$this->cache->clear('user', 'role', 'assignments', 'byGroup', 'inherited', $location->contentId);
             } catch (NotFoundException $e) {
                 $this->logger->notice(
                     "Unable to load the location with the id '$id' to clear its cache"
@@ -141,8 +141,8 @@ class PersistenceCachePurger implements CacheClearerInterface
 
         // clear content related cache as well
         relatedCache:
-        $this->cache->clear('urlAlias');
-        $this->cache->clear('location');
+        //$this->cache->clear('urlAlias');
+        //$this->cache->clear('location');
 
         return $locationIds;
     }
@@ -159,7 +159,7 @@ class PersistenceCachePurger implements CacheClearerInterface
             return;
         }
 
-        $this->cache->clear('content', $contentId, $versionNo);
+        $this->cache->deleteItem("ez-content-version-info-${contentId}-${versionNo}");
     }
 
     /**
@@ -175,9 +175,9 @@ class PersistenceCachePurger implements CacheClearerInterface
         }
 
         if ($id === null) {
-            $this->cache->clear('contentType');
+            //$this->cache->clear('contentType');
         } elseif (is_scalar($id)) {
-            $this->cache->clear('contentType', $id);
+            $this->cache->invalidateTags(['type-' . $id]);
         } else {
             throw new InvalidArgumentType('$id', 'int|null', $id);
         }
@@ -198,15 +198,15 @@ class PersistenceCachePurger implements CacheClearerInterface
         }
 
         if ($id === null) {
-            $this->cache->clear('contentTypeGroup');
+            //$this->cache->clear('contentTypeGroup');
         } elseif (is_scalar($id)) {
-            $this->cache->clear('contentTypeGroup', $id);
+            $this->cache->invalidateTags(['type-group-' . $id]);
         } else {
             throw new InvalidArgumentType('$id', 'int|null', $id);
         }
 
         // clear content type in case of changes as it contains the relation to groups
-        $this->cache->clear('contentType');
+        //$this->cache->clear('contentType');
     }
 
     /**
@@ -222,9 +222,9 @@ class PersistenceCachePurger implements CacheClearerInterface
         }
 
         if ($id === null) {
-            $this->cache->clear('section');
+            //$this->cache->clear('section');
         } elseif (is_scalar($id)) {
-            $this->cache->clear('section', $id);
+            $this->cache->invalidateTags(['section-' . $id]);
         } else {
             throw new InvalidArgumentType('$id', 'int|null', $id);
         }
@@ -243,7 +243,7 @@ class PersistenceCachePurger implements CacheClearerInterface
 
         $ids = (array)$ids;
         foreach ($ids as $id) {
-            $this->cache->clear('language', $id);
+            $this->cache->invalidateTags(['language-' . $id]);
         }
     }
 
@@ -254,11 +254,11 @@ class PersistenceCachePurger implements CacheClearerInterface
      */
     public function stateAssign($contentId)
     {
-        if ($this->allCleared === true || $this->enabled === false) {
+        if ($this->allCleared === true || $this->isSwitchedOff()) {
             return;
         }
 
-        $this->cache->clear('objectstate', 'byContent', $contentId);
+        $this->cache->invalidateTags(['content-' . $contentId]);
     }
 
     /**
@@ -274,9 +274,9 @@ class PersistenceCachePurger implements CacheClearerInterface
         }
 
         if ($id === null) {
-            $this->cache->clear('user');
+            //$this->cache->clear('user');
         } elseif (is_scalar($id)) {
-            $this->cache->clear('user', $id);
+            $this->cache->invalidateTags(['user-' . $id]);
         } else {
             throw new InvalidArgumentType('$id', 'int|null', $id);
         }
