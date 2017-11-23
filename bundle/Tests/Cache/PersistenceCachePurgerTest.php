@@ -12,7 +12,7 @@ use eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger;
 use eZ\Publish\SPI\Persistence\Content\Location;
 use eZ\Publish\SPI\Persistence\Content\Location\Handler;
 use eZ\Publish\Core\Base\Exceptions\NotFoundException;
-use eZ\Publish\Core\Persistence\Cache\CacheServiceDecorator;
+use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
@@ -41,7 +41,7 @@ class PersistenceCachePurgerTest extends TestCase
     protected function setUp()
     {
         parent::setUp();
-        $this->cacheService = $this->createMock(CacheServiceDecorator::class);
+        $this->cacheService = $this->createMock(TagAwareAdapterInterface::class);
         $this->locationHandler = $this->createMock(Handler::class);
         $this->logger = $this->createMock(LoggerInterface::class);
 
