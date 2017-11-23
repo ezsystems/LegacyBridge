@@ -12,7 +12,7 @@ use eZ\Publish\Core\FieldType\Image\AliasCleanerInterface;
 use eZ\Publish\Core\MVC\Legacy\LegacyEvents;
 use eZ\Publish\Core\MVC\Legacy\Event\PreBuildKernelEvent;
 use eZ\Publish\Core\MVC\ConfigResolverInterface;
-use eZ\Publish\Core\MVC\Symfony\Cache\GatewayCachePurger;
+use EzSystems\PlatformHttpCacheBundle\PurgeClient\PurgeClientInterface;
 use eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger;
 use eZ\Publish\Core\MVC\Symfony\Routing\Generator\UrlAliasGenerator;
 use eZ\Publish\Core\Persistence\Database\DatabaseHandler;
@@ -36,9 +36,9 @@ class Configuration implements EventSubscriberInterface
     private $configResolver;
 
     /**
-     * @var \eZ\Publish\Core\MVC\Symfony\Cache\GatewayCachePurger
+     * @var \EzSystems\PlatformHttpCacheBundle\PurgeClient\PurgeClientInterface
      */
-    private $gatewayCachePurger;
+    private $purgeClient;
 
     /**
      * @var \eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger
@@ -74,7 +74,7 @@ class Configuration implements EventSubscriberInterface
 
     public function __construct(
         ConfigResolverInterface $configResolver,
-        GatewayCachePurger $gatewayCachePurger,
+        PurgeClientInterface $purgeClient,
         PersistenceCachePurger $persistenceCachePurger,
         UrlAliasGenerator $urlAliasGenerator,
         DatabaseHandler $legacyDbHandler,
@@ -82,7 +82,7 @@ class Configuration implements EventSubscriberInterface
         array $options = array()
     ) {
         $this->configResolver = $configResolver;
-        $this->gatewayCachePurger = $gatewayCachePurger;
+        $this->purgeClient = $purgeClient;
         $this->persistenceCachePurger = $persistenceCachePurger;
         $this->urlAliasGenerator = $urlAliasGenerator;
         $this->legacyDbHandler = $legacyDbHandler;
@@ -203,8 +203,8 @@ class Configuration implements EventSubscriberInterface
 
         // Register http cache content/cache event listener
         $ezpEvent = ezpEvent::getInstance();
-        $ezpEvent->attach('content/cache', array($this->gatewayCachePurger, 'purge'));
-        $ezpEvent->attach('content/cache/all', array($this->gatewayCachePurger, 'purgeAll'));
+        $ezpEvent->attach('content/cache', array($this->purgeClient, 'purge'));
+        $ezpEvent->attach('content/cache/all', array($this->purgeClient, 'purgeAll'));
 
         // Register persistence cache event listeners
         $ezpEvent->attach('content/cache', array($this->persistenceCachePurger, 'content'));

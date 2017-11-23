@@ -35,7 +35,7 @@ class LoaderStringTest extends TestCase
     public function testIsFresh()
     {
         $loaderString = new LoaderString();
-        $this->assertSame(true, $loaderString->isFresh('foo', time()));
+        $this->assertTrue($loaderString->isFresh('foo', time()));
     }
 
     /**
