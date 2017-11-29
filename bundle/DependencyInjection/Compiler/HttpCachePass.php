@@ -31,6 +31,7 @@ class HttpCachePass implements CompilerPassInterface
                     new Reference('ezplatform.http_cache.purge_client'),
                     new Reference('ezpublish.api.service.inner_content'),
                     new Reference('ezpublish.http_cache.event_dispatcher'),
+                    new Reference('ezpublish.api.repository'),
                 ]
             ),
         ]);
