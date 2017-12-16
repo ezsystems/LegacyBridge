@@ -52,7 +52,7 @@ class Configuration extends SiteAccessConfiguration
                 ->children()
                     ->scalarNode('view_layout')
                         ->info('Template reference to use as pagelayout while rendering a content view in legacy')
-                        ->example('eZDemoBundle::pagelayout.html.twig')
+                        ->example('@eZDemo/pagelayout.html.twig')
                     ->end()
                     ->scalarNode('module_layout')
                         ->info('Template reference to use as pagelayout for legacy modules. If not specified, pagelayout from legacy will be used.')

@@ -5,5 +5,5 @@ services:
         tags:
             -
                 name: ezpublish_data_collector
-                panelTemplate: "EzPublishLegacyBundle:Profiler/templates:panel.html.twig"
-                toolbarTemplate: "EzPublishLegacyBundle:Profiler/templates:toolbar.html.twig"
+                panelTemplate: "@EzPublishLegacy/Profiler/templates/panel.html.twig"
+                toolbarTemplate: "@EzPublishLegacy/Profiler/templates/toolbar.html.twig"

@@ -1,6 +1,6 @@
 parameters:
-    ezpublish_legacy.twig.extension.template.js: 'EzPublishLegacyBundle::ez_legacy_render_js.html.twig'
-    ezpublish_legacy.twig.extension.template.css: 'EzPublishLegacyBundle::ez_legacy_render_css.html.twig'
+    ezpublish_legacy.twig.extension.template.js: '@@EzPublishLegacy/ez_legacy_render_js.html.twig'
+    ezpublish_legacy.twig.extension.template.css: '@@EzPublishLegacy/ez_legacy_render_css.html.twig'
 
     # eZ Template as a real template engine
 
