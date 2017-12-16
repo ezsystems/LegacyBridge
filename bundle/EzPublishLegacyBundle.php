@@ -8,11 +8,14 @@
  */
 namespace eZ\Bundle\EzPublishLegacyBundle;
 
+use eZ\Bundle\EzPublishLegacyBundle\DependencyInjection\Compiler\PageServicePass;
 use eZ\Bundle\EzPublishLegacyBundle\DependencyInjection\Compiler\RememberMeListenerPass;
 use eZ\Bundle\EzPublishLegacyBundle\DependencyInjection\Compiler\LegacyBundlesPass;
 use eZ\Bundle\EzPublishLegacyBundle\DependencyInjection\Compiler\LegacySessionPass;
 use eZ\Bundle\EzPublishLegacyBundle\DependencyInjection\Compiler\RelatedSiteAccessesCleanupPass;
+use eZ\Bundle\EzPublishLegacyBundle\DependencyInjection\Compiler\RequestIndexListenerPass;
 use eZ\Bundle\EzPublishLegacyBundle\DependencyInjection\Compiler\RoutingPass;
+use eZ\Bundle\EzPublishLegacyBundle\DependencyInjection\Compiler\SecurityListenerPass;
 use eZ\Bundle\EzPublishLegacyBundle\DependencyInjection\Security\SSOFactory;
 use Symfony\Component\DependencyInjection\Compiler\PassConfig;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
@@ -55,6 +58,9 @@ class EzPublishLegacyBundle extends Bundle
         $container->addCompilerPass(new RoutingPass());
         $container->addCompilerPass(new LegacySessionPass());
         $container->addCompilerPass(new RememberMeListenerPass());
+        $container->addCompilerPass(new PageServicePass());
+        $container->addCompilerPass(new RequestIndexListenerPass());
+        $container->addCompilerPass(new SecurityListenerPass());
 
         /** @var \Symfony\Bundle\SecurityBundle\DependencyInjection\SecurityExtension $securityExtension */
         $securityExtension = $container->getExtension('security');

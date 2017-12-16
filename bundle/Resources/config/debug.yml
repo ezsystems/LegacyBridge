@@ -1,9 +1,6 @@
-parameters:
-    ezpublish_legacy.debug.templates_collector.class: eZ\Bundle\EzPublishLegacyBundle\Collector\LegacyTemplatesCollector
-
 services:
     ezpublish_legacy.debug.templates_collector:
-        class: "%ezpublish_legacy.debug.templates_collector.class%"
+        class: eZ\Bundle\EzPublishLegacyBundle\Collector\LegacyTemplatesCollector
         arguments: ["@ezpublish_legacy.kernel"]
         tags:
             -

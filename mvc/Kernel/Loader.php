@@ -16,6 +16,7 @@ use eZ\Publish\Core\MVC\Legacy\Event\PreBuildKernelWebHandlerEvent;
 use eZ\Publish\Core\MVC\Legacy\Event\PreBuildKernelEvent;
 use ezpKernelHandler;
 use ezpKernelRest;
+use ezpKernelTreeMenu;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -263,7 +264,7 @@ class Loader
     public function buildLegacyKernelHandlerTreeMenu()
     {
         return $this->buildLegacyKernelHandlerWeb(
-            $this->container->getParameter('ezpublish_legacy.kernel_handler.treemenu.class'),
+            ezpKernelTreeMenu::class,
             array(
                 'use-cache-headers' => false,
                 'use-exceptions' => true,
