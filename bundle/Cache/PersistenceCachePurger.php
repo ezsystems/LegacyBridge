@@ -13,7 +13,6 @@ use Symfony\Component\HttpKernel\CacheClearer\CacheClearerInterface;
 use eZ\Publish\API\Repository\Exceptions\NotFoundException as APINotFoundException;
 use eZ\Publish\SPI\Persistence\Content\Location\Handler as LocationHandlerInterface;
 use eZ\Publish\Core\Base\Exceptions\InvalidArgumentType;
-use Psr\Log\LoggerInterface;
 
 /**
  * Class PersistenceCachePurger.
@@ -40,22 +39,15 @@ class PersistenceCachePurger implements CacheClearerInterface
     protected $allCleared = false;
 
     /**
-     * @var \Psr\Log\LoggerInterface
-     */
-    protected $logger;
-
-    /**
      * Setups current handler with everything needed.
      *
      * @param \Symfony\Component\Cache\Adapter\TagAwareAdapterInterface $cache
      * @param \eZ\Publish\SPI\Persistence\Content\Location\Handler $locationHandler (using SPI cache instance so calls are cached)
-     * @param \Psr\Log\LoggerInterface $logger
      */
-    public function __construct(TagAwareAdapterInterface $cache, LocationHandlerInterface $locationHandler, LoggerInterface $logger)
+    public function __construct(TagAwareAdapterInterface $cache, LocationHandlerInterface $locationHandler)
     {
         $this->cache = $cache;
         $this->locationHandler = $locationHandler;
-        $this->logger = $logger;
     }
 
     /**

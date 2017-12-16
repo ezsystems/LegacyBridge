@@ -14,7 +14,6 @@ use eZ\Publish\SPI\Persistence\Content\Location\Handler;
 use eZ\Publish\Core\Base\Exceptions\NotFoundException;
 use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
 use PHPUnit\Framework\TestCase;
-use Psr\Log\LoggerInterface;
 
 class PersistenceCachePurgerTest extends TestCase
 {
@@ -33,20 +32,15 @@ class PersistenceCachePurgerTest extends TestCase
      */
     private $cachePurger;
 
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
-     */
-    private $logger;
-
     protected function setUp()
     {
         parent::setUp();
         $this->cacheService = $this->createMock(TagAwareAdapterInterface::class);
         $this->locationHandler = $this->createMock(Handler::class);
-        $this->logger = $this->createMock(LoggerInterface::class);
 
         $this->cachePurger = new PersistenceCachePurger(
-            $this->cacheService, $this->locationHandler, $this->logger
+            $this->cacheService,
+            $this->locationHandler
         );
     }
 
@@ -60,10 +54,6 @@ class PersistenceCachePurgerTest extends TestCase
             ->expects($this->once())
             ->method('load')
             ->will($this->throwException(new NotFoundException('location', $id)));
-
-        $this->logger
-            ->expects($this->once())
-            ->method('notice');
 
         $this->cachePurger->content($id);
     }
@@ -140,15 +130,10 @@ class PersistenceCachePurgerTest extends TestCase
      */
     public function testClearAllContent()
     {
-        $map = array(
-            array('content', null),
-            array('urlAlias', null),
-            array('location', null),
-        );
         $this->cacheService
-            ->expects($this->exactly(count($map)))
-            ->method('clear')
-            ->will($this->returnValueMap($map));
+            ->expects($this->once())
+            ->method('clear');
+
         $this->assertNull($this->cachePurger->content());
     }
 
@@ -261,8 +246,8 @@ class PersistenceCachePurgerTest extends TestCase
     {
         $this->cacheService
             ->expects($this->once())
-            ->method('clear')
-            ->with('contentType');
+            ->method('invalidateTags')
+            ->with(['type-map']);
 
         $this->cachePurger->contentType();
     }
@@ -274,8 +259,8 @@ class PersistenceCachePurgerTest extends TestCase
     {
         $this->cacheService
             ->expects($this->once())
-            ->method('clear')
-            ->with('contentType', 123);
+            ->method('invalidateTags')
+            ->with(['type-123']);
 
         $this->cachePurger->contentType(123);
     }
@@ -293,39 +278,12 @@ class PersistenceCachePurgerTest extends TestCase
     /**
      * @covers \eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger::contentTypeGroup
      */
-    public function testClearContentTypeGroupAll()
-    {
-        $this->cacheService
-            ->expects($this->exactly(2))
-            ->method('clear')
-            ->will(
-                $this->returnValueMap(
-                    array(
-                        array('contentTypeGroup', null),
-                        array('contentType', null),
-                    )
-                )
-            );
-
-        $this->cachePurger->contentTypeGroup();
-    }
-
-    /**
-     * @covers \eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger::contentTypeGroup
-     */
     public function testClearContentTypeGroup()
     {
         $this->cacheService
-            ->expects($this->exactly(2))
-            ->method('clear')
-            ->will(
-                $this->returnValueMap(
-                    array(
-                        array('contentTypeGroup', 123, null),
-                        array('contentType', null),
-                    )
-                )
-            );
+            ->expects($this->once())
+            ->method('invalidateTags')
+            ->with(['type-group-123', 'type-map']);
 
         $this->cachePurger->contentTypeGroup(123);
     }
@@ -343,25 +301,12 @@ class PersistenceCachePurgerTest extends TestCase
     /**
      * @covers \eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger::section
      */
-    public function testClearSectionAll()
-    {
-        $this->cacheService
-            ->expects($this->once())
-            ->method('clear')
-            ->with('section');
-
-        $this->cachePurger->section();
-    }
-
-    /**
-     * @covers \eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger::section
-     */
     public function testClearSection()
     {
         $this->cacheService
             ->expects($this->once())
-            ->method('clear')
-            ->with('section', 123);
+            ->method('invalidateTags')
+            ->with(['section-123']);
 
         $this->cachePurger->section(123);
     }
@@ -386,17 +331,9 @@ class PersistenceCachePurgerTest extends TestCase
         $languageId3 = 789;
 
         $this->cacheService
-            ->expects($this->exactly(3))
-            ->method('clear')
-            ->will(
-                $this->returnValueMap(
-                    array(
-                        array($languageId1, null),
-                        array($languageId2, null),
-                        array($languageId3, null),
-                    )
-                )
-            );
+            ->expects($this->once())
+            ->method('invalidateTags')
+            ->with(['language-123', 'language-456', 'language-789']);
 
         $this->cachePurger->languages(array($languageId1, $languageId2, $languageId3));
     }
@@ -410,14 +347,8 @@ class PersistenceCachePurgerTest extends TestCase
 
         $this->cacheService
             ->expects($this->once())
-            ->method('clear')
-            ->will(
-                $this->returnValueMap(
-                    array(
-                        array($languageId, null),
-                    )
-                )
-            );
+            ->method('invalidateTags')
+            ->with(['language-123']);
 
         $this->cachePurger->languages($languageId);
     }
@@ -427,10 +358,11 @@ class PersistenceCachePurgerTest extends TestCase
      */
     public function testClearUserAll()
     {
+        $this->markTestSkipped('Enable when clearing all user cache is implemented.');
+
         $this->cacheService
             ->expects($this->once())
-            ->method('clear')
-            ->with('user');
+            ->method('clear');
 
         $this->cachePurger->user();
     }
@@ -442,8 +374,8 @@ class PersistenceCachePurgerTest extends TestCase
     {
         $this->cacheService
             ->expects($this->once())
-            ->method('clear')
-            ->with('user', 123);
+            ->method('invalidateTags')
+            ->with(['user-123']);
 
         $this->cachePurger->user(123);
     }

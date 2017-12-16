@@ -243,7 +243,6 @@ services:
         arguments:
             - "@ezpublish.cache_pool"
             - "@ezpublish.spi.persistence.cache.locationHandler"
-            - "@logger"
         tags:
             - { name: kernel.cache_clearer }
         lazy: true
