@@ -8,16 +8,19 @@ services:
         class: eZ\Publish\Core\MVC\Legacy\View\Provider
         arguments: ["@ezpublish_legacy.kernel", "@ezpublish_legacy.view_decorator", "@ezpublish_legacy.templating.legacy_helper", "@?logger"]
         abstract: true
+        public: false
 
     ezpublish_legacy.content_view_provider:
         class: eZ\Publish\Core\MVC\Legacy\View\Provider\Content
         parent: ezpublish_legacy.view_provider
+        public: false
         tags:
             - {name: ezpublish.view_provider, type: 'eZ\Publish\Core\MVC\Symfony\View\ContentView', priority: 4}
 
     ezpublish_legacy.location_view_provider:
         class: eZ\Publish\Core\MVC\Legacy\View\Provider\Location
         parent: ezpublish_legacy.view_provider
+        public: false
         calls:
             # Injecting the request, in non strict mode ("=") avoiding this service to be forced in request scope.
             - [setRequestStack, ["@request_stack"]]
@@ -29,6 +32,7 @@ services:
     ezpublish_legacy.block_view_provider:
         class: eZ\Publish\Core\MVC\Legacy\View\Provider\Block
         parent: ezpublish_legacy.view_provider
+        public: false
         calls:
             - [setPageService, ["@ezpublish.fieldType.ezpage.pageService"]]
         tags:
@@ -36,7 +40,9 @@ services:
 
     ezpublish_legacy.view_decorator.twig:
         class: eZ\Publish\Core\MVC\Legacy\View\TwigContentViewLayoutDecorator
+        public: false
         arguments: ["@twig", "%ezpublish_legacy.view_decorator.options%", "@ezpublish.config.resolver"]
 
     ezpublish_legacy.view_decorator:
         alias: ezpublish_legacy.view_decorator.twig
+        public: false

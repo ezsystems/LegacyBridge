@@ -8,20 +8,20 @@
  */
 namespace eZ\Bundle\EzPublishLegacyBundle\Controller;
 
+use eZ\Bundle\EzPublishLegacyBundle\SetupWizard\ConfigurationConverter;
+use eZ\Bundle\EzPublishLegacyBundle\SetupWizard\ConfigurationDumper;
 use eZ\Publish\Core\MVC\Legacy\Kernel\Loader;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use eZ\Publish\Core\MVC\Symfony\ConfigDumperInterface;
 use eZ\Bundle\EzPublishLegacyBundle\DependencyInjection\Configuration\LegacyConfigResolver;
 use eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger;
 use eZINI;
 use eZCache;
+use Symfony\Component\HttpKernel\KernelInterface;
 
-class LegacySetupController implements ContainerAwareInterface
+class LegacySetupController
 {
-    use ContainerAwareTrait;
-
     /**
      * The legacy kernel instance (eZ Publish 4).
      *
@@ -42,31 +42,58 @@ class LegacySetupController implements ContainerAwareInterface
     private $persistenceCachePurger;
 
     /**
-     * @var \Symfony\Component\DependencyInjection\ContainerInterface
-     */
-    protected $container;
-
-    /**
      * @var \eZ\Publish\Core\MVC\Legacy\Kernel\Loader
      */
     protected $kernelFactory;
+
+    /**
+     * @var \eZ\Bundle\EzPublishLegacyBundle\SetupWizard\ConfigurationDumper
+     */
+    protected $configDumper;
+
+    /**
+     * @var \eZ\Bundle\EzPublishLegacyBundle\SetupWizard\ConfigurationConverter
+     */
+    protected $configConverter;
+
+    /**
+     * @var \Symfony\Component\HttpFoundation\RequestStack
+     */
+    protected $requestStack;
+
+    /**
+     * @var \Symfony\Component\HttpKernel\KernelInterface
+     */
+    protected $kernel;
 
     /**
      * @param \Closure $kernelClosure
      * @param \eZ\Bundle\EzPublishLegacyBundle\DependencyInjection\Configuration\LegacyConfigResolver $legacyConfigResolver
      * @param \eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger $persistenceCachePurger
      * @param \eZ\Publish\Core\MVC\Legacy\Kernel\Loader $kernelFactory
+     * @param \eZ\Bundle\EzPublishLegacyBundle\SetupWizard\ConfigurationDumper $configDumper
+     * @param \eZ\Bundle\EzPublishLegacyBundle\SetupWizard\ConfigurationConverter $configConverter
+     * @param \Symfony\Component\HttpFoundation\RequestStack $requestStack
+     * @param \Symfony\Component\HttpKernel\KernelInterface
      */
     public function __construct(
         \Closure $kernelClosure,
         LegacyConfigResolver $legacyConfigResolver,
         PersistenceCachePurger $persistenceCachePurger,
-        Loader $kernelFactory
+        Loader $kernelFactory,
+        ConfigurationDumper $configDumper,
+        ConfigurationConverter $configConverter,
+        RequestStack $requestStack,
+        KernelInterface $kernel
     ) {
         $this->legacyKernelClosure = $kernelClosure;
         $this->legacyConfigResolver = $legacyConfigResolver;
         $this->persistenceCachePurger = $persistenceCachePurger;
         $this->kernelFactory = $kernelFactory;
+        $this->configDumper = $configDumper;
+        $this->configConverter = $configConverter;
+        $this->requestStack = $requestStack;
+        $this->kernel = $kernel;
     }
 
     /**
@@ -89,7 +116,7 @@ class LegacySetupController implements ContainerAwareInterface
         $this->kernelFactory->setBuildEventsEnabled(false);
 
         /** @var $request \Symfony\Component\HttpFoundation\ParameterBag */
-        $request = $this->container->get('request_stack')->getCurrentRequest()->request;
+        $request = $this->requestStack->getCurrentRequest()->request;
 
         // inject the extra ezpublish-community folders we want permissions checked for
         switch ($request->get('eZSetup_current_step')) {
@@ -149,12 +176,9 @@ class LegacySetupController implements ContainerAwareInterface
                     $adminSiteaccess = $request->get('P_site_extra_data_admin_access_type_value-' . $chosenSitePackage);
             }
 
-            /** @var $configurationDumper \eZ\Bundle\EzpublishLegacyBundle\SetupWizard\ConfigurationDumper */
-            $configurationDumper = $this->container->get('ezpublish_legacy.setup_wizard.configuration_dumper');
-            $configurationDumper->addEnvironment($this->container->get('kernel')->getEnvironment());
-            $configurationDumper->dump(
-                $this->container->get('ezpublish_legacy.setup_wizard.configuration_converter')
-                    ->fromLegacy($chosenSitePackage, $adminSiteaccess),
+            $this->configDumper->addEnvironment($this->kernel->getEnvironment());
+            $this->configDumper->dump(
+                $this->configConverter->fromLegacy($chosenSitePackage, $adminSiteaccess),
                 ConfigDumperInterface::OPT_BACKUP_CONFIG
             );
         }
