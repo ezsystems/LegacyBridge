@@ -8,6 +8,7 @@
  */
 namespace eZ\Bundle\EzPublishLegacyBundle\DependencyInjection\Compiler;
 
+use eZ\Publish\Core\MVC\Legacy\Templating\Twig\Environment;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
@@ -26,7 +27,7 @@ class TwigPass implements CompilerPassInterface
         // Adding setLegacyEngine method call here to avoid side effect in redefining the twig service completely.
         // Mentioned side effects are losing extensions/loaders addition for which method calls are added in the TwigEnvironmentPass
         $container->getDefinition('twig')
-            ->setClass('eZ\Publish\Core\MVC\Legacy\Templating\Twig\Environment')
+            ->setClass(Environment::class)
             ->addMethodCall('setEzLegacyEngine', array(new Reference('templating.engine.eztpl')));
     }
 }

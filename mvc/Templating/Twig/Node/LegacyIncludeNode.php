@@ -8,6 +8,7 @@
  */
 namespace eZ\Publish\Core\MVC\Legacy\Templating\Twig\Node;
 
+use eZ\Publish\Core\MVC\Legacy\Templating\Twig\Extension\LegacyExtension;
 use Twig_Node;
 use Twig_Node_Expression;
 use Twig_Compiler;
@@ -34,11 +35,9 @@ class LegacyIncludeNode extends Twig_Node
 
     public function compile(Twig_Compiler $compiler)
     {
-        $legacyExtensionClass = 'eZ\Publish\Core\MVC\Legacy\Templating\Twig\Extension\LegacyExtension';
-
         $compiler
             ->addDebugInfo($this)
-            ->write("echo \$this->env->getExtension( '" . $legacyExtensionClass . "' )->renderTemplate( ")
+            ->write("echo \$this->env->getExtension( '" . LegacyExtension::class . "' )->renderTemplate( ")
             ->subcompile($this->getNode('tplPath'))
             ->raw(', ')
             ->subcompile($this->getNode('params'))

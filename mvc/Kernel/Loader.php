@@ -8,6 +8,7 @@
  */
 namespace eZ\Publish\Core\MVC\Legacy\Kernel;
 
+use eZ\Bundle\EzPublishLegacyBundle\Rest\ResponseWriter;
 use eZ\Publish\Core\MVC\Legacy\Event\PostBuildKernelEvent;
 use eZ\Publish\Core\MVC\Legacy\Event\PreResetLegacyKernelEvent;
 use eZ\Publish\Core\MVC\Legacy\Kernel as LegacyKernel;
@@ -304,7 +305,7 @@ class Loader
                     );
                 }
 
-                $that->setRestHandler(new ezpKernelRest($legacyParameters->all(), 'eZ\Bundle\EzPublishLegacyBundle\Rest\ResponseWriter'));
+                $that->setRestHandler(new ezpKernelRest($legacyParameters->all(), ResponseWriter::class));
                 chdir($webrootDir);
             }
 

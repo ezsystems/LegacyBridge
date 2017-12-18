@@ -8,6 +8,7 @@
  */
 namespace eZ\Bundle\EzPublishLegacyBundle\DependencyInjection\Compiler;
 
+use eZ\Bundle\EzPublishLegacyBundle\Routing\DefaultRouter;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
@@ -23,7 +24,7 @@ class RoutingPass implements CompilerPassInterface
         }
 
         $container->getDefinition('router.default')
-            ->setClass('eZ\Bundle\EzPublishLegacyBundle\Routing\DefaultRouter')
+            ->setClass(DefaultRouter::class)
             ->addMethodCall(
                 'setLegacyAwareRoutes',
                 ['%ezpublish.default_router.legacy_aware_routes%']
@@ -31,7 +32,7 @@ class RoutingPass implements CompilerPassInterface
 
         if ($container->hasDefinition('ezpublish_rest.templated_router')) {
             $container->getDefinition('ezpublish_rest.templated_router')
-                ->setClass('eZ\Bundle\EzPublishLegacyBundle\Routing\DefaultRouter');
+                ->setClass(DefaultRouter::class);
         }
     }
 }
