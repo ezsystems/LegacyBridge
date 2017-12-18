@@ -74,11 +74,10 @@ class LegacyResponseManagerTest extends TestCase
 
     /**
      * @param bool $legacyMode whether legacy mode is active or not
-     * @param bool $notFoundHttpConversion whether not found http conversion is active or not
      * @param bool $expectException whether exception is expected
      * @dataProvider generateResponseNotFoundProvider
      */
-    public function testGenerateResponseNotFound($legacyMode, $notFoundHttpConversion, $expectException)
+    public function testGenerateResponseNotFound($legacyMode, $expectException)
     {
         $this->configResolver
             ->expects($this->any())
@@ -87,7 +86,6 @@ class LegacyResponseManagerTest extends TestCase
                 $this->returnValueMap(
                     array(
                         array('legacy_mode', null, null, $legacyMode),
-                        array('not_found_http_conversion', 'ezpublish_legacy', null, $notFoundHttpConversion),
                     )
                 )
             );
@@ -112,9 +110,8 @@ class LegacyResponseManagerTest extends TestCase
     public function generateResponseNotFoundProvider()
     {
         return array(
-            array(true, true, false),
-            array(false, true, true),
-            array(false, false, false),
+            array(true, false),
+            array(false, true),
         );
     }
 

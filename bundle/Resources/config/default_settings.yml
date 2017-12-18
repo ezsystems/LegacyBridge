@@ -7,8 +7,5 @@ parameters:
     # Pagelayout to use while rendering a content view in legacy
     ezpublish_legacy.default.view_default_layout: "@@EzPublishLegacy/legacy_view_default_pagelayout.html.twig"
 
-    # Whether to use 404 conversion or not. If true, will let symfony handle 404 errors.
-    ezpublish_legacy.default.not_found_http_conversion: false
-
     # Whether to use legacy mode or not. If true, will let the legacy kernel handle url aliases.
     ezsettings.default.legacy_mode: false

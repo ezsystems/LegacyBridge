@@ -45,9 +45,6 @@ class Configuration extends SiteAccessConfiguration
     private function addSiteAccessSettings(NodeBuilder $nodeBuilder)
     {
         $nodeBuilder
-            ->booleanNode('not_found_http_conversion')
-                ->info('Whether to use 404 conversion or not. If true, will let symfony handle 404 errors.')
-            ->end()
             ->arrayNode('templating')
                 ->children()
                     ->scalarNode('view_layout')

@@ -47,13 +47,6 @@ class LegacyResponseManager
     private $legacyMode;
 
     /**
-     * Flag indicating if we're convert 404 errors into a NotFoundHttpException.
-     *
-     * @var bool
-     */
-    private $notFoundHttpConversion;
-
-    /**
      * @var RequestStack
      */
     private $requestStack;
@@ -62,7 +55,6 @@ class LegacyResponseManager
     {
         $this->templateEngine = $templateEngine;
         $this->legacyLayout = $configResolver->getParameter('module_default_layout', 'ezpublish_legacy');
-        $this->notFoundHttpConversion = $configResolver->getParameter('not_found_http_conversion', 'ezpublish_legacy');
         $this->legacyMode = $configResolver->getParameter('legacy_mode');
         $this->requestStack = $requestStack;
     }
@@ -104,19 +96,11 @@ class LegacyResponseManager
                     throw new AccessDeniedException($errorMessage);
                 }
 
-                // If having an "Not found" error code in non-legacy mode and conversion is true,
+                // If having an "Not found" error code in non-legacy mode,
                 // we send an NotFoundHttpException to be able to trigger error page in Symfony stack.
                 if ($moduleResult['errorCode'] == 404) {
-                    if ($this->notFoundHttpConversion) {
-                        $errorMessage = isset($moduleResult['errorMessage']) ? $moduleResult['errorMessage'] : 'Not found';
-                        throw new NotFoundHttpException($errorMessage, $response);
-                    }
-
-                    @trigger_error(
-                        "Legacy 404 error handling is deprecated, and will be removed in legacy-bridge 2.0.\n" .
-                        'Use the not_found_http_conversion setting to use the new behavior and disable this notice.',
-                        E_USER_DEPRECATED
-                    );
+                    $errorMessage = isset($moduleResult['errorMessage']) ? $moduleResult['errorMessage'] : 'Not found';
+                    throw new NotFoundHttpException($errorMessage, $response);
                 }
             }
 
