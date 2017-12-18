@@ -66,16 +66,6 @@ class LegacySetupController
      */
     protected $kernel;
 
-    /**
-     * @param \Closure $kernelClosure
-     * @param \eZ\Bundle\EzPublishLegacyBundle\DependencyInjection\Configuration\LegacyConfigResolver $legacyConfigResolver
-     * @param \eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger $persistenceCachePurger
-     * @param \eZ\Publish\Core\MVC\Legacy\Kernel\Loader $kernelFactory
-     * @param \eZ\Bundle\EzPublishLegacyBundle\SetupWizard\ConfigurationDumper $configDumper
-     * @param \eZ\Bundle\EzPublishLegacyBundle\SetupWizard\ConfigurationConverter $configConverter
-     * @param \Symfony\Component\HttpFoundation\RequestStack $requestStack
-     * @param \Symfony\Component\HttpKernel\KernelInterface
-     */
     public function __construct(
         \Closure $kernelClosure,
         LegacyConfigResolver $legacyConfigResolver,

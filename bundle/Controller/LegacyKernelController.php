@@ -28,6 +28,11 @@ class LegacyKernelController
     private $kernelClosure;
 
     /**
+     * @var \eZ\Publish\Core\MVC\ConfigResolverInterface
+     */
+    private $configResolver;
+
+    /**
      * Template declaration to wrap legacy responses in a Twig pagelayout (optional)
      * Either a template declaration string or null/false to use legacy pagelayout
      * Default is null.
@@ -46,7 +51,9 @@ class LegacyKernelController
      */
     private $legacyResponseManager;
 
-    /** @var \eZ\Publish\Core\MVC\Legacy\Templating\LegacyHelper; */
+    /**
+     * @var \eZ\Publish\Core\MVC\Legacy\Templating\LegacyHelper
+     */
     private $legacyHelper;
 
     /**
@@ -74,6 +81,8 @@ class LegacyKernelController
     /**
      * Base fallback action.
      * Will be basically used for every legacy module.
+     *
+     * @param \Symfony\Component\HttpFoundation\Request $request
      *
      * @return \eZ\Bundle\EzPublishLegacyBundle\LegacyResponse
      */
