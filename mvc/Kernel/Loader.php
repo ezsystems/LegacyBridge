@@ -8,6 +8,7 @@
  */
 namespace eZ\Publish\Core\MVC\Legacy\Kernel;
 
+use eZ\Bundle\EzPublishLegacyBundle\Rest\ResponseWriter;
 use eZ\Publish\Core\MVC\Legacy\Event\PostBuildKernelEvent;
 use eZ\Publish\Core\MVC\Legacy\Event\PreResetLegacyKernelEvent;
 use eZ\Publish\Core\MVC\Legacy\Kernel as LegacyKernel;
@@ -16,6 +17,7 @@ use eZ\Publish\Core\MVC\Legacy\Event\PreBuildKernelWebHandlerEvent;
 use eZ\Publish\Core\MVC\Legacy\Event\PreBuildKernelEvent;
 use ezpKernelHandler;
 use ezpKernelRest;
+use ezpKernelTreeMenu;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -263,7 +265,7 @@ class Loader
     public function buildLegacyKernelHandlerTreeMenu()
     {
         return $this->buildLegacyKernelHandlerWeb(
-            $this->container->getParameter('ezpublish_legacy.kernel_handler.treemenu.class'),
+            ezpKernelTreeMenu::class,
             array(
                 'use-cache-headers' => false,
                 'use-exceptions' => true,
@@ -303,7 +305,7 @@ class Loader
                     );
                 }
 
-                $that->setRestHandler(new ezpKernelRest($legacyParameters->all(), 'eZ\Bundle\EzPublishLegacyBundle\Rest\ResponseWriter'));
+                $that->setRestHandler(new ezpKernelRest($legacyParameters->all(), ResponseWriter::class));
                 chdir($webrootDir);
             }
 

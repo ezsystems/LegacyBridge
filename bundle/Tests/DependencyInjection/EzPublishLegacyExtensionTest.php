@@ -59,7 +59,7 @@ class EzPublishLegacyExtensionTest extends AbstractExtensionTestCase
 
         $this->assertContainerBuilderHasParameter(
             'ezpublish_legacy.default.view_default_layout',
-            'EzPublishLegacyBundle::legacy_view_default_pagelayout.html.twig'
+            '@EzPublishLegacy/legacy_view_default_pagelayout.html.twig'
         );
         $this->assertContainerBuilderHasParameter('ezpublish_legacy.default.module_default_layout', null);
     }
@@ -74,7 +74,7 @@ class EzPublishLegacyExtensionTest extends AbstractExtensionTestCase
 
         $layoutSa1 = 'view_layout_for_sa1.html.twig';
         $layoutSaGroup = 'view_layout_for_sa_group.html.twig';
-        $defaultLayout = 'EzPublishLegacyBundle::legacy_view_default_pagelayout.html.twig';
+        $defaultLayout = '@EzPublishLegacy/legacy_view_default_pagelayout.html.twig';
         $config = array(
             'enabled' => true,
             'root_dir' => __DIR__,

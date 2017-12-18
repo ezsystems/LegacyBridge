@@ -8,21 +8,19 @@
  */
 namespace eZ\Bundle\EzPublishLegacyBundle\DependencyInjection\Compiler;
 
-use eZ\Bundle\EzPublishLegacyBundle\Security\RememberMeListener;
+use eZ\Bundle\EzPublishLegacyBundle\Security\SecurityListener;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Reference;
 
-class RememberMeListenerPass implements CompilerPassInterface
+class SecurityListenerPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container)
     {
-        if (!$container->hasDefinition('security.authentication.listener.rememberme')) {
+        if (!$container->hasDefinition('ezpublish.security.login_listener')) {
             return;
         }
 
-        $container->findDefinition('security.authentication.listener.rememberme')
-            ->setClass(RememberMeListener::class)
-            ->addMethodCall('setConfigResolver', array(new Reference('ezpublish.config.resolver')));
+        $container->findDefinition('ezpublish.security.login_listener')
+            ->setClass(SecurityListener::class);
     }
 }

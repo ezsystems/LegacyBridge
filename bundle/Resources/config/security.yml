@@ -1,22 +1,20 @@
-parameters:
-    ezpublish_legacy.security.login_cleanup_listener.class: eZ\Publish\Core\MVC\Legacy\Security\Firewall\LoginCleanupListener
-    ezpublish_legacy.security_mapper.class: eZ\Bundle\EzPublishLegacyBundle\LegacyMapper\Security
-    ezpublish_legacy.security.sso_firewall_listener.class: eZ\Publish\Core\MVC\Legacy\Security\Firewall\SSOListener
-
 services:
     ezpublish_legacy.security.login_cleanup_listener:
-        class: "%ezpublish_legacy.security.login_cleanup_listener.class%"
+        class: eZ\Publish\Core\MVC\Legacy\Security\Firewall\LoginCleanupListener
+        public: false
         tags:
             - { name: kernel.event_subscriber }
 
     ezpublish_legacy.security_mapper:
-        class: "%ezpublish_legacy.security_mapper.class%"
+        class: eZ\Bundle\EzPublishLegacyBundle\LegacyMapper\Security
+        public: false
         arguments: ["@ezpublish.api.repository", "@ezpublish.config.resolver", "@security.token_storage", "@security.authorization_checker"]
         tags:
             - { name: kernel.event_subscriber }
 
     ezpublish_legacy.security.sso_firewall_listener:
-        class: "%ezpublish_legacy.security.sso_firewall_listener.class%"
+        class: eZ\Publish\Core\MVC\Legacy\Security\Firewall\SSOListener
+        public: false
         abstract: true
         arguments:
             - "@security.token_storage"
