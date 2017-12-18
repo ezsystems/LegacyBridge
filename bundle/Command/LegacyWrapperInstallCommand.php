@@ -53,6 +53,12 @@ EOT
          */
         $filesystem = $this->getContainer()->get('filesystem');
         $legacyRootDir = rtrim($this->getContainer()->getParameter('ezpublish_legacy.root_dir'), '/');
+        $defaultIoRootDir = $this->getContainer()->getParameter('ezsettings.default.io.root_dir');
+
+        // Removes empty IO root folder which is created by IO Services
+        if (count(glob("$defaultIoRootDir/*", GLOB_NOSORT)) === 0) {
+            $filesystem->remove($defaultIoRootDir);
+        }
 
         $output->writeln(sprintf("Installing eZ Publish legacy assets from $legacyRootDir using the <comment>%s</comment> option", $input->getOption('symlink') ? 'symlink' : 'hard copy'));
         $symlink = $input->getOption('symlink');
