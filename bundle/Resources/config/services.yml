@@ -261,12 +261,12 @@ services:
 
     ezpublish_legacy.setup_wizard.configuration_converter:
         class: eZ\Bundle\EzPublishLegacyBundle\SetupWizard\ConfigurationConverter
-        public: false
+        public: true
         arguments: ["@ezpublish_legacy.config.resolver", "@ezpublish_legacy.kernel", "%ezpublish_legacy.setup_wizard.supported_packages%"]
 
     ezpublish_legacy.setup_wizard.configuration_dumper:
         class: eZ\Bundle\EzPublishLegacyBundle\SetupWizard\ConfigurationDumper
-        public: false
+        public: true
         arguments:
             - "@filesystem"
             - "%ezpublish_legacy.setup_wizard.configuration_dumper.environments%"
@@ -317,7 +317,7 @@ services:
 
     ezpublish_legacy.legacy_bundles.extension_locator:
         class: eZ\Bundle\EzPublishLegacyBundle\LegacyBundles\LegacyExtensionsLocator
-        public: false
+        public: true
 
     ezpublish_legacy.setup_listener:
         class: eZ\Bundle\EzPublishLegacyBundle\EventListener\SetupListener
