@@ -12,7 +12,6 @@ use eZ\Bundle\EzPublishLegacyBundle\DependencyInjection\Configuration\LegacyConf
 use eZ\Publish\Core\Base\Exceptions\InvalidArgumentException;
 use eZINI;
 use eZSiteAccess;
-use Stash\Driver\FileSystem as FileSystemDriver;
 
 /**
  * Handles conversionlegacy eZ Publish 4 parameters from a set of settings to a configuration array
@@ -151,8 +150,6 @@ class ConfigurationConverter
             }
         }
 
-        $settings['stash'] = $this->getStashCacheSettings();
-
         ksort($settings);
         ksort($settings['ezpublish']);
 
@@ -203,51 +200,6 @@ class ConfigurationConverter
         }
 
         return $doctrineSettings;
-    }
-
-    /**
-     * Returns cache settings based on which cache functionality is available on the current server.
-     *
-     * Order of preference:
-     * - FileSystem
-     * - APC
-     * - Memcache  [DISABLED, SEE INLINE]
-     * - Xcache  [DISABLED, SEE INLINE]
-     * - variable instance cache  [DISABLED, SEE INLINE]
-     *
-     * @return array
-     */
-    protected function getStashCacheSettings()
-    {
-        // Should only contain one out of the box
-        $handlers = array();
-        $inMemory = false;
-        $handlerSetting = array();
-        if (FileSystemDriver::isAvailable()) {
-            $handlers[] = 'FileSystem';
-            $inMemory = true;
-            // If running on Windows, use "crc32" keyHashFunction
-            if (stripos(php_uname(), 'win') === 0) {
-                $handlerSetting['FileSystem'] = array(
-                    'keyHashFunction' => 'crc32',
-                );
-            }
-        } else {
-            // '/dev/null' fallback driver, no cache at all
-            $handlers[] = 'BlackHole';
-            $inMemory = true;
-        }
-
-        return array(
-            'caches' => array(
-                'default' => array(
-                    'drivers' => $handlers,
-                    // inMemory will enable/disable "Ephemeral", not allowed as separate handler in stash-bundle
-                    'inMemory' => $inMemory,
-                    'registerDoctrineAdapter' => false,
-                ) + $handlerSetting,
-            ),
-        );
     }
 
     /**

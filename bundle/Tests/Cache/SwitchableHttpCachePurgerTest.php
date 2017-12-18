@@ -8,28 +8,28 @@
 namespace eZ\Bundle\EzPublishLegacyBundle\Tests\Cache;
 
 use eZ\Bundle\EzPublishLegacyBundle\Cache\SwitchableHttpCachePurger;
-use eZ\Publish\Core\MVC\Symfony\Cache\GatewayCachePurger;
+use EzSystems\PlatformHttpCacheBundle\PurgeClient\PurgeClientInterface;
 use PHPUnit\Framework\TestCase;
 
 class SwitchableHttpCachePurgerTest extends TestCase
 {
-    /** @var \eZ\Publish\Core\MVC\Symfony\Cache\GatewayCachePurger|\PHPUnit_Framework_MockObject_MockObject */
-    private $gatewayCachePurgerMock;
+    /** @var \EzSystems\PlatformHttpCacheBundle\PurgeClient\PurgeClientInterface|\PHPUnit_Framework_MockObject_MockObject */
+    private $purgeClientMockMock;
 
     /** @var \eZ\Bundle\EzPublishLegacyBundle\Cache\SwitchableHttpCachePurger */
     private $httpCachePurger;
 
     public function setUp()
     {
-        $this->gatewayCachePurgerMock = $this->createMock(GatewayCachePurger::class);
-        $this->httpCachePurger = new SwitchableHttpCachePurger($this->gatewayCachePurgerMock);
+        $this->purgeClientMockMock = $this->createMock(PurgeClientInterface::class);
+        $this->httpCachePurger = new SwitchableHttpCachePurger($this->purgeClientMockMock);
     }
 
     public function testPurgeSwitchedOn()
     {
         $this->httpCachePurger->switchOn();
 
-        $this->gatewayCachePurgerMock->expects($this->once())->method('purge')->willReturn($this->getCacheElements());
+        $this->purgeClientMockMock->expects($this->once())->method('purge')->willReturn($this->getCacheElements());
         self::assertEquals(
             $this->getCacheElements(),
             $this->httpCachePurger->purge($this->getCacheElements())
@@ -39,7 +39,7 @@ class SwitchableHttpCachePurgerTest extends TestCase
     public function testPurgeSwitchedOff()
     {
         $this->httpCachePurger->switchOff();
-        $this->gatewayCachePurgerMock->expects($this->never())->method('purge');
+        $this->purgeClientMockMock->expects($this->never())->method('purge');
         self::assertEquals(
             $this->getCacheElements(),
             $this->httpCachePurger->purge($this->getCacheElements())
@@ -49,14 +49,14 @@ class SwitchableHttpCachePurgerTest extends TestCase
     public function testPurgeAllSwitchedOn()
     {
         $this->httpCachePurger->switchOn();
-        $this->gatewayCachePurgerMock->expects($this->once())->method('purgeAll');
+        $this->purgeClientMockMock->expects($this->once())->method('purgeAll');
         $this->httpCachePurger->purgeAll();
     }
 
     public function testPurgeAllSwitchedOff()
     {
         $this->httpCachePurger->switchOff();
-        $this->gatewayCachePurgerMock->expects($this->never())->method('purgeAll');
+        $this->purgeClientMockMock->expects($this->never())->method('purgeAll');
         $this->httpCachePurger->purgeAll();
     }
 

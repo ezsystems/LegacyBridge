@@ -7,21 +7,23 @@
  */
 namespace eZ\Bundle\EzPublishLegacyBundle\Cache;
 
-use eZ\Publish\Core\MVC\Symfony\Cache\GatewayCachePurger;
+use EzSystems\PlatformHttpCacheBundle\PurgeClient\PurgeClientInterface;
 
 /**
- * A GatewayCachePurger decorator that allows the actual purger to be switched on/off.
+ * A PurgeClient decorator that allows the actual purger to be switched on/off.
  */
-class SwitchableHttpCachePurger implements GatewayCachePurger
+class SwitchableHttpCachePurger implements PurgeClientInterface
 {
     use Switchable;
 
-    /** @var \eZ\Publish\Core\MVC\Symfony\Cache\GatewayCachePurger */
-    private $gatewayCachePurger;
+    /**
+     * @var \EzSystems\PlatformHttpCacheBundle\PurgeClient\PurgeClientInterface
+     */
+    private $purgeClient;
 
-    public function __construct(GatewayCachePurger $gatewayCachePurger)
+    public function __construct(PurgeClientInterface $purgeClient)
     {
-        $this->gatewayCachePurger = $gatewayCachePurger;
+        $this->purgeClient = $purgeClient;
     }
 
     public function purge($locationIds)
@@ -30,7 +32,7 @@ class SwitchableHttpCachePurger implements GatewayCachePurger
             return $locationIds;
         }
 
-        return $this->gatewayCachePurger->purge($locationIds);
+        return $this->purgeClient->purge($locationIds);
     }
 
     public function purgeAll()
@@ -39,15 +41,21 @@ class SwitchableHttpCachePurger implements GatewayCachePurger
             return;
         }
 
-        $this->gatewayCachePurger->purgeAll();
+        $this->purgeClient->purgeAll();
     }
 
+    /**
+     * Implemented for BC with deprecated PurgeClientInterface::purgeForContent from eZ kernel.
+     *
+     * @param int $contentId
+     * @param array $locationIds
+     */
     public function purgeForContent($contentId, $locationIds = array())
     {
-        if ($this->isSwitchedOff()) {
+        if ($this->isSwitchedOff() || !method_exists($this->purgeClient, 'purgeForContent')) {
             return;
         }
 
-        $this->gatewayCachePurger->purgeForContent($contentId, $locationIds);
+        $this->purgeClient->purgeForContent($contentId, $locationIds);
     }
 }

@@ -171,15 +171,6 @@ class ConfigurationConverterTest extends LegacyBasedTestCase
                     'path' => '/usr/bin/convert',
                 ),
             ),
-            'stash' => array(
-                'caches' => array(
-                    'default' => array(
-                        'drivers' => array('FileSystem'), // If this fails then APC or Memcached is enabled on PHP-CLI
-                        'inMemory' => true,
-                        'registerDoctrineAdapter' => false,
-                    ),
-                ),
-            ),
         );
 
         $exceptionType = InvalidArgumentException::class;

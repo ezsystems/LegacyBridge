@@ -8,12 +8,11 @@
  */
 namespace eZ\Bundle\EzPublishLegacyBundle\Cache;
 
+use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
 use Symfony\Component\HttpKernel\CacheClearer\CacheClearerInterface;
+use eZ\Publish\API\Repository\Exceptions\NotFoundException as APINotFoundException;
 use eZ\Publish\SPI\Persistence\Content\Location\Handler as LocationHandlerInterface;
 use eZ\Publish\Core\Base\Exceptions\InvalidArgumentType;
-use eZ\Publish\Core\Base\Exceptions\NotFoundException;
-use eZ\Publish\Core\Persistence\Cache\CacheServiceDecorator;
-use Psr\Log\LoggerInterface;
 
 /**
  * Class PersistenceCachePurger.
@@ -23,7 +22,7 @@ class PersistenceCachePurger implements CacheClearerInterface
     use Switchable;
 
     /**
-     * @var \eZ\Publish\Core\Persistence\Cache\CacheServiceDecorator
+     * @var \Symfony\Component\Cache\Adapter\TagAwareAdapterInterface
      */
     protected $cache;
 
@@ -33,33 +32,28 @@ class PersistenceCachePurger implements CacheClearerInterface
     protected $locationHandler;
 
     /**
-     * Avoid clearing sub elements if all cache is already cleared, avoids redundant calls to Stash.
+     * Avoid clearing sub elements if all cache is already cleared, avoids redundant calls to cache.
      *
      * @var bool
      */
     protected $allCleared = false;
 
     /**
-     * @var \Psr\Log\LoggerInterface
-     */
-    protected $logger;
-
-    /**
      * Setups current handler with everything needed.
      *
-     * @param \eZ\Publish\Core\Persistence\Cache\CacheServiceDecorator $cache
-     * @param \eZ\Publish\SPI\Persistence\Content\Location\Handler $locationHandler
-     * @param \Psr\Log\LoggerInterface $logger
+     * @param \Symfony\Component\Cache\Adapter\TagAwareAdapterInterface $cache
+     * @param \eZ\Publish\SPI\Persistence\Content\Location\Handler $locationHandler (using SPI cache instance so calls are cached)
      */
-    public function __construct(CacheServiceDecorator $cache, LocationHandlerInterface $locationHandler, LoggerInterface $logger)
+    public function __construct(TagAwareAdapterInterface $cache, LocationHandlerInterface $locationHandler)
     {
         $this->cache = $cache;
         $this->locationHandler = $locationHandler;
-        $this->logger = $logger;
     }
 
     /**
      * Clear all persistence cache.
+     *
+     * In legacy kernel used when user presses clear all cache button in admin interface.
      *
      * Sets a internal flag 'allCleared' to avoid clearing cache several times
      */
@@ -98,7 +92,9 @@ class PersistenceCachePurger implements CacheClearerInterface
     /**
      * Clear all content persistence cache, or by locationIds (legacy content/cache mechanism is location based).
      *
-     * Either way all location and urlAlias cache is cleared as well.
+     * In legacy kernel used when any kind of event triggers cache clearing for content.
+     * If amount of accepted nodes goes over threshold, or in case where all content cache is cleared from admin
+     * interface, argument will be empty.
      *
      * @param int|int[]|null $locationIds Ids of location we need to purge content cache for. Purges all content cache if null
      *
@@ -113,42 +109,40 @@ class PersistenceCachePurger implements CacheClearerInterface
         }
 
         if ($locationIds === null) {
-            $this->cache->clear('content');
-            goto relatedCache;
-        } elseif (!is_array($locationIds)) {
-            $locationIds = array($locationIds);
+            $this->cache->clear();
+
+            return $locationIds;
         }
 
+        if (!is_array($locationIds)) {
+            $locationIds = [$locationIds];
+        }
+
+        $tags = [];
         foreach ($locationIds as $id) {
             if (!is_scalar($id)) {
                 throw new InvalidArgumentType('$id', 'int[]|null', $id);
             }
 
+            $tags[] = 'location-' . $id;
+            $tags[] = 'urlAlias-location-' . $id;
+
             try {
                 $location = $this->locationHandler->load($id);
-                $this->cache->clear('content', $location->contentId);
-                $this->cache->clear('content', 'info', $location->contentId);
-                $this->cache->clear('content', 'info', 'remoteId');
-                $this->cache->clear('content', 'locations', $location->contentId);
-                $this->cache->clear('user', 'role', 'assignments', 'byGroup', $location->contentId);
-                $this->cache->clear('user', 'role', 'assignments', 'byGroup', 'inherited', $location->contentId);
-            } catch (NotFoundException $e) {
-                $this->logger->notice(
-                    "Unable to load the location with the id '$id' to clear its cache"
-                );
+                $tags[] = 'content-' . $location->contentId;
+            } catch (APINotFoundException $e) {
+                // Location might be deleted, so catch and we clear by location id which is ok for most cases.
             }
         }
-
-        // clear content related cache as well
-        relatedCache:
-        $this->cache->clear('urlAlias');
-        $this->cache->clear('location');
+        $this->cache->invalidateTags($tags);
 
         return $locationIds;
     }
 
     /**
      * Clears persistence cache for given $contentId and $versionNo.
+     *
+     * In legacy kernel used when storing a draft.
      *
      * @param int $contentId
      * @param int $versionNo
@@ -159,11 +153,15 @@ class PersistenceCachePurger implements CacheClearerInterface
             return;
         }
 
-        $this->cache->clear('content', $contentId, $versionNo);
+        $this->cache->deleteItem("ez-content-version-info-${contentId}-${versionNo}");
+        $this->cache->invalidateTags(["content-${contentId}-version-list"]);
     }
 
     /**
      * Clear all contentType persistence cache, or by id.
+     *
+     * In legacy kernel used when editing content type, in this case we get id.
+     * Also used when clearing content type meta data cache in admin cache interface (no id).
      *
      * @param int|null $id Purges all contentType cache if null
      * @throws \eZ\Publish\Core\Base\Exceptions\InvalidArgumentType On invalid $id type
@@ -175,63 +173,61 @@ class PersistenceCachePurger implements CacheClearerInterface
         }
 
         if ($id === null) {
-            $this->cache->clear('contentType');
+            $this->cache->invalidateTags(['type-map']);
         } elseif (is_scalar($id)) {
-            $this->cache->clear('contentType', $id);
+            $this->cache->invalidateTags(['type-' . $id]);
         } else {
             throw new InvalidArgumentType('$id', 'int|null', $id);
         }
     }
 
     /**
-     * Clear all contentTypeGroup persistence cache, or by id.
+     * Clear contentTypeGroup persistence cache by id.
      *
-     * Either way, contentType cache is also cleared as it contains the relation to contentTypeGroups
+     * In legacy kernel used when editing/removing content type group, so there is always an id.
      *
-     * @param int|null $id Purges all contentTypeGroup cache if null
+     * @param int $id
      * @throws \eZ\Publish\Core\Base\Exceptions\InvalidArgumentType On invalid $id type
      */
-    public function contentTypeGroup($id = null)
+    public function contentTypeGroup($id)
     {
         if ($this->allCleared === true || $this->isSwitchedOff()) {
             return;
         }
 
-        if ($id === null) {
-            $this->cache->clear('contentTypeGroup');
-        } elseif (is_scalar($id)) {
-            $this->cache->clear('contentTypeGroup', $id);
+        if (is_scalar($id)) {
+            // @todo should also clear content type cache for items themselves in case of link/unlink changes, kernel should have a "type-all" tag for this
+            $this->cache->invalidateTags(['type-group-' . $id, 'type-map']);
         } else {
             throw new InvalidArgumentType('$id', 'int|null', $id);
         }
-
-        // clear content type in case of changes as it contains the relation to groups
-        $this->cache->clear('contentType');
     }
 
     /**
-     * Clear all section persistence cache, or by id.
+     * Clear section persistence cache by id.
      *
-     * @param int|null $id Purges all section cache if null
+     * In legacy kernel used when editing section, so there is always an id.
+     *
+     * @param int $id
      * @throws \eZ\Publish\Core\Base\Exceptions\InvalidArgumentType On invalid $id type
      */
-    public function section($id = null)
+    public function section($id)
     {
         if ($this->allCleared === true || $this->isSwitchedOff()) {
             return;
         }
 
-        if ($id === null) {
-            $this->cache->clear('section');
-        } elseif (is_scalar($id)) {
-            $this->cache->clear('section', $id);
+        if (is_scalar($id)) {
+            $this->cache->invalidateTags(['section-' . $id]);
         } else {
             throw new InvalidArgumentType('$id', 'int|null', $id);
         }
     }
 
     /**
-     * Clear all language persistence cache, or by id.
+     * Clear language persistence cache by id.
+     *
+     * In legacy kernel used when editing language, so there is always an id.
      *
      * @param array|int $ids
      */
@@ -242,27 +238,34 @@ class PersistenceCachePurger implements CacheClearerInterface
         }
 
         $ids = (array)$ids;
+        $tags = [];
         foreach ($ids as $id) {
-            $this->cache->clear('language', $id);
+            $tags[] = 'language-' . $id;
         }
+
+        $this->cache->invalidateTags($tags);
     }
 
     /**
      * Clear object state assignment persistence cache by content id.
      *
+     * In legacy kernel used when assigning statet to an content.
+     *
      * @param int $contentId
      */
     public function stateAssign($contentId)
     {
-        if ($this->allCleared === true || $this->enabled === false) {
+        if ($this->allCleared === true || $this->isSwitchedOff()) {
             return;
         }
 
-        $this->cache->clear('objectstate', 'byContent', $contentId);
+        $this->cache->invalidateTags(['content-' . $contentId]);
     }
 
     /**
-     * Clear all user persistence cache.
+     * Clear meta info on users in Persistence.
+     *
+     * In legacy kernel used when clearing meta info cache on users in eZUser, never with id.
      *
      * @param int|null $id Purges all users cache if null
      * @throws \eZ\Publish\Core\Base\Exceptions\InvalidArgumentType On invalid $id type
@@ -274,9 +277,11 @@ class PersistenceCachePurger implements CacheClearerInterface
         }
 
         if ($id === null) {
-            $this->cache->clear('user');
+            // @todo From the looks of usage in legacy we only need to clear meta data here, and there is no such thing
+            // in persistence so we ignore it for now.
+            //$this->cache->clear();
         } elseif (is_scalar($id)) {
-            $this->cache->clear('user', $id);
+            $this->cache->invalidateTags(['user-' . $id]);
         } else {
             throw new InvalidArgumentType('$id', 'int|null', $id);
         }
@@ -284,6 +289,8 @@ class PersistenceCachePurger implements CacheClearerInterface
 
     /**
      * Clears any caches necessary.
+     *
+     * Used by symfony cache clear command.
      *
      * @param string $cacheDir the cache directory
      */
