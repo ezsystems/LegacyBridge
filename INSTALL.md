@@ -28,7 +28,7 @@ Edit `composer.json`, and add those lines to both `post-update-cmd` and `post-in
 }
 ```
 
-Example: In the case of stock eZ Platform 1.11 and higher that would specifically be:
+Example: In the case of stock eZ Platform 2.0 and higher that would specifically be:
 ```
 "scripts": {
     "legacy-scripts": [
@@ -56,10 +56,14 @@ Example: In the case of stock eZ Platform 1.11 and higher that would specificall
 ```
 
 
-### Enable EzPublishLegacyBundle
+### Enable EzPublishLegacyBundle and EzSystemsEzPlatformXmlTextFieldTypeBundle
 Edit `app/AppKernel.php`, and add `new eZ\Bundle\EzPublishLegacyBundle\EzPublishLegacyBundle( $this ),`
 at the end of  the `$bundles` array. Pay close attention to the `$this` argument, LegacyBundle is a bit 
 spoiled and has high expectations from its collaborators ;)
+
+If you still plan to have content in XmlText _(as opposed to migrating to RichText straight away)_, then
+you'll also need to enable `EzSystems\EzPlatformXmlTextFieldTypeBundle\EzSystemsEzPlatformXmlTextFieldTypeBundle`
+bundle, which gets installed together with Legacy Bridge.
 
 ### Add legacy routes
 Edit `app/config/routing.yml`, and add the LegacyBundle routes at the end of the file.
@@ -99,12 +103,10 @@ _Tip:_
 
 ### Install `ezsystems/legacy-bridge`
 
-`ezsystems/legacy-bridge` contains the libraries previously included in `ezsystems/ezpublish-kernel` in version 5.x.
-
-It must be installed using Composer. Take care to use `^1.3.0` as version constraint, since previous versions lack some important fixes for newer versions of eZ Platform:
+`ezsystems/legacy-bridge` contains a newer version of the libraries previously included in `ezsystems/ezpublish-kernel` in version 5.x.
 
 ```
-composer require --update-no-dev "ezsystems/legacy-bridge:^1.3.0"
+composer require --update-no-dev "ezsystems/legacy-bridge:^2.0"
 ```
 
 ### Optional: Add missing legacy extensions
@@ -160,4 +162,4 @@ rewrite "^/var/storage/packages/(.*)" "/var/storage/packages/$1" break;
 
 Last step, if you are on *nix operation system, is to make sure to run 
 the appropriate command for setting correct folder permissions, you 
-can find the information you need in [installation guide for eZ Publish 5.x](https://doc.ez.no/display/EZP/Installation).
+can find the information you need in [installation guide for eZ Platform](https://doc.ezplatform.com/en/latest/getting_started/install_ez_platform/).
