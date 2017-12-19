@@ -8,13 +8,19 @@ services:
     ezpublish_legacy.twig.extension:
         class: eZ\Publish\Core\MVC\Legacy\Templating\Twig\Extension\LegacyExtension
         public: false
+        tags:
+            - {name: twig.extension}
+
+    ezpublish_legacy.twig.runtime:
+        class: eZ\Publish\Core\MVC\Legacy\Templating\Twig\Extension\LegacyRuntime
+        public: false
         arguments:
-            - "@templating.engine.eztpl"
+            - "@twig"
             - "@ezpublish_legacy.templating.legacy_helper"
             - "%ezpublish_legacy.twig.extension.template.js%"
             - "%ezpublish_legacy.twig.extension.template.css%"
         tags:
-            - {name: twig.extension}
+            - {name: twig.runtime}
 
     ezpublish_legacy.templating.generic_converter:
         class: eZ\Publish\Core\MVC\Legacy\Templating\Converter\GenericConverter

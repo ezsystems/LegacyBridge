@@ -10,7 +10,7 @@ namespace eZ\Bundle\EzPublishLegacyBundle\DependencyInjection\Security;
 
 use Symfony\Bundle\SecurityBundle\DependencyInjection\Security\Factory\AbstractFactory;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\DefinitionDecorator;
+use Symfony\Component\DependencyInjection\ChildDefinition;
 use Symfony\Component\DependencyInjection\Reference;
 
 /**
@@ -23,7 +23,7 @@ class SSOFactory extends AbstractFactory
         $preAuthProviderId = 'security.authentication.provider.pre_authenticated';
         $providerId = "$preAuthProviderId.$id";
         $container
-            ->setDefinition($providerId, new DefinitionDecorator($preAuthProviderId))
+            ->setDefinition($providerId, new ChildDefinition($preAuthProviderId))
             ->replaceArgument(0, new Reference($userProviderId))
             ->replaceArgument(1, new Reference('security.user_checker.' . $id))
             ->addArgument($id);
@@ -36,7 +36,7 @@ class SSOFactory extends AbstractFactory
         $parentListenerId = $this->getListenerId();
         $listenerId = "$parentListenerId.$id";
         $container
-            ->setDefinition($listenerId, new DefinitionDecorator($parentListenerId))
+            ->setDefinition($listenerId, new ChildDefinition($parentListenerId))
             ->replaceArgument(2, $id);
 
         return $listenerId;
