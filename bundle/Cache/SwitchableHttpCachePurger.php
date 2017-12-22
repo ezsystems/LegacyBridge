@@ -30,7 +30,9 @@ class SwitchableHttpCachePurger implements GatewayCachePurger
             return $locationIds;
         }
 
-        return $this->gatewayCachePurger->purge($locationIds);
+        $this->gatewayCachePurger->purge($locationIds);
+
+        return $locationIds;
     }
 
     public function purgeAll()
