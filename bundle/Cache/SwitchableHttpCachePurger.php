@@ -32,7 +32,9 @@ class SwitchableHttpCachePurger implements PurgeClientInterface
             return $locationIds;
         }
 
-        return $this->purgeClient->purge($locationIds);
+        $this->purgeClient->purge($locationIds);
+
+        return $locationIds;
     }
 
     public function purgeAll()
