@@ -57,7 +57,6 @@ parameters:
     # Cache purging
     ezpublish_legacy.persistence_cache_purger.class: eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger
     ezpublish_legacy.legacy_cache_purger.class: eZ\Bundle\EzPublishLegacyBundle\Cache\LegacyCachePurger
-    ezpublish_legacy.switchable_http_cache_purger.class: eZ\Bundle\EzPublishLegacyBundle\Cache\SwitchableHttpCachePurger
 
     # Overriding base PageService for ezpage fieldtype.
     ezpublish.fieldType.ezpage.pageService.class: eZ\Bundle\EzPublishLegacyBundle\FieldType\Page\PageService
@@ -256,10 +255,6 @@ services:
         tags:
             - { name: kernel.cache_clearer }
         lazy: true
-
-    ezpublish_legacy.switchable_http_cache_purger:
-        class: "%ezpublish_legacy.switchable_http_cache_purger.class%"
-        arguments: ["@ezpublish.http_cache.purger"]
 
     ezpublish_legacy.content_exception_handler:
         class: "%ezpublish_legacy.content_exception_handler.class%"

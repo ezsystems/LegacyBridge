@@ -1,0 +1,7 @@
+parameters:
+    ezpublish_legacy.switchable_http_cache_purger.class: eZ\Bundle\EzPublishLegacyBundle\Cache\SwitchableHttpCachePurger
+
+services:
+    ezpublish_legacy.switchable_http_cache_purger:
+        class: "%ezpublish_legacy.switchable_http_cache_purger.class%"
+        arguments: ["@ezplatform.http_cache.purge_client"]
