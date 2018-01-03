@@ -17,6 +17,7 @@ use eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger;
 use eZ\Publish\Core\MVC\Symfony\Routing\Generator\UrlAliasGenerator;
 use eZ\Publish\Core\Persistence\Database\DatabaseHandler;
 use ezpEvent;
+use EzSystems\PlatformHttpCacheBundle\PurgeClient\PurgeClientInterface;
 use ezxFormToken;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -36,7 +37,7 @@ class Configuration implements EventSubscriberInterface
     private $configResolver;
 
     /**
-     * @var \eZ\Publish\Core\MVC\Symfony\Cache\GatewayCachePurger
+     * @var \eZ\Publish\Core\MVC\Symfony\Cache\GatewayCachePurger|\EzSystems\PlatformHttpCacheBundle\PurgeClient\PurgeClientInterface
      */
     private $gatewayCachePurger;
 
@@ -74,13 +75,24 @@ class Configuration implements EventSubscriberInterface
 
     public function __construct(
         ConfigResolverInterface $configResolver,
-        GatewayCachePurger $gatewayCachePurger,
+        $gatewayCachePurger,
         PersistenceCachePurger $persistenceCachePurger,
         UrlAliasGenerator $urlAliasGenerator,
         DatabaseHandler $legacyDbHandler,
         AliasCleanerInterface $aliasCleaner,
         array $options = array()
     ) {
+        if (!$gatewayCachePurger instanceof GatewayCachePurger && !$gatewayCachePurger instanceof PurgeClientInterface) {
+            throw new RuntimeException(
+                sprintf(
+                    'Gateway cache purger passed to %s needs to be an instance of %s or %s',
+                    self::class,
+                    GatewayCachePurger::class,
+                    PurgeClientInterface::class
+                )
+            );
+        }
+
         $this->configResolver = $configResolver;
         $this->gatewayCachePurger = $gatewayCachePurger;
         $this->persistenceCachePurger = $persistenceCachePurger;

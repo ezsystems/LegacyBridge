@@ -32,6 +32,14 @@ class EzPublishLegacyExtension extends Extension
             new FileLocator(__DIR__ . '/../Resources/config')
         );
         $loader->load('services.yml');
+
+        // Conditionally load HTTP cache services compatible with
+        // ezsystems/ezplatform-http-cache based on availability of its bundle
+        $activatedBundles = $container->getParameter('kernel.bundles');
+        array_key_exists('EzSystemsPlatformHttpCacheBundle', $activatedBundles) ?
+            $loader->load('http_cache/services.yml') :
+            $loader->load('http_cache/legacy_services.yml');
+
         // Security services
         $loader->load('security.yml');
 
