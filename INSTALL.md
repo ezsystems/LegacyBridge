@@ -39,12 +39,11 @@ Example: In the case of stock eZ Platform 2.0 and higher that would specifically
     ],
     "symfony-scripts": [
         "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters",
-        "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::buildBootstrap",
         "eZ\\Bundle\\EzPublishCoreBundle\\Composer\\ScriptHandler::clearCache",
         "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installAssets",
+        "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installRequirementsFile",
         "@legacy-scripts",
-        "eZ\\Bundle\\EzPublishCoreBundle\\Composer\\ScriptHandler::dumpAssets",
-        "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installRequirementsFile"
+        "@php bin/console assetic:dump"
     ],
     "post-install-cmd": [
         "@symfony-scripts"
