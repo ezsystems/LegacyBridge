@@ -181,6 +181,13 @@ class Configuration implements EventSubscriberInterface
         // Enforce ViewCaching to be enabled in order to persistence/http cache to be purged correctly.
         $settings['site.ini/ContentSettings/ViewCaching'] = 'enabled';
 
+        // Dev / Debug
+        // if symfony is in debug mode, also put legacy in dev mode as a convention for ease of use
+        if ($this->container->getParameter('kernel.debug')) {
+            $settings['site.ini/DebugSettings/DebugOutput'] = 'enabled';
+            $settings['site.ini/TemplateSettings/DevelopmentMode'] = 'enabled';
+        }
+
         $event->getParameters()->set(
             'injected-settings',
             $settings + (array)$event->getParameters()->get('injected-settings')
