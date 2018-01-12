@@ -136,7 +136,7 @@ EOT
         // secondly handle sub folders in design and settings/siteaccess
         $directories = ['design', 'settings/siteaccess'];
         foreach ($directories as $directory) {
-            foreach (Finder::create()->directories()->in(["$srcArg/$directory"]) as $folder) {
+            foreach (Finder::create()->directories()->depth(0)->in(["$srcArg/$directory"]) as $folder) {
                 $folderName = $folder->getFilename();
                 if (!$force && $filesystem->exists("$legacyRootDir/$directory/$folderName")) {
                     continue;
