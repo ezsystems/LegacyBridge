@@ -62,6 +62,7 @@ EOT
 
         $output->writeln(sprintf("Installing eZ Publish legacy assets from $legacyRootDir using the <comment>%s</comment> option", $input->getOption('symlink') ? 'symlink' : 'hard copy'));
         $symlink = $input->getOption('symlink');
+        $relative = $input->getOption('relative');
         $force = (bool)$input->getOption('force');
 
         foreach (array('design', 'extension', 'share', 'var') as $folder) {
@@ -86,15 +87,24 @@ EOT
 
             $filesystem->remove($targetDir);
             if ($symlink) {
-                if ($input->getOption('relative')) {
-                    $originDir = $filesystem->makePathRelative($originDir, realpath($targetArg));
+                if ($relative) {
+                    $relativeOriginDir = $filesystem->makePathRelative($originDir, realpath($targetArg));
+
+                    try {
+                        $filesystem->symlink($relativeOriginDir, $targetDir);
+                    } catch (IOException $e) {
+                        $relative = false;
+                        $output->writeln('It looks like your system doesn\'t support relative symbolic links, so will fallback to absolute symbolic links instead!');
+                    }
                 }
 
-                try {
-                    $filesystem->symlink($originDir, $targetDir);
-                } catch (IOException $e) {
-                    $symlink = false;
-                    $output->writeln('It looks like your system doesn\'t support symbolic links, so will fallback to hard copy instead!');
+                if (!$relative) {
+                    try {
+                        $filesystem->symlink($originDir, $targetDir);
+                    } catch (IOException $e) {
+                        $symlink = false;
+                        $output->writeln('It looks like your system doesn\'t support symbolic links, so will fallback to hard copy instead!');
+                    }
                 }
             }
 
@@ -108,7 +118,7 @@ EOT
             }
         }
 
-        if ($input->getOption('relative')) {
+        if ($relative) {
             $legacyRootDir = $filesystem->makePathRelative(realpath($legacyRootDir), realpath($targetArg));
             $rootDirCode = "__DIR__ . DIRECTORY_SEPARATOR . '{$legacyRootDir}'";
         } else {
