@@ -12,6 +12,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 
@@ -87,7 +88,7 @@ EOT
             $output->writeln("<comment>Empty legacy src folder was created in '$srcArg'.</comment>");
         }
 
-        $symlinkFolderStr = implode(' ,', $this->linkSrcFolders($filesystem, $srcArg, $force));
+        $symlinkFolderStr = implode(' ,', $this->linkSrcFolders($filesystem, $srcArg, $force, $output));
 
         if ($symlinkFolderStr) {
             $output->writeln("The following folders were symlinked: '$symlinkFolderStr'.");
@@ -110,26 +111,43 @@ EOT
      * @param Filesystem $filesystem
      * @param string $srcArg
      * @param bool $force
+     * @param OutputInterface $output
      *
      * @return array
      */
-    protected function linkSrcFolders(Filesystem $filesystem, $srcArg, $force)
+    protected function linkSrcFolders(Filesystem $filesystem, $srcArg, $force, OutputInterface $output)
     {
         $symlinks = [];
         $legacyRootDir = rtrim($this->getContainer()->getParameter('ezpublish_legacy.root_dir'), '/');
+        $relative = true;
 
         // first handle override folder if it exists
         if (
             $filesystem->exists("$srcArg/settings/override") &&
             ($force || !$filesystem->exists("$legacyRootDir/settings/override"))
         ) {
-            $filesystem->symlink(
-                $filesystem->makePathRelative(
+            if ($relative) {
+                try {
+                    $filesystem->symlink(
+                        $filesystem->makePathRelative(
+                            realpath("$srcArg/settings/override"),
+                            realpath("$legacyRootDir/settings")
+                        ),
+                        "$legacyRootDir/settings/override"
+                    );
+                } catch (IOException $e) {
+                    $relative = false;
+                    $output->writeln('It looks like your system doesn\'t support relative symbolic links, so will fallback to absolute symbolic links instead!');
+                }
+            }
+
+            if (!$relative) {
+                $filesystem->symlink(
                     realpath("$srcArg/settings/override"),
-                    realpath("$legacyRootDir/settings")
-                ),
-                "$legacyRootDir/settings/override"
-            );
+                    "$legacyRootDir/settings/override"
+                );
+            }
+
             $symlinks[] = "$legacyRootDir/settings/override";
         }
 
@@ -142,13 +160,28 @@ EOT
                     continue;
                 }
 
-                $filesystem->symlink(
-                    $filesystem->makePathRelative(
+                if ($relative) {
+                    try {
+                        $filesystem->symlink(
+                            $filesystem->makePathRelative(
+                                realpath("$srcArg/$directory/$folderName"),
+                                realpath("$legacyRootDir/$directory")
+                            ),
+                            "$legacyRootDir/$directory/$folderName"
+                        );
+                    } catch (IOException $e) {
+                        $relative = false;
+                        $output->writeln('It looks like your system doesn\'t support relative symbolic links, so will fallback to absolute symbolic links instead!');
+                    }
+                }
+
+                if (!$relative) {
+                    $filesystem->symlink(
                         realpath("$srcArg/$directory/$folderName"),
-                        realpath("$legacyRootDir/$directory")
-                    ),
-                    "$legacyRootDir/$directory/$folderName"
-                );
+                        "$legacyRootDir/$directory/$folderName"
+                    );
+                }
+
                 $symlinks[] = "$legacyRootDir/$directory/$folderName";
             }
         }
