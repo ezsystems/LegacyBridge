@@ -48,7 +48,7 @@ EOT
             foreach ($legacyExtensionsLocator->getExtensionDirectories($bundle->getPath()) as $extensionDir) {
                 $output->writeln('- ' . $this->removeCwd($extensionDir));
                 try {
-                    $target = $this->linkLegacyExtension($extensionDir, $options);
+                    $target = $this->linkLegacyExtension($extensionDir, $options, $output);
                     $output->writeln('  <info>' . ($options['copy'] ? 'Copied' : 'linked') . "</info> to $target</info>");
                 } catch (RuntimeException $e) {
                     $output->writeln('  <error>' . $e->getMessage() . '</error>');
@@ -62,11 +62,12 @@ EOT
      *
      * @param string $extensionPath Absolute path to a legacy extension folder
      * @param array  $options
+     * @param OutputInterface $output
      *
      * @throws \RuntimeException If a target link/directory exists and $options[force] isn't set to true
      * @return string The resulting link/directory
      */
-    protected function linkLegacyExtension($extensionPath, array $options = array())
+    protected function linkLegacyExtension($extensionPath, array $options = array(), OutputInterface $output)
     {
         $options += array('force' => false, 'copy' => false, 'relative' => false);
         $filesystem = $this->getContainer()->get('filesystem');
@@ -99,13 +100,28 @@ EOT
         }
 
         if (!$options['copy']) {
-            try {
-                $filesystem->symlink(
-                    $options['relative'] ? $relativeExtensionPath : $extensionPath,
-                    $targetPath
-                );
-            } catch (IOException $e) {
-                $options['copy'] = true;
+            if ($options['relative']) {
+                try {
+                    $filesystem->symlink(
+                        $relativeExtensionPath,
+                        $targetPath
+                    );
+                } catch (IOException $e) {
+                    $options['relative'] = false;
+                    $output->writeln('It looks like your system doesn\'t support relative symbolic links, so will fallback to absolute symbolic links instead!');
+                }
+            }
+
+            if (!$options['relative']) {
+                try {
+                    $filesystem->symlink(
+                        $extensionPath,
+                        $targetPath
+                    );
+                } catch (IOException $e) {
+                    $options['copy'] = true;
+                    $output->writeln('It looks like your system doesn\'t support symbolic links, so will fallback to hard copy instead!');
+                }
             }
         }
 
