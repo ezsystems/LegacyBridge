@@ -90,9 +90,9 @@ EOT
         $symlinkFolderStr = implode(' ,', $this->linkSrcFolders($filesystem, $srcArg, $force));
 
         if ($symlinkFolderStr) {
-            $output->writeln("The following folders where symlinked: '$symlinkFolderStr'.");
+            $output->writeln("The following folders were symlinked: '$symlinkFolderStr'.");
         } else {
-            $output->writeln('No folders where symlinked, use <info>--force</info> option if they need to be re-created.');
+            $output->writeln('No folders were symlinked, use <info>--force</info> option if they need to be re-created.');
         }
 
         $output->writeln(<<<EOT
