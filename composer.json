@@ -21,7 +21,7 @@
     "require-dev": {
         "ezsystems/ezplatform-http-cache": "*",
         "matthiasnoback/symfony-dependency-injection-test": "^2.0",
-        "phpunit/phpunit": "~6.0",
+        "phpunit/phpunit": "^6.0",
         "mikey179/vfsStream": "~1.1.0"
     },
     "autoload": {
