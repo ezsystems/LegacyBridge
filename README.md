@@ -5,7 +5,6 @@
 [![Latest version](https://img.shields.io/packagist/v/ezsystems/legacy-bridge.svg?style=flat-square)](https://packagist.org/packages/ezsystems/legacy-bridge)
 [![License](https://img.shields.io/github/license/ezsystems/LegacyBridge.svg?style=flat-square)](LICENSE)
 
-
 This package integrates eZ Publish Legacy into eZ Platform. It is an extract of the Legacy backwards compatibility 
 features that were part of eZ Publish 5.x.
 
