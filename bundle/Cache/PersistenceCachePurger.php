@@ -97,12 +97,13 @@ class PersistenceCachePurger implements CacheClearerInterface
      * interface, argument will be empty.
      *
      * @param int|int[]|null $locationIds Ids of location we need to purge content cache for. Purges all content cache if null
+     * @param int[]|null $contentIds Ids of content we need to purge
      *
      * @return array|int|\int[]|null
      *
      * @throws \eZ\Publish\Core\Base\Exceptions\InvalidArgumentType On invalid $id type
      */
-    public function content($locationIds = null)
+    public function content($locationIds = null, array $contentIds = null)
     {
         if ($this->allCleared === true || $this->isSwitchedOff()) {
             return $locationIds;
@@ -118,21 +119,33 @@ class PersistenceCachePurger implements CacheClearerInterface
             $locationIds = [$locationIds];
         }
 
+        if ($contentIds === null) {
+            $contentIds = [];
+        }
+
         $tags = [];
         foreach ($locationIds as $id) {
             if (!is_scalar($id)) {
-                throw new InvalidArgumentType('$id', 'int[]|null', $id);
+                throw new InvalidArgumentType('$locationIds', 'int[]|null', $id);
             }
 
             $tags[] = 'location-' . $id;
             $tags[] = 'urlAlias-location-' . $id;
 
-            try {
-                $location = $this->locationHandler->load($id);
-                $tags[] = 'content-' . $location->contentId;
-            } catch (APINotFoundException $e) {
-                // Location might be deleted, so catch and we clear by location id which is ok for most cases.
+            if (empty($contentIds)) {
+                // if caller did not provide affected content id's, then try to load location to get it
+                try {
+                    $tags[] = 'content-' . $this->locationHandler->load($id)->contentId;
+                } catch (APINotFoundException $e) {}
             }
+        }
+
+        foreach($contentIds as $id) {
+            if (!is_scalar($id)) {
+                throw new InvalidArgumentType('$contentIds', 'int[]|null', $id);
+            }
+
+            $tags[] = 'content-' . $id;
         }
         $this->cache->invalidateTags($tags);
 
