@@ -101,12 +101,13 @@ class PersistenceCachePurger implements CacheClearerInterface
      * Either way all location and urlAlias cache is cleared as well.
      *
      * @param int|int[]|null $locationIds Ids of location we need to purge content cache for. Purges all content cache if null
+     * @param int[]|null $contentIds Ids of content we need to purge
      *
      * @return array|int|\int[]|null
      *
      * @throws \eZ\Publish\Core\Base\Exceptions\InvalidArgumentType On invalid $id type
      */
-    public function content($locationIds = null)
+    public function content($locationIds = null, array $contentIds = null)
     {
         if ($this->allCleared === true || $this->isSwitchedOff()) {
             return $locationIds;
@@ -119,19 +120,17 @@ class PersistenceCachePurger implements CacheClearerInterface
             $locationIds = array($locationIds);
         }
 
+        if ($contentIds === null) {
+            $contentIds = array();
+        }
+
         foreach ($locationIds as $id) {
             if (!is_scalar($id)) {
                 throw new InvalidArgumentType('$id', 'int[]|null', $id);
             }
 
             try {
-                $location = $this->locationHandler->load($id);
-                $this->cache->clear('content', $location->contentId);
-                $this->cache->clear('content', 'info', $location->contentId);
-                $this->cache->clear('content', 'info', 'remoteId');
-                $this->cache->clear('content', 'locations', $location->contentId);
-                $this->cache->clear('user', 'role', 'assignments', 'byGroup', $location->contentId);
-                $this->cache->clear('user', 'role', 'assignments', 'byGroup', 'inherited', $location->contentId);
+                $contentIds[] = $this->locationHandler->load($id)->contentId;
             } catch (NotFoundException $e) {
                 $this->logger->notice(
                     "Unable to load the location with the id '$id' to clear its cache"
@@ -139,8 +138,21 @@ class PersistenceCachePurger implements CacheClearerInterface
             }
         }
 
+        foreach (array_unique($contentIds) as $id) {
+            if (!is_scalar($id)) {
+                throw new InvalidArgumentType('$id', 'int[]|null', $id);
+            }
+
+            $this->cache->clear('content', $id);
+            $this->cache->clear('content', 'info', $id);
+            $this->cache->clear('content', 'locations', $id);
+            $this->cache->clear('user', 'role', 'assignments', 'byGroup', $id);
+            $this->cache->clear('user', 'role', 'assignments', 'byGroup', 'inherited', $id);
+        }
+
         // clear content related cache as well
         relatedCache:
+        $this->cache->clear('content', 'info', 'remoteId');
         $this->cache->clear('urlAlias');
         $this->cache->clear('location');
 
