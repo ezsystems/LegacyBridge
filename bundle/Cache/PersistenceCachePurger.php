@@ -101,13 +101,13 @@ class PersistenceCachePurger implements CacheClearerInterface
      * Either way all location and urlAlias cache is cleared as well.
      *
      * @param int|int[]|null $locationIds Ids of location we need to purge content cache for. Purges all content cache if null
-     * @param int|int[]|null $contentIds Ids of content we need to purge
+     * @param int[]|null $contentIds Ids of content we need to purge
      *
      * @return array|int|\int[]|null
      *
      * @throws \eZ\Publish\Core\Base\Exceptions\InvalidArgumentType On invalid $id type
      */
-    public function content($locationIds = null, $contentIds = null)
+    public function content($locationIds = null, array $contentIds = null)
     {
         if ($this->allCleared === true || $this->isSwitchedOff()) {
             return $locationIds;
@@ -122,8 +122,6 @@ class PersistenceCachePurger implements CacheClearerInterface
 
         if ($contentIds === null) {
             $contentIds = array();
-        } elseif (!is_array($contentIds)) {
-            $contentIds = array($contentIds);
         }
 
         foreach ($locationIds as $id) {
@@ -139,6 +137,7 @@ class PersistenceCachePurger implements CacheClearerInterface
                 );
             }
         }
+
         foreach (array_unique($contentIds) as $id) {
             if (!is_scalar($id)) {
                 throw new InvalidArgumentType('$id', 'int[]|null', $id);
