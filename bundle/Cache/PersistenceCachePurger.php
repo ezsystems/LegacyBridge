@@ -139,14 +139,13 @@ class PersistenceCachePurger implements CacheClearerInterface
                 );
             }
         }
-        foreach ($contentIds as $id) {
+        foreach (array_unique($contentIds) as $id) {
             if (!is_scalar($id)) {
                 throw new InvalidArgumentType('$id', 'int[]|null', $id);
             }
 
             $this->cache->clear('content', $id);
             $this->cache->clear('content', 'info', $id);
-            $this->cache->clear('content', 'info', 'remoteId');
             $this->cache->clear('content', 'locations', $id);
             $this->cache->clear('user', 'role', 'assignments', 'byGroup', $id);
             $this->cache->clear('user', 'role', 'assignments', 'byGroup', 'inherited', $id);
@@ -154,6 +153,7 @@ class PersistenceCachePurger implements CacheClearerInterface
 
         // clear content related cache as well
         relatedCache:
+        $this->cache->clear('content', 'info', 'remoteId');
         $this->cache->clear('urlAlias');
         $this->cache->clear('location');
 
