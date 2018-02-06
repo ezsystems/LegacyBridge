@@ -136,11 +136,12 @@ class PersistenceCachePurger implements CacheClearerInterface
                 // if caller did not provide affected content id's, then try to load location to get it
                 try {
                     $tags[] = 'content-' . $this->locationHandler->load($id)->contentId;
-                } catch (APINotFoundException $e) {}
+                } catch (APINotFoundException $e) {
+                }
             }
         }
 
-        foreach($contentIds as $id) {
+        foreach ($contentIds as $id) {
             if (!is_scalar($id)) {
                 throw new InvalidArgumentType('$contentIds', 'int[]|null', $id);
             }
