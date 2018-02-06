@@ -108,6 +108,17 @@ _Tip:_
 composer require --update-no-dev "ezsystems/legacy-bridge:^2.0"
 ```
 
+### Recommended: Add addtional Legacy <=> eZ Platform integrations
+
+**[netgen/ezplatformsearch](https://github.com/netgen/ezplatformsearch)**
+
+When using either Solr or _(future)_ Elastic search bundle in eZ Platform, this eZ Publish extenion takes care of integrating with eZ Platform Search API, and among other things makes sure updates in legacy triggers search indexing updates, and all out of the box search featurs in eZ Publihs uses the same search index.
+
+**[netgen/richtext-datatype-bundle](https://github.com/netgen/NetgenRichTextDataTypeBundle)**
+
+If you plan to migrate some or all of your content types to eZ Platform RichText format, install this bundle which extends legacy so you can edit content also with richtext field types using raw XML editing text box. Good for cases where content migration, and also backend migration needs to happen gradually over time.
+
+
 ### Optional: Add missing legacy extensions
 
 Several ezpublish-legacy extensions are no longer installed by default with ezpublish-legacy package, such as ezfind or eztags.
