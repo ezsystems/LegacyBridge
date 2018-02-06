@@ -112,7 +112,7 @@ composer require --update-no-dev "ezsystems/legacy-bridge:^2.0"
 
 **[netgen/ezplatformsearch](https://github.com/netgen/ezplatformsearch)**
 
-When using either Solr or _(future)_ Elastic search bundle in eZ Platform, this extension makes sure eZ Platform and eZ Publish Legacy use the same search index. Technically it represents eZ Platform search engine as a eZ Publish Legacy search engine called "ezplatformsearch" for which is then used for search, indexing and delayed cronjob indexing.
+When using either Solr or _(future)_ Elastic search bundle in eZ Platform, this extension makes sure eZ Platform and eZ Publish Legacy use the same search index. Technically it represents eZ Platform search engine as a eZ Publish Legacy search engine called "ezplatformsearch" which is then used for search, indexing and delayed cronjob indexing.
 
 **[netgen/richtext-datatype-bundle](https://github.com/netgen/NetgenRichTextDataTypeBundle)**
 
