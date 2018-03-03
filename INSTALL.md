@@ -71,7 +71,7 @@ Edit `app/config/routing.yml`, and add the LegacyBundle routes at the end of the
 # NOTE: Always keep at the end of the file so native symfony routes always have precendence, to avoid legacy
 # REST pattern overriding possible eZ Platform REST routes. 
 _ezpublishLegacyRoutes:
-    resource: @EzPublishLegacyBundle/Resources/config/routing.yml
+    resource: '@EzPublishLegacyBundle/Resources/config/routing.yml'
 ```
 
 ### Enable legacy_mode for your backoffice siteaccess
