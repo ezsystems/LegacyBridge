@@ -172,6 +172,7 @@ class PersistenceCachePurger implements CacheClearerInterface
         }
 
         $this->cache->clear('content', $contentId, $versionNo);
+        $this->cache->clear('content', 'info', $contentId, 'versioninfo', $versionNo);
     }
 
     /**
