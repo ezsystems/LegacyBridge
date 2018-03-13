@@ -10,8 +10,9 @@ namespace eZ\Publish\Core\MVC\Legacy\Templating\Tests\Twig;
 
 use eZ\Publish\Core\MVC\Legacy\Templating\Twig\Template;
 use eZ\Publish\Core\MVC\Legacy\Templating\LegacyEngine;
-use eZ\Publish\Core\MVC\Legacy\Templating\Twig\Environment;
 use PHPUnit\Framework\TestCase;
+use Twig_Environment;
+use Twig_Loader_Array;
 
 class TemplateTest extends TestCase
 {
@@ -23,7 +24,7 @@ class TemplateTest extends TestCase
     private $legacyEngine;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
+     * @var \Twig_Environment
      */
     private $twigEnv;
 
@@ -36,7 +37,7 @@ class TemplateTest extends TestCase
     {
         parent::setUp();
         $this->legacyEngine = $this->createMock(LegacyEngine::class);
-        $this->twigEnv = $this->createMock(Environment::class);
+        $this->twigEnv = new Twig_Environment(new Twig_Loader_Array());
         $this->template = new Template(self::TEMPLATE_NAME, $this->twigEnv, $this->legacyEngine);
     }
 
