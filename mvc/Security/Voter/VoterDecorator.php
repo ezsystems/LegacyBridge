@@ -39,6 +39,16 @@ class VoterDecorator implements VoterInterface
         return true;
     }
 
+    /**
+     * Decorates the built in eZ kernel voters to allow eZ Publish legacy
+     * to vote on modules/functions available only in legacy kernel.
+     *
+     * @param \Symfony\Component\Security\Core\Authentication\Token\TokenInterface $token
+     * @param mixed $object
+     * @param array $attributes
+     *
+     * @return int
+     */
     public function vote(TokenInterface $token, $object, array $attributes)
     {
         try {
