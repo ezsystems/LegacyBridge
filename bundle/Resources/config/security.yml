@@ -1,4 +1,16 @@
 services:
+    ezpublish_legacy.security.voter.core:
+        class: eZ\Publish\Core\MVC\Legacy\Security\Voter\VoterDecorator
+        decorates: ezpublish.security.voter.core
+        public: false
+        arguments: ["@ezpublish_legacy.security.voter.core.inner", "@ezpublish_legacy.kernel"]
+
+    ezpublish_legacy.security.voter.value_object:
+        class: eZ\Publish\Core\MVC\Legacy\Security\Voter\VoterDecorator
+        decorates: ezpublish.security.voter.value_object
+        public: false
+        arguments: ["@ezpublish_legacy.security.voter.value_object.inner", "@ezpublish_legacy.kernel"]
+
     ezpublish_legacy.security.login_cleanup_listener:
         class: eZ\Publish\Core\MVC\Legacy\Security\Firewall\LoginCleanupListener
         public: false
