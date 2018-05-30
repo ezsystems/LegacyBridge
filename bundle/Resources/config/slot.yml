@@ -199,6 +199,13 @@ services:
         tags:
             - { name: ezpublish.api.slot, signal: UserService\UpdateUserSignal }
 
+    ezpublish_legacy.signalslot.create_user:
+            class: eZ\Publish\Core\MVC\Legacy\SignalSlot\LegacyCreatUserSlot
+            parent: ezpublish_legacy.signalslot.base
+            public: false
+            tags:
+                - { name: ezpublish.api.slot, signal: UserService\CreateUserSignal }
+
     ezpublish_legacy.signalslot.assign_user_to_user_group:
         class: "%ezpublish_legacy.signalslot.assign_user_to_user_group.class%"
         parent: ezpublish_legacy.signalslot.base
