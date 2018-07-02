@@ -105,7 +105,7 @@ _Tip:_
 `ezsystems/legacy-bridge` contains a newer version of the libraries previously included in `ezsystems/ezpublish-kernel` in version 5.x.
 
 ```
-composer require --update-no-dev "ezsystems/legacy-bridge:^2.0"
+composer require --update-with-all-dependencies "ezsystems/legacy-bridge:^2.0"
 ```
 
 ### Recommended: Add additional Legacy <=> eZ Platform integrations
