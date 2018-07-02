@@ -130,7 +130,7 @@ Previusly bundled extensions, and their composer package names for installing:
 - ezsystems/ezfind-ls
 - ezsystems/eztags-ls
 
-To add the package(s) you want, add them with: `composer require --update-no-dev <package>...`
+To add the package(s) you want, add them with: `composer require --update-with-all-dependencies <package>...`
 
 ### Configure virtual host rewrite rules
 
