@@ -67,7 +67,7 @@ class WebsiteToolbarController extends Controller
      */
     public function websiteToolbarAction($locationId, Request $request)
     {
-        $response = new Response();
+        $response = $this->buildResponse();
 
         if (isset($this->csrfTokenManager)) {
             $parameters['form_token'] = $this->csrfTokenManager->getToken('legacy')->getValue();
@@ -105,6 +105,36 @@ class WebsiteToolbarController extends Controller
         }
 
         $response->setContent($this->legacyTemplateEngine->render($template, $parameters));
+
+        return $response;
+    }
+
+    /**
+     * Build the response so that depending on settings it's cacheable.
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    protected function buildResponse()
+    {
+        $request = $this->getRequest();
+        $response = new Response();
+        if ($this->getParameter('content.view_cache') === true) {
+            $response->setPublic();
+
+            if ($this->getParameter('content.ttl_cache') === true) {
+                $response->setSharedMaxAge(
+                    $this->getParameter('content.default_ttl')
+                );
+            }
+
+            // Make the response vary against Cookie header ensures that an HTTP
+            // reverse proxy caches the different possible variations of the
+            // response as it can depend on user role for instance. X-User-Hash cannot
+            // be used since the website toolbar can have Owner( Self ) Policy Limitation.
+            if ($request->headers->has('Cookie')) {
+                $response->setVary('Cookie');
+            }
+        }
 
         return $response;
     }
