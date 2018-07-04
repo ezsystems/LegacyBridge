@@ -39,12 +39,24 @@ class WebsiteToolbarController extends Controller
     /** @var ContentPreviewHelper */
     private $previewHelper;
 
+    /** @var bool */
+    private $viewCache;
+
+    /** @var bool */
+    private $ttlCache;
+
+    /** @var int */
+    private $defaultTtl;
+
     public function __construct(
         EngineInterface $engine,
         ContentService $contentService,
         LocationService $locationService,
         AuthorizationCheckerInterface $authChecker,
         ContentPreviewHelper $previewHelper,
+        $viewCache,
+        $ttlCache,
+        $defaultTtl,
         CsrfTokenManagerInterface $csrfTokenManager = null
     ) {
         $this->legacyTemplateEngine = $engine;
@@ -53,6 +65,9 @@ class WebsiteToolbarController extends Controller
         $this->authChecker = $authChecker;
         $this->csrfTokenManager = $csrfTokenManager;
         $this->previewHelper = $previewHelper;
+        $this->viewCache = $viewCache;
+        $this->ttlCache = $ttlCache;
+        $this->defaultTtl = $defaultTtl;
     }
 
     /**
@@ -118,12 +133,12 @@ class WebsiteToolbarController extends Controller
     {
         $request = $this->getRequest();
         $response = new Response();
-        if ($this->getParameter('content.view_cache') === true) {
+        if ($this->viewCache === true) {
             $response->setPublic();
 
-            if ($this->getParameter('content.ttl_cache') === true) {
+            if ($this->ttlCache === true) {
                 $response->setSharedMaxAge(
-                    $this->getParameter('content.default_ttl')
+                    $this->defaultTtl
                 );
             }
 
