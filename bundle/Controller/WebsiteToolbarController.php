@@ -146,9 +146,7 @@ class WebsiteToolbarController extends Controller
             // reverse proxy caches the different possible variations of the
             // response as it can depend on user role for instance. X-User-Hash cannot
             // be used since the website toolbar can have Owner( Self ) Policy Limitation.
-            if ($request->headers->has('Cookie')) {
-                $response->setVary('Cookie');
-            }
+            $response->setVary('Cookie');
         }
 
         return $response;
