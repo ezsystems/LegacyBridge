@@ -131,7 +131,6 @@ class WebsiteToolbarController extends Controller
      */
     protected function buildResponse()
     {
-        $request = $this->getRequest();
         $response = new Response();
         if ($this->viewCache === true) {
             $response->setPublic();
