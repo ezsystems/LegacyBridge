@@ -39,12 +39,24 @@ class WebsiteToolbarController extends Controller
     /** @var ContentPreviewHelper */
     private $previewHelper;
 
+    /** @var bool */
+    private $viewCache;
+
+    /** @var bool */
+    private $ttlCache;
+
+    /** @var int */
+    private $defaultTtl;
+
     public function __construct(
         EngineInterface $engine,
         ContentService $contentService,
         LocationService $locationService,
         AuthorizationCheckerInterface $authChecker,
         ContentPreviewHelper $previewHelper,
+        $viewCache,
+        $ttlCache,
+        $defaultTtl,
         CsrfTokenManagerInterface $csrfTokenManager = null
     ) {
         $this->legacyTemplateEngine = $engine;
@@ -53,6 +65,9 @@ class WebsiteToolbarController extends Controller
         $this->authChecker = $authChecker;
         $this->csrfTokenManager = $csrfTokenManager;
         $this->previewHelper = $previewHelper;
+        $this->viewCache = $viewCache;
+        $this->ttlCache = $ttlCache;
+        $this->defaultTtl = $defaultTtl;
     }
 
     /**
@@ -67,7 +82,7 @@ class WebsiteToolbarController extends Controller
      */
     public function websiteToolbarAction($locationId, Request $request)
     {
-        $response = new Response();
+        $response = $this->buildResponse();
 
         if (isset($this->csrfTokenManager)) {
             $parameters['form_token'] = $this->csrfTokenManager->getToken('legacy')->getValue();
@@ -105,6 +120,33 @@ class WebsiteToolbarController extends Controller
         }
 
         $response->setContent($this->legacyTemplateEngine->render($template, $parameters));
+
+        return $response;
+    }
+
+    /**
+     * Build the response so that depending on settings it's cacheable.
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    protected function buildResponse()
+    {
+        $response = new Response();
+        if ($this->viewCache === true) {
+            $response->setPublic();
+
+            if ($this->ttlCache === true) {
+                $response->setSharedMaxAge(
+                    $this->defaultTtl
+                );
+            }
+
+            // Make the response vary against Cookie header ensures that an HTTP
+            // reverse proxy caches the different possible variations of the
+            // response as it can depend on user role for instance. X-User-Hash cannot
+            // be used since the website toolbar can have Owner( Self ) Policy Limitation.
+            $response->setVary('Cookie');
+        }
 
         return $response;
     }
