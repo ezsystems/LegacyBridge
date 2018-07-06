@@ -142,6 +142,9 @@ services:
             - "@ezpublish.api.service.location"
             - "@security.authorization_checker"
             - "@ezpublish.content_preview_helper"
+            - "$content.view_cache$"
+            - "$content.ttl_cache$"
+            - "$content.default_ttl$"
             - "@?security.csrf.token_manager"
 
     ezpublish_legacy.router:
