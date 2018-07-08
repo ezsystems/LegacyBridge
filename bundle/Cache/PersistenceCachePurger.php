@@ -168,7 +168,7 @@ class PersistenceCachePurger implements CacheClearerInterface
         }
 
         $this->cache->deleteItem("ez-content-version-info-${contentId}-${versionNo}");
-        $this->cache->invalidateTags(["content-${contentId}-version-list"]);
+        $this->cache->invalidateTags(["content-{$contentId}-version-{$versionNo}"]);
     }
 
     /**
