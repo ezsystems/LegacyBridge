@@ -330,3 +330,15 @@ services:
             - "%ezpublish.siteaccess.default%"
         tags:
             - { name: kernel.event_subscriber }
+
+    ezpublish_legacy.ezp_module_not_found_to_not_found_listener:
+        class: eZ\Bundle\EzPublishLegacyBundle\EventListener\EzpModuleNotFoundToNotFoundListener
+        public: false
+        tags:
+            - { name: kernel.event_subscriber }
+
+    ezpublish_legacy.ezp_module_view_not_found_to_not_found_listener:
+        class: eZ\Bundle\EzPublishLegacyBundle\EventListener\EzpModuleViewNotFoundToNotFoundListener
+        public: false
+        tags:
+            - { name: kernel.event_subscriber }
