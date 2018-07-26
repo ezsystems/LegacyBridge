@@ -404,7 +404,7 @@ class PersistenceCachePurgerTest extends TestCase
         $this->cacheService
             ->expects($this->once())
             ->method('invalidateTags')
-            ->with(["content-${contentId}-version-${versionNo}"]);
+            ->with(["content-${contentId}-version-list", "content-${contentId}-version-${versionNo}"]);
 
         $this->cachePurger->contentVersion($contentId, $versionNo);
     }
