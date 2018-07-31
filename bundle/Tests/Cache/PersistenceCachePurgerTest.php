@@ -389,4 +389,30 @@ class PersistenceCachePurgerTest extends TestCase
     {
         $this->cachePurger->user(new \stdClass());
     }
+
+    /**
+     * @covers \eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger::contentVersion
+     * @dataProvider getDataForTestClearVersionForOneContent
+     */
+    public function testClearVersionOfOneContent($contentId, $versionNo)
+    {
+        $this->cacheService
+            ->expects($this->once())
+            ->method('deleteItem')
+            ->with("ez-content-version-info-${contentId}-${versionNo}");
+
+        $this->cacheService
+            ->expects($this->once())
+            ->method('invalidateTags')
+            ->with(["content-${contentId}-version-list", "content-${contentId}-version-${versionNo}"]);
+
+        $this->cachePurger->contentVersion($contentId, $versionNo);
+    }
+
+    public function getDataForTestClearVersionForOneContent()
+    {
+        return [
+            [18, 37],
+        ];
+    }
 }
