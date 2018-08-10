@@ -99,6 +99,7 @@ class LegacyMapperTest extends LegacyBasedTestCase
 
     public function siteAccessMatchProvider()
     {
+        // args: $pathinfo, $semanticPathinfo, $siteaccess, $expectedAccess
         return array(
             array(
                 '/some/pathinfo',
@@ -297,6 +298,16 @@ class LegacyMapperTest extends LegacyBasedTestCase
                 array(
                     'name' => 'foo',
                     'type' => 10,
+                    'uri_part' => array(),
+                ),
+            ),
+            array(
+                '/_fragment',
+                '/',
+                new SiteAccess('site', 'default'),
+                array(
+                    'name' => 'site',
+                    'type' => 1,
                     'uri_part' => array(),
                 ),
             ),

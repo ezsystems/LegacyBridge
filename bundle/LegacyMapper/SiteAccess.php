@@ -87,8 +87,9 @@ class SiteAccess implements EventSubscriberInterface
         } else {
             $semanticPathinfo = $request->attributes->get('semanticPathinfo', $pathinfo);
         }
+
         $pos = mb_strrpos($pathinfo, $semanticPathinfo);
-        if ($pathinfo != $semanticPathinfo && $pos !== false) {
+        if ($legacyAccessType !== eZSiteAccess::TYPE_DEFAULT && $pathinfo != $semanticPathinfo && $pos !== false) {
             if ($pos === 0) {
                 $pos = mb_strlen($pathinfo) + 1;
             }
