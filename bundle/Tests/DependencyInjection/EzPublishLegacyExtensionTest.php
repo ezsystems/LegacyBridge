@@ -22,6 +22,13 @@ class EzPublishLegacyExtensionTest extends AbstractExtensionTestCase
         );
     }
 
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->setParameter('kernel.bundles', []);
+    }
+
     public function testBundleNotEnabled()
     {
         $this->load(['enabled' => false]);

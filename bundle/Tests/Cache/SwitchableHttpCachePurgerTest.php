@@ -7,7 +7,7 @@
  */
 namespace eZ\Bundle\EzPublishLegacyBundle\Tests\Cache;
 
-use eZ\Bundle\EzPublishLegacyBundle\Cache\SwitchableHttpCachePurger;
+use eZ\Bundle\EzPublishLegacyBundle\Cache\LegacySwitchableHttpCachePurger;
 use eZ\Publish\Core\MVC\Symfony\Cache\GatewayCachePurger;
 use PHPUnit\Framework\TestCase;
 
@@ -22,7 +22,7 @@ class SwitchableHttpCachePurgerTest extends TestCase
     public function setUp()
     {
         $this->gatewayCachePurgerMock = $this->createMock(GatewayCachePurger::class);
-        $this->httpCachePurger = new SwitchableHttpCachePurger($this->gatewayCachePurgerMock);
+        $this->httpCachePurger = new LegacySwitchableHttpCachePurger($this->gatewayCachePurgerMock);
     }
 
     public function testPurgeSwitchedOn()

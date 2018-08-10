@@ -142,6 +142,7 @@ class PersistenceCachePurgerTest extends TestCase
     {
         $map = array(
             array('content', null),
+            array(['content', 'info', 'remoteId'], null),
             array('urlAlias', null),
             array('location', null),
         );
