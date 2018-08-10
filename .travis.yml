@@ -15,6 +15,7 @@ cache:
 branches:
   only:
     - master
+    - 1.4
 
 # setup requirements for running unit tests
 before_script:
