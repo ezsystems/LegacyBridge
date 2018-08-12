@@ -15,6 +15,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Finder\Finder;
+use FilesystemIterator;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 
 class LegacyWrapperInstallCommand extends ContainerAwareCommand
 {
@@ -53,12 +56,6 @@ EOT
          */
         $filesystem = $this->getContainer()->get('filesystem');
         $legacyRootDir = rtrim($this->getContainer()->getParameter('ezpublish_legacy.root_dir'), '/');
-        $defaultIoRootDir = $this->getContainer()->getParameter('ezsettings.default.io.root_dir');
-
-        // Removes empty IO root folder which is created by IO Services
-        if (count(glob("$defaultIoRootDir/*", GLOB_NOSORT)) === 0) {
-            $filesystem->remove($defaultIoRootDir);
-        }
 
         $output->writeln(sprintf("Installing eZ Publish legacy assets from $legacyRootDir using the <comment>%s</comment> option", $input->getOption('symlink') ? 'symlink' : 'hard copy'));
         $symlink = $input->getOption('symlink');
@@ -70,9 +67,9 @@ EOT
             $originDir = "$legacyRootDir/$folder";
 
             // Check if directory exists (not link) and is not empty to avoid removing things that should be backed up
-            if (!$force && !is_link($targetDir) && is_dir($targetDir) && count(glob("$targetDir/*", GLOB_NOSORT)) > 0) {
+            if (!$force && !is_link($targetDir) && is_dir($targetDir) && !$this->isDirectoryEmpty($targetDir)) {
                 $output->writeln(<<<EOT
-Skipping: The folder "$targetDir" already exists and seems to contain content!
+<warning>Skipping: The folder "$targetDir" already exists and seems to contain content!</warning>
 
 Make sure to backup this content and move it into corresponding legacy folder which will be setup to symlink / copy
 to this folder before you remove it, then re-run this command.
@@ -146,5 +143,20 @@ EOT
 EOT;
             $filesystem->dumpFile($newFrontController, $code);
         }
+    }
+
+    private function isDirectoryEmpty($path)
+    {
+        $directory = new RecursiveDirectoryIterator(
+            $path,
+            FilesystemIterator::FOLLOW_SYMLINKS | FilesystemIterator::SKIP_DOTS
+        );
+        $iterator = new RecursiveIteratorIterator($directory);
+
+        foreach ($iterator as $item) {
+            return false;
+        }
+
+        return true;
     }
 }
