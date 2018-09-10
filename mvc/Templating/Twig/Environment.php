@@ -38,7 +38,7 @@ class Environment extends Twig_Environment
             return $this->legacyTemplatesCache[$name];
         }
 
-        if (is_string($name) && $this->legacyEngine->supports($name)) {
+        if (is_string($name) && $this->legacyEngine !== null && $this->legacyEngine->supports($name)) {
             if (!$this->legacyEngine->exists($name)) {
                 throw new Twig_Error_Loader("Unable to find the template \"$name\"");
             }
