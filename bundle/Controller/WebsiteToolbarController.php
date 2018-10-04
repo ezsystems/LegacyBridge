@@ -80,7 +80,7 @@ class WebsiteToolbarController extends Controller
      *
      * @return Response
      */
-    public function websiteToolbarAction($locationId, Request $request)
+    public function websiteToolbarAction($locationId = null, $originalSemanticPathInfo = '', Request $request)
     {
         $response = $this->buildResponse();
 
@@ -105,7 +105,7 @@ class WebsiteToolbarController extends Controller
             $template = 'design:parts/website_toolbar.tpl';
             $parameters = array(
                 'current_node_id' => $locationId,
-                'redirect_uri' => $request->attributes->get('semanticPathinfo'),
+                'redirect_uri' => $originalSemanticPathInfo ? $originalSemanticPathInfo : $request->attributes->get('semanticPathinfo'),
             );
         }
 
