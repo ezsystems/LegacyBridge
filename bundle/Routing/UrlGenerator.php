@@ -84,6 +84,10 @@ class UrlGenerator extends Generator
                         continue;
                     }
 
+                    if (is_bool($paramValue)) {
+                        $paramValue = (int)$paramValue;
+                    }
+
                     $unorderedParams .= "/($paramName)/$paramValue";
                 }
 
