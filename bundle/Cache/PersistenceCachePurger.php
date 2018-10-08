@@ -131,6 +131,7 @@ class PersistenceCachePurger implements CacheClearerInterface
 
             $tags[] = 'location-' . $id;
             $tags[] = 'urlAlias-location-' . $id;
+            $tags[] = 'urlAlias-location-path-' . $id;
 
             if (empty($contentIds)) {
                 // if caller did not provide affected content id's, then try to load location to get it
