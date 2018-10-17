@@ -77,7 +77,7 @@ _ezpublishLegacyRoutes:
 ### Enable legacy_mode for your backoffice siteaccess
 
 The Legacy Backoffice requires the `legacy_mode` option to be enabled.
-This can be done in app/config/config.yml or app/config/ezplatform.yml:
+This can be done in `app/config/config.yml` or `app/config/ezplatform.yml`:
 
 ```
 ez_publish_legacy:
