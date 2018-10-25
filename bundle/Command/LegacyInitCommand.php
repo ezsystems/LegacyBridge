@@ -11,6 +11,7 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
 
 class LegacyInitCommand extends ContainerAwareCommand
@@ -51,6 +52,7 @@ EOT
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->createDirectories($input, $output);
+        $this->updateComposeJson($output);
     }
 
     protected function createDirectories(InputInterface $input, OutputInterface $output)
@@ -89,5 +91,49 @@ legacy install:
 
 EOT
         );
+    }
+
+    protected function updateComposeJson(OutputInterface $output)
+    {
+        $errOutput = $output instanceof ConsoleOutputInterface ? $output->getErrorOutput() : $output;
+        $updateComposerJson = false;
+        $composerJson = json_decode(file_get_contents('composer.json'), true);
+        if ($composerJson === null) {
+            $errOutput->writeln('Error: Unable to parse composer.json');
+
+            return;
+        }
+
+        if (!array_key_exists('legacy-scripts', $composerJson['scripts'])) {
+            $legacy_scripts = [
+                'eZ\\Bundle\\EzPublishLegacyBundle\\Composer\\ScriptHandler::installAssets',
+                'eZ\\Bundle\\EzPublishLegacyBundle\\Composer\\ScriptHandler::installLegacyBundlesExtensions',
+                'eZ\\Bundle\\EzPublishLegacyBundle\\Composer\\ScriptHandler::generateAutoloads',
+                'eZ\\Bundle\\EzPublishLegacyBundle\\Composer\\ScriptHandler::symlinkLegacyFiles',
+            ];
+            $composerJson['scripts'] = array_merge(['legacy-scripts' => $legacy_scripts], $composerJson['scripts']);
+            $updateComposerJson = true;
+        }
+
+        if (!array_key_exists('symfony-scripts', $composerJson['scripts'])) {
+            $composerJson['scripts']['symfony-scripts'] = ['@legacy-scripts'];
+            $updateComposerJson = true;
+        } elseif (!in_array('@legacy-scripts', $composerJson['scripts']['symfony-scripts'])) {
+            $symfonyScripts = $composerJson['scripts']['symfony-scripts'];
+            $offset = array_search('@php bin/console assetic:dump', $symfonyScripts);
+
+            if ($offset === false) {
+                $errOutput->writeln('Warning : Unable to find "assetic:dump" in [symfony-scripts], putting "@legacy_scripts" at the end of array');
+                $offset = count($symfonyScripts);
+            }
+
+            array_splice($symfonyScripts, $offset, 0, ['@legacy-scripts']);
+            $composerJson['scripts']['symfony-scripts'] = $symfonyScripts;
+            $updateComposerJson = true;
+        }
+
+        if ($updateComposerJson) {
+            file_put_contents('composer.json', json_encode($composerJson, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) . PHP_EOL);
+        }
     }
 }
