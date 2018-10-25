@@ -50,6 +50,11 @@ EOT
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $this->createDirectories($input, $output);
+    }
+
+    protected function createDirectories(InputInterface $input, OutputInterface $output)
+    {
         $srcArg = rtrim($input->getArgument('src'), '/');
 
         /**
@@ -83,6 +88,6 @@ legacy install:
 
 
 EOT
-);
+        );
     }
 }
