@@ -5,16 +5,21 @@
 [![Latest version](https://img.shields.io/packagist/v/ezsystems/legacy-bridge.svg?style=flat-square)](https://packagist.org/packages/ezsystems/legacy-bridge)
 [![License](https://img.shields.io/github/license/ezsystems/LegacyBridge.svg?style=flat-square)](LICENSE)
 
-This package integrates eZ Publish Legacy into eZ Platform. It is an extract of the Legacy backwards compatibility 
-features that were part of eZ Publish 5.x.
+This package integrates eZ Publish Legacy into eZ Platform. It is an enhanced version of LegacyBundle that were part of
+eZ Publish 5.x, providing even more features to simplify running Platform stack and legacy together.
 
-It is meant to be installed as an addition to eZ Platform, starting from version 15.01.
+It is meant to be installed as an addition to eZ Platform 1.13.x - 2.x installs when you need legacy for migration.
+
+**NOTE: Legacy bridge will not be supported on eZ Platform 3.x**
+_eZ Platform 3.x aims to finally start improving database schema again, which will break legacy comparability.
+Recommendation is to use eZ Platform / Platform Enterprise 2.5LTS to handle migration needs, and once done evaluate 3.x upgrade._
 
 See [INSTALL.md](INSTALL.md) for the installation procedure.
 
 ### Reporting issues
 
-As Legacy Bridge is co-maintained by the community and eZ Engineering *(as active community members)*, issues found can be reported directly here on Github. There is no SLA on fixes, this is all on voluntary basis, and we welcome you in contributing to issues in any form you you are capable of.
+As Legacy Bridge is co-maintained by the community and eZ Engineering *(as active community members)*, issues found can be reported directly here on Github.
+There is no SLA on fixes, this is all on voluntary basis, and we welcome you in contributing to issues in any form you you are capable of.
 
 
 ##### For Enterprise Customers

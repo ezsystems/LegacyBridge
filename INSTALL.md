@@ -1,9 +1,7 @@
 # Installing the eZ Platform legacy bridge
 
-Unlike eZ Publish 5.x, eZ Platform does not include the Legacy stack by default.
-
-Even though it is not recommended for use on new installs, eZ Publish Legacy can easily be installed
-on top of Platform using Composer to provide a more up-to-date platform to migrate your code to eZ Platform with.
+Instructions below will take you true installing legacy bridge and implicit legacy on top of a eZ Platform 2.x
+install.
 
 ### Add the composer `legacy post-*-scripts`
 
@@ -28,7 +26,7 @@ Edit `composer.json`, and add those lines to both `post-update-cmd` and `post-in
 }
 ```
 
-Example: In the case of stock eZ Platform 2.0 and higher that would specifically be:
+Example: In the case of stock eZ Platform 2.x that would specifically be:
 ```
 "scripts": {
     "legacy-scripts": [
@@ -102,7 +100,7 @@ _Tip:_
 
 ### Install `ezsystems/legacy-bridge`
 
-`ezsystems/legacy-bridge` contains a newer version of the libraries previously included in `ezsystems/ezpublish-kernel` in version 5.x.
+Package can be installed using Composer in the following way:
 
 ```
 composer require --update-with-all-dependencies "ezsystems/legacy-bridge:^2.0"
