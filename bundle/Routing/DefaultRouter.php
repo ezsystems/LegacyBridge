@@ -28,6 +28,7 @@ class DefaultRouter extends BaseRouter
 
     public function matchRequest(Request $request)
     {
+        $this->setContext($this->context->fromRequest($request));
         $attributes = parent::matchRequest($request);
 
         if (
