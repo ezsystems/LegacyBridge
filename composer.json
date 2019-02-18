@@ -12,14 +12,14 @@
     "minimum-stability": "stable",
     "require": {
         "ezsystems/ezpublish-legacy-installer": "^2.0.4",
-        "ezsystems/ezpublish-legacy": ">=2017.08@dev",
-        "ezsystems/ezpublish-kernel": "^6.11@dev",
-        "sensio/distribution-bundle": "^3.0.36|^4.0.6|^5.0.6",
-        "twig/twig": "^1.27 | ^2.0"
+        "ezsystems/ezpublish-legacy": "^2017.12",
+        "ezsystems/ezpublish-kernel": "^6.13.4",
+        "sensio/distribution-bundle": "^3.0.36 | ^4.0.40 | ^5.0.23",
+        "twig/twig": "^1.36 | ^2.5"
     },
     "require-dev": {
-        "matthiasnoback/symfony-dependency-injection-test": "^1.0",
-        "phpunit/phpunit": "^5.7",
+        "matthiasnoback/symfony-dependency-injection-test": "^1.1",
+        "phpunit/phpunit": "^5.7.27",
         "mikey179/vfsStream": "~1.1.0"
     },
     "autoload": {
@@ -34,7 +34,7 @@
     "extra": {
         "ezpublish-legacy-dir": "ezpublish_legacy",
         "branch-alias": {
-            "dev-master": "1.4.x-dev"
+            "dev-master": "1.5.x-dev"
         }
     }
 }
