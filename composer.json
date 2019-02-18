@@ -14,6 +14,7 @@
         "ezsystems/ezpublish-legacy-installer": "^2.0.4",
         "ezsystems/ezpublish-legacy": "^2017.12",
         "ezsystems/ezpublish-kernel": "^6.13.4",
+        "ezsystems/ezplatform-xmltext-fieldtype": "^1.7",
         "sensio/distribution-bundle": "^3.0.36 | ^4.0.40 | ^5.0.22",
         "twig/twig": "^1.35 | ^2.5"
     },
