@@ -103,7 +103,7 @@ _Tip:_
 Package can be installed using Composer in the following way:
 
 ```
-composer require --update-with-all-dependencies "ezsystems/legacy-bridge:^2.0"
+composer require --update-with-all-dependencies "ezsystems/legacy-bridge:^2.1"
 ```
 
 ### Recommended: Add additional Legacy <=> eZ Platform integrations
