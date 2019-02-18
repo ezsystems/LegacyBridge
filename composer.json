@@ -14,8 +14,8 @@
         "ezsystems/ezpublish-legacy-installer": "^2.0.4",
         "ezsystems/ezpublish-legacy": "^2017.12",
         "ezsystems/ezpublish-kernel": "^6.13.4",
-        "sensio/distribution-bundle": "^3.0.36 | ^4.0.40 | ^5.0.23",
-        "twig/twig": "^1.36 | ^2.5"
+        "sensio/distribution-bundle": "^3.0.36 | ^4.0.40 | ^5.0.22",
+        "twig/twig": "^1.35 | ^2.5"
     },
     "require-dev": {
         "matthiasnoback/symfony-dependency-injection-test": "^1.1",
