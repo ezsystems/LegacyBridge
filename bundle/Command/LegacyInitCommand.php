@@ -86,7 +86,7 @@ EOT
 
         $output->writeln(<<<'EOT'
 
-The following folders should have been created (or where already present):
+The following folders should have been created (or were already present):
 - <info>src/AppBundle/ezpublish_legacy</info>  (for extensions)
 - <info>src/legacy_files/design</info>  (optional if you have a design which is not provided by an extension)
 - <info>src/legacy_files/settings/override</info>
