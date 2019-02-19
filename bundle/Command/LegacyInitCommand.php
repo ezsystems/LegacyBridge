@@ -77,7 +77,6 @@ EOT
         $filesystem->mkdir([
             $srcArg,
             "$srcArg/design",
-            //"$srcArg/AppBundle",
             "$srcArg/AppBundle/ezpublish_legacy",
             "$srcArg/settings",
             "$srcArg/settings/override",
