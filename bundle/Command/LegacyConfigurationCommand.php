@@ -59,6 +59,6 @@ EOT
         $configurationDumper->dump($configurationConverter->fromLegacy($package, $adminSiteaccess), $options);
 
         $output->writeln('Configuration written to ezpublish.yml and environment related ezpublish configuration files.');
-        $output->writeln('Make sure to apply the config relevant to your install to you ezplatform.yml file.');
+        $output->writeln('Make sure to apply the config relevant to your install to your ezplatform.yml file.');
     }
 }
