@@ -1,6 +1,6 @@
 # Installing the eZ Platform legacy bridge
 
-Instructions below will take you true installing legacy bridge and implicit legacy on top of a eZ Platform 1.13.x - 2.x
+Instructions below will take you through installing legacy bridge and implicit legacy on top of a eZ Platform 1.13.x - 2.x
 install.
 
 _TIP:_
