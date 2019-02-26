@@ -1,35 +1,76 @@
 # Installing the eZ Platform legacy bridge
 
-Instructions below will take you through installing legacy bridge and implicit legacy on top of a eZ Platform 1.13.x - 2.x
+Instructions below will take you true installing legacy bridge and implicit legacy on top of a eZ Platform 1.13.x - 2.x
 install.
 
 _TIP:_
 > Before starting make sure to check-in (e.g. to Git) your eZ Platform project working space so you'll be able to see & verify changes applied to your setup separate from initial clean project install.
 
-### Install `ezsystems/legacy-bridge` and run `init` command
+### Add the composer `legacy post-*-scripts`
 
-1. Installed package using [Composer](https://getcomposer.org/doc/00-intro.md):
+Edit `composer.json`, and add those lines to both `post-update-cmd` and `post-install-cmd` blocks at the end, but before
+`eZ\Bundle\EzPublishCoreBundle\Composer\ScriptHandler::dumpAssets`:
 ```
-composer require --update-no-dev "ezsystems/legacy-bridge"
+"scripts": {
+    "legacy-scripts": [
+        "eZ\\Bundle\\EzPublishLegacyBundle\\Composer\\ScriptHandler::installAssets",
+        "eZ\\Bundle\\EzPublishLegacyBundle\\Composer\\ScriptHandler::installLegacyBundlesExtensions",
+        "eZ\\Bundle\\EzPublishLegacyBundle\\Composer\\ScriptHandler::generateAutoloads",
+        "eZ\\Bundle\\EzPublishLegacyBundle\\Composer\\ScriptHandler::symlinkLegacyFiles"
+    ],
+    "post-install-cmd": [
+        ...,
+        "@legacy-scripts"
+    ],
+    "post-update-cmd": [
+        ...,
+        "@legacy-scripts"
+    ],
+}
 ```
 
-2. Enable `EzPublishLegacyBundle`
+Example: In the case of stock eZ Platform 1.13 that would specifically be:
+```
+"scripts": {
+    "legacy-scripts": [
+        "eZ\\Bundle\\EzPublishLegacyBundle\\Composer\\ScriptHandler::installAssets",
+        "eZ\\Bundle\\EzPublishLegacyBundle\\Composer\\ScriptHandler::installLegacyBundlesExtensions",
+        "eZ\\Bundle\\EzPublishLegacyBundle\\Composer\\ScriptHandler::generateAutoloads",
+        "eZ\\Bundle\\EzPublishLegacyBundle\\Composer\\ScriptHandler::symlinkLegacyFiles"
+    ],
+    "symfony-scripts": [
+        "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters",
+        "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::buildBootstrap",
+        "eZ\\Bundle\\EzPublishCoreBundle\\Composer\\ScriptHandler::clearCache",
+        "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installAssets",
+        "@legacy-scripts",
+        "eZ\\Bundle\\EzPublishCoreBundle\\Composer\\ScriptHandler::dumpAssets",
+        "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installRequirementsFile"
+    ],
+    "post-install-cmd": [
+        "@symfony-scripts"
+    ],
+    "post-update-cmd": [
+        "@symfony-scripts"
+    ],
+    (...)
+```
+
+
+### Enable EzPublishLegacyBundle
 Edit `app/AppKernel.php`, and add `new eZ\Bundle\EzPublishLegacyBundle\EzPublishLegacyBundle( $this ),`
-at the end of the `$bundles` array _(typically just after `new AppBundle\AppBundle(),`)_.
+at the end of  the `$bundles` array. Pay close attention to the `$this` argument, LegacyBundle is a bit
+spoiled and has high expectations from its collaborators ;)
 
-_NOTE: Pay close attention to the `$this` argument, LegacyBundle needs it to interact with other eZ bundles._
+### Add legacy routes
+Edit `app/config/routing.yml`, and add the LegacyBundle routes at the end of the file.
 
-3. Run the following command to configure your install for legacy usage:
 ```
-php app/console ezpublish:legacy:init
+# NOTE: Always keep at the end of the file so native symfony routes always have precendence, to avoid legacy
+# REST pattern overriding possible eZ Platform REST routes.
+_ezpublishLegacyRoutes:
+    resource: @EzPublishLegacyBundle/Resources/config/routing.yml
 ```
-
-During it's execution it will advice you on which command to run **after** you have moved over your legacy files
-_(extensions, settings and optionally designs)_.
-
-_TIP:_
-> If you are in need of applying these "init" steps manually, see INSTALL-MANUALLY.md.
-
 
 ### Enable legacy_mode for your backoffice siteaccess
 
@@ -58,6 +99,15 @@ ezpublish_setup:
 _Tip:_
 > Enabling Setup wizard is only needed if you intend to perform a new install with legacy demo data, you can also install Platform data _(clean, demo)_ and afterwards when everything is setup use Platform UI to change Richtext FieldTypes to XmlText _(using [ezplatform-xmltext-fieldtype](https://github.com/ezsystems/ezplatform-xmltext-fieldtype))_, or install [Netgen RichTextDataType Bundle for legacy](https://github.com/netgen/NetgenRichTextDataTypeBundle) to make legacy allow raw editing of these. If you install eZ Platform Enterprise and it's demo data, there will also be Landing Page field type to handle in similar way _(contributions to Legacy Bridge on this more than welcome ;))_
 
+
+### Install `ezsystems/legacy-bridge`
+
+
+Package can be installed using Composer in the following way:
+
+```
+composer require --update-no-dev "ezsystems/legacy-bridge:^1.5.0"
+```
 
 ### Optional: Add missing legacy extensions
 
