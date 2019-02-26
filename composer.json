@@ -15,8 +15,8 @@
         "ezsystems/ezpublish-legacy": "^2018.09 | ^2019.02",
         "ezsystems/ezpublish-kernel": "^7.4",
         "ezsystems/ezplatform-xmltext-fieldtype": "^1.8",
-        "sensio/distribution-bundle": "^5.0.23",
-        "twig/twig": "^1.36 | ^2.5"
+        "sensio/distribution-bundle": "^5.0.22",
+        "twig/twig": "^1.35 | ^2.5"
     },
     "require-dev": {
         "ezsystems/ezplatform-http-cache": "*",
