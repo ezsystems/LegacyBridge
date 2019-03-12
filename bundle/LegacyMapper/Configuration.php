@@ -181,6 +181,19 @@ class Configuration implements EventSubscriberInterface
         // Enforce ViewCaching to be enabled in order to persistence/http cache to be purged correctly.
         $settings['site.ini/ContentSettings/ViewCaching'] = 'enabled';
 
+        // DFS Settings
+        if ($this->container->hasParameter('dfs_nfs_path')) {
+            $settings += array(
+                'file.ini/ClusteringSettings/FileHandler'           => 'eZDFSFileHandler',
+                'file.ini/eZDFSClusteringSettings/MountPointPath'   => $this->container->getParameter('dfs_nfs_path'),
+                'file.ini/eZDFSClusteringSettings/DBHost'           => $this->container->getParameter('dfs_database_host'),
+                'file.ini/eZDFSClusteringSettings/DBPort'           => $this->container->getParameter('dfs_database_port'),
+                'file.ini/eZDFSClusteringSettings/DBName'           => $this->container->getParameter('dfs_database_name'),
+                'file.ini/eZDFSClusteringSettings/DBUser'           => $this->container->getParameter('dfs_database_user'),
+                'file.ini/eZDFSClusteringSettings/DBPassword'       => $this->container->getParameter('dfs_database_password'),
+            );
+        }
+
         $event->getParameters()->set(
             'injected-settings',
             $settings + (array)$event->getParameters()->get('injected-settings')
