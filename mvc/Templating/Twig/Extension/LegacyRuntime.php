@@ -57,10 +57,10 @@ class LegacyRuntime
      */
     public function renderLegacyJs()
     {
-        $jsFiles = array();
-        $jsCodeLines = array();
+        $jsFiles = [];
+        $jsCodeLines = [];
 
-        foreach ($this->legacyHelper->get('js_files', array()) as $jsItem) {
+        foreach ($this->legacyHelper->get('js_files', []) as $jsItem) {
             // List of items can contain empty elements, path to files or code
             if (!empty($jsItem)) {
                 if (isset($jsItem[4]) && $this->isFile($jsItem, '.js')) {
@@ -73,10 +73,10 @@ class LegacyRuntime
 
         return $this->environment->render(
             $this->jsTemplate,
-            array(
+            [
                 'js_files' => $jsFiles,
                 'js_code_lines' => $jsCodeLines,
-            )
+            ]
         );
     }
 
@@ -87,10 +87,10 @@ class LegacyRuntime
      */
     public function renderLegacyCss()
     {
-        $cssFiles = array();
-        $cssCodeLines = array();
+        $cssFiles = [];
+        $cssCodeLines = [];
 
-        foreach ($this->legacyHelper->get('css_files', array()) as $cssItem) {
+        foreach ($this->legacyHelper->get('css_files', []) as $cssItem) {
             // List of items can contain empty elements, path to files or code
             if (!empty($cssItem)) {
                 if (isset($cssItem[5]) && $this->isFile($cssItem, '.css')) {
@@ -103,10 +103,10 @@ class LegacyRuntime
 
         return $this->environment->render(
             $this->cssTemplate,
-            array(
+            [
                 'css_files' => $cssFiles,
                 'css_code_lines' => $cssCodeLines,
-            )
+            ]
         );
     }
 
@@ -123,6 +123,6 @@ class LegacyRuntime
         return
             strpos($item, 'http://') === 0
             || strpos($item, 'https://') === 0
-            || strripos($item, $extension) === (strlen($item) - strlen($extension));
+            || strripos($item, $extension) === (\strlen($item) - \strlen($extension));
     }
 }

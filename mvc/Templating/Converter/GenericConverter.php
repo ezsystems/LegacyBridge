@@ -26,8 +26,8 @@ class GenericConverter implements ObjectConverter
      */
     public function convert($object)
     {
-        if (!is_object($object)) {
-            throw new \InvalidArgumentException('Transferred object must be a real object. Got ' . gettype($object));
+        if (!\is_object($object)) {
+            throw new \InvalidArgumentException('Transferred object must be a real object. Got ' . \gettype($object));
         }
 
         return new LegacyAdapter($object);

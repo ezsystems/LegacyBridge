@@ -20,9 +20,9 @@ class LegacyInitCommand extends ContainerAwareCommand
         $this
             ->setName('ezpublish:legacy:init')
             ->setDefinition(
-                array(
+                [
                     new InputArgument('src', InputArgument::OPTIONAL, 'The src directory for legacy files', 'src/legacy_files'),
-                )
+                ]
             )
             ->setDescription('Inits Platform installation for legacy usage')
             ->setHelp(
@@ -105,7 +105,7 @@ EOT
             return;
         }
 
-        if (!array_key_exists('legacy-scripts', $composerJson['scripts'])) {
+        if (!\array_key_exists('legacy-scripts', $composerJson['scripts'])) {
             $legacy_scripts = [
                 'eZ\\Bundle\\EzPublishLegacyBundle\\Composer\\ScriptHandler::installAssets',
                 'eZ\\Bundle\\EzPublishLegacyBundle\\Composer\\ScriptHandler::installLegacyBundlesExtensions',
@@ -116,7 +116,7 @@ EOT
             $updateComposerJson = true;
         }
 
-        if (!array_key_exists('symfony-scripts', $composerJson['scripts'])) {
+        if (!\array_key_exists('symfony-scripts', $composerJson['scripts'])) {
             $composerJson['scripts']['symfony-scripts'] = ['@legacy-scripts'];
             $updateComposerJson = true;
             $errOutput->writeln(<<<'EOT'

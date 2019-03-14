@@ -48,11 +48,11 @@ class EnvironmentTest extends TestCase
     /**
      * @covers \eZ\Publish\Core\MVC\Legacy\Templating\Twig\Environment::loadTemplate
      * @covers \eZ\Publish\Core\MVC\Legacy\Templating\Twig\Template::getTemplateName
-     *
-     * @expectedException \Twig_Error_Loader
      */
     public function testLoadNonExistingTemplateLegacy()
     {
+        $this->expectException(\Twig_Error_Loader::class);
+
         $legacyEngine = $this->createMock(LegacyEngine::class);
 
         $templateName = 'design:test/helloworld.tpl';

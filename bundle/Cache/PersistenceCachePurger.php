@@ -10,7 +10,6 @@ namespace eZ\Bundle\EzPublishLegacyBundle\Cache;
 
 use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
 use Symfony\Component\HttpKernel\CacheClearer\CacheClearerInterface;
-use eZ\Publish\API\Repository\Exceptions\NotFoundException as APINotFoundException;
 use eZ\Publish\SPI\Persistence\Content\Location\Handler as LocationHandlerInterface;
 use eZ\Publish\Core\Base\Exceptions\InvalidArgumentType;
 
@@ -115,7 +114,7 @@ class PersistenceCachePurger implements CacheClearerInterface
             return $locationIds;
         }
 
-        if (!is_array($locationIds)) {
+        if (!\is_array($locationIds)) {
             $locationIds = [$locationIds];
         }
 

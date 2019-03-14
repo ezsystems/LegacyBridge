@@ -37,7 +37,7 @@ class ConfigurationDumperTest extends TestCase
         $this->cacheDir = __DIR__ . '/cache';
         $this->configDir = __DIR__ . '/config';
         @mkdir($this->configDir);
-        $this->envs = array('dev', 'prod');
+        $this->envs = ['dev', 'prod'];
     }
 
     protected function tearDown()
@@ -62,33 +62,33 @@ class ConfigurationDumperTest extends TestCase
 
     public function dumpProvider()
     {
-        return array(
-            array(
-                array(
+        return [
+            [
+                [
                     'foo' => 'bar',
                     'baz' => null,
                     'flag' => true,
-                    'myArray' => array(1, 2, 3),
-                    'myHash' => array('this' => 'that', 'these' => 'those'),
-                ),
-            ),
-            array(
-                array(
+                    'myArray' => [1, 2, 3],
+                    'myHash' => ['this' => 'that', 'these' => 'those'],
+                ],
+            ],
+            [
+                [
                     'foo' => 'bar',
                     'flag' => true,
-                    'someArray' => array(1, 2, 3),
-                    'nestedArray' => array(
-                        'anotherArray' => array('one', 'two', 'three'),
-                        'anotherHash' => array(
+                    'someArray' => [1, 2, 3],
+                    'nestedArray' => [
+                        'anotherArray' => ['one', 'two', 'three'],
+                        'anotherHash' => [
                             'someKey' => 123,
                             'anotherFlag' => false,
                             'nullValue' => null,
-                            'emptyArray' => array(),
-                        ),
-                    ),
-                ),
-            ),
-        );
+                            'emptyArray' => [],
+                        ],
+                    ],
+                ],
+            ],
+        ];
     }
 
     private function assertConfigFileValid(array $configArray)
@@ -98,13 +98,13 @@ class ConfigurationDumperTest extends TestCase
         $this->assertEquals($configArray, Yaml::parse(file_get_contents($configFile)));
     }
 
-    private function assertEnvConfigFilesValid(array $configArray = array())
+    private function assertEnvConfigFilesValid(array $configArray = [])
     {
         $configArray = array_merge_recursive(
             $configArray,
-            array(
-                'imports' => array(array('resource' => 'ezpublish.yml')),
-            )
+            [
+                'imports' => [['resource' => 'ezpublish.yml']],
+            ]
         );
 
         foreach ($this->envs as $env) {
@@ -161,7 +161,7 @@ class ConfigurationDumperTest extends TestCase
     private function expectBackup()
     {
         $this->fs
-            ->expects($this->exactly(count($this->envs) + 1))
+            ->expects($this->exactly(\count($this->envs) + 1))
             ->method('copy')
             ->with(
                 $this->logicalAnd(

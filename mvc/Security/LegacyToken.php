@@ -30,7 +30,7 @@ class LegacyToken implements TokenInterface
 
     public function serialize()
     {
-        return serialize(array($this->innerToken));
+        return serialize([$this->innerToken]);
     }
 
     public function unserialize($serialized)

@@ -50,7 +50,7 @@ class Template extends Twig_Template
      * @param array $context An array of parameters to pass to the template
      * @param array $blocks  An array of blocks to pass to the template
      */
-    public function display(array $context, array $blocks = array())
+    public function display(array $context, array $blocks = [])
     {
         echo $this->render($context);
     }
@@ -68,7 +68,7 @@ class Template extends Twig_Template
      */
     public function getDebugInfo()
     {
-        return array();
+        return [];
     }
 
     /**
@@ -82,7 +82,7 @@ class Template extends Twig_Template
     /**
      * {@inheritdoc}
      */
-    protected function doDisplay(array $context, array $blocks = array())
+    protected function doDisplay(array $context, array $blocks = [])
     {
     }
 }

@@ -43,11 +43,11 @@ class ConfigurationConverterTest extends LegacyBasedTestCase
     public function testFromLegacy($package, $adminSiteaccess, $mockParameters, $expectedResult, $exception = null)
     {
         $configurationConverter = $this->getConfigurationConverterMock(
-            array(
+            [
                 $this->getLegacyConfigResolverMock(),
                 $this->getLegacyKernelMock(),
-                array($package),
-            )
+                [$package],
+            ]
         );
         foreach ($mockParameters as $method => $callbackMap) {
             $configurationConverter->expects($this->any())
@@ -86,178 +86,178 @@ class ConfigurationConverterTest extends LegacyBasedTestCase
      */
     protected function convertMapToCallback($callbackMap)
     {
-        return function () use ($callbackMap) {
+        return static function () use ($callbackMap) {
             foreach ($callbackMap as $map) {
-                $mapArguments = array_slice($map, 0, -1);
+                $mapArguments = \array_slice($map, 0, -1);
                 // pad the call arguments array with nulls to match the map
-                $callArguments = array_pad(func_get_args(), count($mapArguments), null);
+                $callArguments = array_pad(\func_get_args(), \count($mapArguments), null);
 
-                if (count(array_diff($callArguments, $mapArguments)) == 0) {
-                    $return = $map[count($map) - 1];
-                    if (is_callable($return)) {
+                if (\count(array_diff($callArguments, $mapArguments)) == 0) {
+                    $return = $map[\count($map) - 1];
+                    if (\is_callable($return)) {
                         return $return();
                     } else {
                         return $return;
                     }
                 }
             }
-            throw new \Exception('No callback match found for ' . var_export(func_get_args(), true));
+            throw new \Exception('No callback match found for ' . var_export(\func_get_args(), true));
         };
     }
 
     public function providerForTestFromLegacy()
     {
-        define('IDX_PACKAGE', 0);
-        define('IDX_ADMIN_SITEACCESS', 1);
-        define('IDX_MOCK_PARAMETERS', 2);
-        define('IDX_EXPECTED_RESULT', 3);
-        define('IDX_EXCEPTION', 4);
+        \define('IDX_PACKAGE', 0);
+        \define('IDX_ADMIN_SITEACCESS', 1);
+        \define('IDX_MOCK_PARAMETERS', 2);
+        \define('IDX_EXPECTED_RESULT', 3);
+        \define('IDX_EXCEPTION', 4);
 
-        $commonResult = array(
-            'doctrine' => array(
-                'dbal' => array(
-                    'connections' => array(
-                        'eng_repository_connection' => array(
+        $commonResult = [
+            'doctrine' => [
+                'dbal' => [
+                    'connections' => [
+                        'eng_repository_connection' => [
                             'driver' => 'pdo_mysql',
                             'user' => 'root',
                             'password' => null,
                             'host' => 'localhost',
                             'dbname' => 'ezdemo',
                             'charset' => 'UTF8',
-                        ),
-                    ),
-                ),
-            ),
-            'ez_publish_legacy' => array(
+                        ],
+                    ],
+                ],
+            ],
+            'ez_publish_legacy' => [
                 'enabled' => true,
-                'system' => array(
-                    'ezdemo_site_admin' => array(
+                'system' => [
+                    'ezdemo_site_admin' => [
                         'legacy_mode' => true,
-                    ),
-                ),
-            ),
-            'ezpublish' => array(
-                'repositories' => array(
-                    'eng_repository' => array('engine' => 'legacy', 'connection' => 'eng_repository_connection'),
-                ),
-                'siteaccess' => array(
+                    ],
+                ],
+            ],
+            'ezpublish' => [
+                'repositories' => [
+                    'eng_repository' => ['engine' => 'legacy', 'connection' => 'eng_repository_connection'],
+                ],
+                'siteaccess' => [
                     'default_siteaccess' => 'eng',
-                    'list' => array(
+                    'list' => [
                         0 => 'eng',
                         1 => 'ezdemo_site',
                         2 => 'ezdemo_site_admin',
-                    ),
-                    'groups' => array(
-                        'ezdemo_group' => array(
+                    ],
+                    'groups' => [
+                        'ezdemo_group' => [
                             0 => 'eng',
                             1 => 'ezdemo_site',
                             2 => 'ezdemo_site_admin',
-                        ),
-                    ),
-                    'match' => array('URIElement' => 1),
-                ),
-                'system' => array(
-                    'ezdemo_group' => array(
+                        ],
+                    ],
+                    'match' => ['URIElement' => 1],
+                ],
+                'system' => [
+                    'ezdemo_group' => [
                         'repository' => 'eng_repository',
                         'var_dir' => 'var/ezdemo_site',
-                        'languages' => array('eng-GB'),
-                    ),
-                    'eng' => array(),
-                    'ezdemo_site_admin' => array(),
-                ),
+                        'languages' => ['eng-GB'],
+                    ],
+                    'eng' => [],
+                    'ezdemo_site_admin' => [],
+                ],
 
-                'imagemagick' => array(
+                'imagemagick' => [
                     'enabled' => true,
                     'path' => '/usr/bin/convert',
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
 
         $exceptionType = InvalidArgumentException::class;
 
-        $commonMockParameters = array(
-            'getParameter' => array(
-                'SiteSettingsDefaultAccess' => array('SiteSettings', 'DefaultAccess', null, null, 'eng'),
-                'SiteAccessSettingsAvailableSiteAccessList' => array('SiteAccessSettings', 'AvailableSiteAccessList', null, null, array('eng', 'ezdemo_site', 'ezdemo_site_admin')),
-                'FileSettingsVarDir' => array('FileSettings', 'VarDir', 'site.ini', 'eng', 'var/ezdemo_site'),
-                'FileSettingsStorageDir' => array('FileSettings', 'StorageDir', 'site.ini', 'eng', 'storage'),
-                'ImageMagickIsEnabled' => array('ImageMagick', 'IsEnabled', 'image.ini', 'eng', 'true'),
-                'ImageMagickExecutablePath' => array('ImageMagick', 'ExecutablePath', 'image.ini', 'eng', '/usr/bin'),
-                'ImageMagickExecutable' => array('ImageMagick', 'Executable', 'image.ini', 'eng', 'convert'),
-                'Languages_eng' => array('RegionalSettings', 'SiteLanguageList', 'site.ini', 'eng', array('eng-GB')),
-                'Languages_demo' => array('RegionalSettings', 'SiteLanguageList', 'site.ini', 'ezdemo_site', array('eng-GB')),
-                'Languages_admin' => array('RegionalSettings', 'SiteLanguageList', 'site.ini', 'ezdemo_site_admin', array('eng-GB')),
-                'SessionNameHandler_eng' => array('Session', 'SessionNameHandler', 'site.ini', 'eng', 'default'),
-                'SessionNameHandler_demo' => array('Session', 'SessionNameHandler', 'site.ini', 'ezdemo_site', 'default'),
-                'SessionNameHandler_admin' => array('Session', 'SessionNameHandler', 'site.ini', 'ezdemo_site_admin', 'default'),
-                'SessionName' => array('Session', 'SessionNamePrefix', 'site.ini', null, 'eZSESSID'),
-            ),
-            'getGroup' => array(
-                'SiteAccessSettings' => array(
+        $commonMockParameters = [
+            'getParameter' => [
+                'SiteSettingsDefaultAccess' => ['SiteSettings', 'DefaultAccess', null, null, 'eng'],
+                'SiteAccessSettingsAvailableSiteAccessList' => ['SiteAccessSettings', 'AvailableSiteAccessList', null, null, ['eng', 'ezdemo_site', 'ezdemo_site_admin']],
+                'FileSettingsVarDir' => ['FileSettings', 'VarDir', 'site.ini', 'eng', 'var/ezdemo_site'],
+                'FileSettingsStorageDir' => ['FileSettings', 'StorageDir', 'site.ini', 'eng', 'storage'],
+                'ImageMagickIsEnabled' => ['ImageMagick', 'IsEnabled', 'image.ini', 'eng', 'true'],
+                'ImageMagickExecutablePath' => ['ImageMagick', 'ExecutablePath', 'image.ini', 'eng', '/usr/bin'],
+                'ImageMagickExecutable' => ['ImageMagick', 'Executable', 'image.ini', 'eng', 'convert'],
+                'Languages_eng' => ['RegionalSettings', 'SiteLanguageList', 'site.ini', 'eng', ['eng-GB']],
+                'Languages_demo' => ['RegionalSettings', 'SiteLanguageList', 'site.ini', 'ezdemo_site', ['eng-GB']],
+                'Languages_admin' => ['RegionalSettings', 'SiteLanguageList', 'site.ini', 'ezdemo_site_admin', ['eng-GB']],
+                'SessionNameHandler_eng' => ['Session', 'SessionNameHandler', 'site.ini', 'eng', 'default'],
+                'SessionNameHandler_demo' => ['Session', 'SessionNameHandler', 'site.ini', 'ezdemo_site', 'default'],
+                'SessionNameHandler_admin' => ['Session', 'SessionNameHandler', 'site.ini', 'ezdemo_site_admin', 'default'],
+                'SessionName' => ['Session', 'SessionNamePrefix', 'site.ini', null, 'eZSESSID'],
+            ],
+            'getGroup' => [
+                'SiteAccessSettings' => [
                     'SiteAccessSettings', null, null,
-                    array('MatchOrder' => 'uri', 'URIMatchType' => 'element', 'URIMatchElement' => 1),
-                ),
-                'DatabaseSettings' => array(
+                    ['MatchOrder' => 'uri', 'URIMatchType' => 'element', 'URIMatchElement' => 1],
+                ],
+                'DatabaseSettings' => [
                     'DatabaseSettings', 'site.ini', 'eng',
-                    array('DatabaseImplementation' => 'ezmysqli', 'Server' => 'localhost', 'User' => 'root', 'Password' => '', 'Database' => 'ezdemo'),
-                ),
-                'AliasSettings' => array(
+                    ['DatabaseImplementation' => 'ezmysqli', 'Server' => 'localhost', 'User' => 'root', 'Password' => '', 'Database' => 'ezdemo'],
+                ],
+                'AliasSettings' => [
                     'AliasSettings', 'image.ini', 'eng',
-                    array('AliasList' => array('large', 'infoboximage')),
-                ),
-                'AliasSettings_demo' => array(
+                    ['AliasList' => ['large', 'infoboximage']],
+                ],
+                'AliasSettings_demo' => [
                     'AliasSettings', 'image.ini', 'ezdemo_site',
-                    array('AliasList' => array('large', 'infoboximage')),
-                ),
-                'AliasSettings_admin' => array(
+                    ['AliasList' => ['large', 'infoboximage']],
+                ],
+                'AliasSettings_admin' => [
                     'AliasSettings', 'image.ini', 'ezdemo_site_admin',
-                    array('AliasList' => array('large', 'infoboximage')),
-                ),
-                'large' => array(
+                    ['AliasList' => ['large', 'infoboximage']],
+                ],
+                'large' => [
                     'large', 'image.ini', 'eng',
-                    array('Reference' => '', 'Filters' => array('geometry/scaledownonly=360;440')),
-                ),
-                'infoboximage' => array(
+                    ['Reference' => '', 'Filters' => ['geometry/scaledownonly=360;440']],
+                ],
+                'infoboximage' => [
                     'infoboximage', 'image.ini', 'eng',
-                    array('Reference' => '', 'Filters' => array('geometry/scalewidth=75', 'flatten')),
-                ),
-                'large_demo' => array(
+                    ['Reference' => '', 'Filters' => ['geometry/scalewidth=75', 'flatten']],
+                ],
+                'large_demo' => [
                     'large', 'image.ini', 'ezdemo_site',
-                    array('Reference' => '', 'Filters' => array('geometry/scaledownonly=360;440')),
-                ),
-                'infoboximage_demo' => array(
+                    ['Reference' => '', 'Filters' => ['geometry/scaledownonly=360;440']],
+                ],
+                'infoboximage_demo' => [
                     'infoboximage', 'image.ini', 'ezdemo_site',
-                    array('Reference' => '', 'Filters' => array('geometry/scalewidth=75', 'flatten')),
-                ),
-                'large_admin' => array(
+                    ['Reference' => '', 'Filters' => ['geometry/scalewidth=75', 'flatten']],
+                ],
+                'large_admin' => [
                     'large', 'image.ini', 'ezdemo_site_admin',
-                    array('Reference' => '', 'Filters' => array('geometry/scaledownonly=360;440')),
-                ),
-                'infoboximage_admin' => array(
+                    ['Reference' => '', 'Filters' => ['geometry/scaledownonly=360;440']],
+                ],
+                'infoboximage_admin' => [
                     'infoboximage', 'image.ini', 'ezdemo_site_admin',
-                    array('Reference' => '', 'Filters' => array('geometry/scalewidth=75', 'flatten')),
-                ),
-                'ImageMagick' => array(
+                    ['Reference' => '', 'Filters' => ['geometry/scalewidth=75', 'flatten']],
+                ],
+                'ImageMagick' => [
                     'ImageMagick', 'image.ini', 'eng',
-                    array('Filters' => array('geometry/scale=-geometry %1x%2', 'geometry/scalewidth=-geometry %1')),
-                ),
-            ),
-        );
+                    ['Filters' => ['geometry/scale=-geometry %1x%2', 'geometry/scalewidth=-geometry %1']],
+                ],
+            ],
+        ];
 
-        $baseData = array('ezdemo', 'ezdemo_site_admin', $commonMockParameters, $commonResult);
+        $baseData = ['ezdemo', 'ezdemo_site_admin', $commonMockParameters, $commonResult];
 
-        $data = array();
+        $data = [];
         $data[] = $baseData;
 
         // empty site list => invalid argument exception
         $element = $baseData;
-        $element[IDX_MOCK_PARAMETERS]['getParameter']['SiteSettingsSiteList'] = array('SiteSettings', 'SiteList', null, null, array());
+        $element[IDX_MOCK_PARAMETERS]['getParameter']['SiteSettingsSiteList'] = ['SiteSettings', 'SiteList', null, null, []];
         $element[IDX_EXCEPTION] = $exceptionType;
         $data[] = $element;
 
         // imagemagick disabled
         $element = $baseData;
-        $element[IDX_MOCK_PARAMETERS]['getParameter']['ImageMagickIsEnabled'] = array('ImageMagick', 'IsEnabled', 'eng', 'image.ini', 'false');
+        $element[IDX_MOCK_PARAMETERS]['getParameter']['ImageMagickIsEnabled'] = ['ImageMagick', 'IsEnabled', 'eng', 'image.ini', 'false'];
         $element[IDX_EXPECTED_RESULT]['ezpublish']['imagemagick']['enabled'] = false;
         unset($element[IDX_EXPECTED_RESULT]['ezpublish']['imagemagick']['path']);
         unset($element[IDX_EXPECTED_RESULT]['ezpublish']['imagemagick']['filters']);
@@ -271,35 +271,35 @@ class ConfigurationConverterTest extends LegacyBasedTestCase
 
         // host match, with map
         $element = $baseData;
-        $element[IDX_MOCK_PARAMETERS]['getGroup']['SiteAccessSettings'] = array(
-            'SiteAccessSettings', null, null, array(
+        $element[IDX_MOCK_PARAMETERS]['getGroup']['SiteAccessSettings'] = [
+            'SiteAccessSettings', null, null, [
                 'MatchOrder' => 'host',
                 'HostMatchType' => 'map',
-                'HostMatchMapItems' => array('site.com;eng', 'admin.site.com;ezdemo_site_admin'),
-            ),
-        );
-        $element[IDX_EXPECTED_RESULT]['ezpublish']['siteaccess']['match'] = array(
-            'Map\\Host' => array('site.com' => 'eng', 'admin.site.com' => 'ezdemo_site_admin'),
-        );
+                'HostMatchMapItems' => ['site.com;eng', 'admin.site.com;ezdemo_site_admin'],
+            ],
+        ];
+        $element[IDX_EXPECTED_RESULT]['ezpublish']['siteaccess']['match'] = [
+            'Map\\Host' => ['site.com' => 'eng', 'admin.site.com' => 'ezdemo_site_admin'],
+        ];
         $data[] = $element;
 
         // host match, with map
         $element = $baseData;
-        $element[IDX_MOCK_PARAMETERS]['getGroup']['SiteAccessSettings'] = array(
-            'SiteAccessSettings', null, null, array(
+        $element[IDX_MOCK_PARAMETERS]['getGroup']['SiteAccessSettings'] = [
+            'SiteAccessSettings', null, null, [
                 'MatchOrder' => 'host',
                 'HostMatchType' => 'map',
-                'HostMatchMapItems' => array('site.com;eng', 'admin.site.com;ezdemo_site_admin'),
-            ),
-        );
-        $element[IDX_EXPECTED_RESULT]['ezpublish']['siteaccess']['match'] = array(
-            'Map\\Host' => array('site.com' => 'eng', 'admin.site.com' => 'ezdemo_site_admin'),
-        );
+                'HostMatchMapItems' => ['site.com;eng', 'admin.site.com;ezdemo_site_admin'],
+            ],
+        ];
+        $element[IDX_EXPECTED_RESULT]['ezpublish']['siteaccess']['match'] = [
+            'Map\\Host' => ['site.com' => 'eng', 'admin.site.com' => 'ezdemo_site_admin'],
+        ];
         $data[] = $element;
 
         // customized storage dir
         $element = $baseData;
-        $element[IDX_MOCK_PARAMETERS]['getParameter']['FileSettingsStorageDir'] = array('FileSettings', 'StorageDir', 'site.ini', 'eng', 'customstorage');
+        $element[IDX_MOCK_PARAMETERS]['getParameter']['FileSettingsStorageDir'] = ['FileSettings', 'StorageDir', 'site.ini', 'eng', 'customstorage'];
         $element[IDX_EXPECTED_RESULT]['ezpublish']['system']['ezdemo_group']['storage_dir'] = 'customstorage';
         $data[] = $element;
 
@@ -312,12 +312,12 @@ class ConfigurationConverterTest extends LegacyBasedTestCase
         // different alias list for ezdemo_site_admin
         // each siteaccess has its own variations list
         $element = $baseData;
-        $element[IDX_MOCK_PARAMETERS]['getGroup']['AliasSettings_admin'] = array(
+        $element[IDX_MOCK_PARAMETERS]['getGroup']['AliasSettings_admin'] = [
             'AliasSettings', 'image.ini', 'ezdemo_site_admin',
-            array(
-                'AliasList' => array('large'),
-            ),
-        );
+            [
+                'AliasList' => ['large'],
+            ],
+        ];
         unset($element[IDX_MOCK_PARAMETERS]['getGroup']['infoboximage_admin']);
 
         $data[] = $element;
@@ -325,36 +325,36 @@ class ConfigurationConverterTest extends LegacyBasedTestCase
         // different parameter for an alias in ezdemo_site_admin
         // each siteaccess has its own variations list
         $element = $baseData;
-        $element[IDX_MOCK_PARAMETERS]['getGroup']['large_admin'] = array(
+        $element[IDX_MOCK_PARAMETERS]['getGroup']['large_admin'] = [
             'large', 'image.ini', 'ezdemo_site_admin',
-            array(
+            [
                 'Reference' => '',
-                'Filters' => array('geometry/scaledownonly=100;100'),
-            ),
-        );
+                'Filters' => ['geometry/scaledownonly=100;100'],
+            ],
+        ];
 
         $data[] = $element;
 
         // several languages and same for all SA
         // still only a languages setting in ezdemo_group
         $element = $baseData;
-        $element[IDX_MOCK_PARAMETERS]['getParameter']['Languages_eng'][4] = array('eng-GB', 'fre-FR');
-        $element[IDX_MOCK_PARAMETERS]['getParameter']['Languages_demo'][4] = array('eng-GB', 'fre-FR');
-        $element[IDX_MOCK_PARAMETERS]['getParameter']['Languages_admin'][4] = array('eng-GB', 'fre-FR');
+        $element[IDX_MOCK_PARAMETERS]['getParameter']['Languages_eng'][4] = ['eng-GB', 'fre-FR'];
+        $element[IDX_MOCK_PARAMETERS]['getParameter']['Languages_demo'][4] = ['eng-GB', 'fre-FR'];
+        $element[IDX_MOCK_PARAMETERS]['getParameter']['Languages_admin'][4] = ['eng-GB', 'fre-FR'];
 
-        $element[IDX_EXPECTED_RESULT]['ezpublish']['system']['ezdemo_group']['languages'] = array('eng-GB', 'fre-FR');
+        $element[IDX_EXPECTED_RESULT]['ezpublish']['system']['ezdemo_group']['languages'] = ['eng-GB', 'fre-FR'];
         $data[] = $element;
 
         // several languages and same list for all SA but not the same order
         // no more languages setting in ezdemo_group, one by SA
         $element = $baseData;
-        $element[IDX_MOCK_PARAMETERS]['getParameter']['Languages_eng'][4] = array('eng-GB', 'fre-FR');
-        $element[IDX_MOCK_PARAMETERS]['getParameter']['Languages_demo'][4] = array('fre-FR', 'eng-GB');
-        $element[IDX_MOCK_PARAMETERS]['getParameter']['Languages_admin'][4] = array('eng-GB', 'fre-FR');
+        $element[IDX_MOCK_PARAMETERS]['getParameter']['Languages_eng'][4] = ['eng-GB', 'fre-FR'];
+        $element[IDX_MOCK_PARAMETERS]['getParameter']['Languages_demo'][4] = ['fre-FR', 'eng-GB'];
+        $element[IDX_MOCK_PARAMETERS]['getParameter']['Languages_admin'][4] = ['eng-GB', 'fre-FR'];
 
-        $element[IDX_EXPECTED_RESULT]['ezpublish']['system']['eng']['languages'] = array('eng-GB', 'fre-FR');
-        $element[IDX_EXPECTED_RESULT]['ezpublish']['system']['ezdemo_site']['languages'] = array('fre-FR', 'eng-GB');
-        $element[IDX_EXPECTED_RESULT]['ezpublish']['system']['ezdemo_site_admin']['languages'] = array('eng-GB', 'fre-FR');
+        $element[IDX_EXPECTED_RESULT]['ezpublish']['system']['eng']['languages'] = ['eng-GB', 'fre-FR'];
+        $element[IDX_EXPECTED_RESULT]['ezpublish']['system']['ezdemo_site']['languages'] = ['fre-FR', 'eng-GB'];
+        $element[IDX_EXPECTED_RESULT]['ezpublish']['system']['ezdemo_site_admin']['languages'] = ['eng-GB', 'fre-FR'];
 
         unset($element[IDX_EXPECTED_RESULT]['ezpublish']['system']['ezdemo_group']['languages']);
         $data[] = $element;
@@ -362,24 +362,24 @@ class ConfigurationConverterTest extends LegacyBasedTestCase
         // several languages and different lists for each SA
         // no more languages setting in ezdemo_group, one by SA
         $element = $baseData;
-        $element[IDX_MOCK_PARAMETERS]['getParameter']['Languages_eng'][4] = array('eng-GB', 'fre-FR');
-        $element[IDX_MOCK_PARAMETERS]['getParameter']['Languages_demo'][4] = array('Entish', 'Valarin', 'Elvish');
-        $element[IDX_MOCK_PARAMETERS]['getParameter']['Languages_admin'][4] = array('Khuzdul', 'Sindarin');
+        $element[IDX_MOCK_PARAMETERS]['getParameter']['Languages_eng'][4] = ['eng-GB', 'fre-FR'];
+        $element[IDX_MOCK_PARAMETERS]['getParameter']['Languages_demo'][4] = ['Entish', 'Valarin', 'Elvish'];
+        $element[IDX_MOCK_PARAMETERS]['getParameter']['Languages_admin'][4] = ['Khuzdul', 'Sindarin'];
 
-        $element[IDX_EXPECTED_RESULT]['ezpublish']['system']['eng']['languages'] = array('eng-GB', 'fre-FR');
-        $element[IDX_EXPECTED_RESULT]['ezpublish']['system']['ezdemo_site']['languages'] = array('Entish', 'Valarin', 'Elvish');
-        $element[IDX_EXPECTED_RESULT]['ezpublish']['system']['ezdemo_site_admin']['languages'] = array('Khuzdul', 'Sindarin');
+        $element[IDX_EXPECTED_RESULT]['ezpublish']['system']['eng']['languages'] = ['eng-GB', 'fre-FR'];
+        $element[IDX_EXPECTED_RESULT]['ezpublish']['system']['ezdemo_site']['languages'] = ['Entish', 'Valarin', 'Elvish'];
+        $element[IDX_EXPECTED_RESULT]['ezpublish']['system']['ezdemo_site_admin']['languages'] = ['Khuzdul', 'Sindarin'];
 
         unset($element[IDX_EXPECTED_RESULT]['ezpublish']['system']['ezdemo_group']['languages']);
         $data[] = $element;
 
         // session name
         $element = $baseData;
-        $element[IDX_MOCK_PARAMETERS]['getParameter']['SessionNameHandler_eng'] = array('Session', 'SessionNameHandler', 'site.ini', 'eng', 'custom');
-        $element[IDX_MOCK_PARAMETERS]['getParameter']['SessionNameHandler_demo'] = array('Session', 'SessionNameHandler', 'site.ini', 'ezdemo_site', 'custom');
-        $element[IDX_MOCK_PARAMETERS]['getParameter']['SessionNamePerSiteAccess_eng'] = array('Session', 'SessionNamePerSiteAccess', 'site.ini', 'eng', 'enabled');
-        $element[IDX_MOCK_PARAMETERS]['getParameter']['SessionNamePerSiteAccess_demo'] = array('Session', 'SessionNamePerSiteAccess', 'site.ini', 'ezdemo_site', 'disabled');
-        $element[IDX_EXPECTED_RESULT]['ezpublish']['system']['ezdemo_site']['session'] = array('name' => 'eZSESSID');
+        $element[IDX_MOCK_PARAMETERS]['getParameter']['SessionNameHandler_eng'] = ['Session', 'SessionNameHandler', 'site.ini', 'eng', 'custom'];
+        $element[IDX_MOCK_PARAMETERS]['getParameter']['SessionNameHandler_demo'] = ['Session', 'SessionNameHandler', 'site.ini', 'ezdemo_site', 'custom'];
+        $element[IDX_MOCK_PARAMETERS]['getParameter']['SessionNamePerSiteAccess_eng'] = ['Session', 'SessionNamePerSiteAccess', 'site.ini', 'eng', 'enabled'];
+        $element[IDX_MOCK_PARAMETERS]['getParameter']['SessionNamePerSiteAccess_demo'] = ['Session', 'SessionNamePerSiteAccess', 'site.ini', 'ezdemo_site', 'disabled'];
+        $element[IDX_EXPECTED_RESULT]['ezpublish']['system']['ezdemo_site']['session'] = ['name' => 'eZSESSID'];
         $data[] = $element;
 
         return $data;
@@ -390,11 +390,11 @@ class ConfigurationConverterTest extends LegacyBasedTestCase
      *
      * @return \PHPUnit_Framework_MockObject_MockObject|\eZ\Bundle\EzPublishLegacyBundle\DependencyInjection\Configuration\LegacyConfigResolver
      */
-    protected function getLegacyConfigResolverMock(array $methodsToMock = array())
+    protected function getLegacyConfigResolverMock(array $methodsToMock = [])
     {
         $mock = $this
             ->getMockBuilder(LegacyConfigResolver::class)
-            ->setMethods(array_merge($methodsToMock, array('getParameter', 'getGroup')))
+            ->setMethods(array_merge($methodsToMock, ['getParameter', 'getGroup']))
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -412,7 +412,7 @@ class ConfigurationConverterTest extends LegacyBasedTestCase
             ->method('runCallback')
             ->will($this->returnValue(ezpKernelResult::class));
 
-        $closureMock = function () use ($legacyKernelMock) {
+        $closureMock = static function () use ($legacyKernelMock) {
             return $legacyKernelMock;
         };
 

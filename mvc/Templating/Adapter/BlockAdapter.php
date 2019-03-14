@@ -19,7 +19,7 @@ class BlockAdapter extends DefinitionBasedAdapter
 {
     protected function definition()
     {
-        return array(
+        return [
             'id' => 'id',
             'name' => 'name',
             'action' => 'action',
@@ -30,19 +30,19 @@ class BlockAdapter extends DefinitionBasedAdapter
             'view' => 'view',
             'overflow_id' => 'overflowId',
             'zone_id' => 'zoneId',
-            'valid_items' => function (Block $block) {
+            'valid_items' => static function (Block $block) {
                 return eZFlowPool::validItems($block->id);
             },
-            'valid_nodes' => function (Block $block) {
+            'valid_nodes' => static function (Block $block) {
                 return eZFlowPool::validNodes($block->id);
             },
-            'archived_items' => function (Block $block) {
+            'archived_items' => static function (Block $block) {
                 return eZFlowPool::archivedItems($block->id);
             },
-            'waiting_items' => function (Block $block) {
+            'waiting_items' => static function (Block $block) {
                 return eZFlowPool::waitingItems($block->id);
             },
-            'last_valid_items' => function (Block $block) {
+            'last_valid_items' => static function (Block $block) {
                 $validItems = eZFlowPool::validItems($block->id);
                 if (empty($validItems)) {
                     return;
@@ -60,9 +60,9 @@ class BlockAdapter extends DefinitionBasedAdapter
                 return $result;
             },
             // The following is only for block_view_gui template function in legacy.
-            'view_template' => function (Block $block) {
+            'view_template' => static function (Block $block) {
                 return 'view';
             },
-        );
+        ];
     }
 }

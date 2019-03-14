@@ -23,17 +23,17 @@ class LegacyExtension extends Twig_Extension
      */
     public function getFunctions()
     {
-        return array(
+        return [
             new Twig_SimpleFunction(
                 'ez_legacy_render_js',
-                array(LegacyRuntime::class, 'renderLegacyJs'),
-                array('is_safe' => array('html'))
+                [LegacyRuntime::class, 'renderLegacyJs'],
+                ['is_safe' => ['html']]
             ),
             new Twig_SimpleFunction(
                 'ez_legacy_render_css',
-                array(LegacyRuntime::class, 'renderLegacyCss'),
-                array('is_safe' => array('html'))
+                [LegacyRuntime::class, 'renderLegacyCss'],
+                ['is_safe' => ['html']]
             ),
-        );
+        ];
     }
 }

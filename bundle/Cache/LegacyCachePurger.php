@@ -62,16 +62,16 @@ class LegacyCachePurger implements CacheClearerInterface
     public function clear($cacheDir)
     {
         $this->getLegacyKernel()->runCallback(
-            function () {
+            static function () {
                 $helper = new eZCacheHelper(
                     $cli = eZCLI::instance(),
                     $script = eZScript::instance(
-                        array(
+                        [
                             'description' => 'eZ Publish Cache Handler',
                             'use-session' => false,
                             'use-modules' => false,
                             'use-extensions' => true,
-                        )
+                        ]
                     )
                 );
                 $helper->clearItems(eZCache::fetchByTag('template,ini,i18n'), 'Legacy file cache (Template, ini and i18n)');

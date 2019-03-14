@@ -30,7 +30,7 @@ class LegacyCreateUserSlot extends AbstractLegacySlot
         }
 
         $this->runLegacyKernelCallback(
-            function () use ($signal) {
+            static function () use ($signal) {
                 eZContentCacheManager::clearContentCacheIfNeeded($signal->userId);
                 eZContentOperationCollection::registerSearchObject($signal->userId);
                 eZContentObject::clearCache(); // Clear all object memory cache to free memory

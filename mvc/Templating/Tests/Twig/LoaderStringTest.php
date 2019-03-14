@@ -49,13 +49,13 @@ class LoaderStringTest extends TestCase
 
     public function existsProvider()
     {
-        return array(
-            array('foo.html.twig', false),
-            array('foo/bar/baz.txt.twig', false),
-            array('SOMETHING.HTML.tWiG', false),
-            array('foo', true),
-            array('Hey, I love twig', true),
-            array('Hey, I love Twig', true),
-        );
+        return [
+            ['foo.html.twig', false],
+            ['foo/bar/baz.txt.twig', false],
+            ['SOMETHING.HTML.tWiG', false],
+            ['foo', true],
+            ['Hey, I love twig', true],
+            ['Hey, I love Twig', true],
+        ];
     }
 }

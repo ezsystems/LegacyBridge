@@ -53,23 +53,23 @@ class LegacyResponseManagerTest extends TestCase
 
         $manager = new LegacyResponseManager($this->templateEngine, $this->configResolver, new RequestStack());
         $content = 'foobar';
-        $moduleResult = array(
+        $moduleResult = [
             'content' => $content,
             'errorCode' => $errorCode,
             'errorMessage' => $errorMessage,
-        );
-        $kernelResult = new ezpKernelResult($content, array('module_result' => $moduleResult));
+        ];
+        $kernelResult = new ezpKernelResult($content, ['module_result' => $moduleResult]);
         $manager->generateResponseFromModuleResult($kernelResult);
     }
 
     public function generateResponseAccessDeniedProvider()
     {
-        return array(
-            array('401', 'Unauthorized access'),
-            array('403', 'Forbidden'),
-            array('403', null),
-            array('401', null),
-        );
+        return [
+            ['401', 'Unauthorized access'],
+            ['403', 'Forbidden'],
+            ['403', null],
+            ['401', null],
+        ];
     }
 
     /**
@@ -84,9 +84,9 @@ class LegacyResponseManagerTest extends TestCase
             ->method('getParameter')
             ->will(
                 $this->returnValueMap(
-                    array(
-                        array('legacy_mode', null, null, $legacyMode),
-                    )
+                    [
+                        ['legacy_mode', null, null, $legacyMode],
+                    ]
                 )
             );
         if ($expectException) {
@@ -95,12 +95,12 @@ class LegacyResponseManagerTest extends TestCase
         }
         $manager = new LegacyResponseManager($this->templateEngine, $this->configResolver, new RequestStack());
         $content = 'foobar';
-        $moduleResult = array(
+        $moduleResult = [
             'content' => $content,
             'errorCode' => 404,
             'errorMessage' => 'Not found',
-        );
-        $kernelResult = new ezpKernelResult($content, array('module_result' => $moduleResult));
+        ];
+        $kernelResult = new ezpKernelResult($content, ['module_result' => $moduleResult]);
         $response = $manager->generateResponseFromModuleResult($kernelResult);
         if (!$expectException) {
             $this->assertSame($moduleResult['errorCode'], $response->getStatusCode());
@@ -109,10 +109,10 @@ class LegacyResponseManagerTest extends TestCase
 
     public function generateResponseNotFoundProvider()
     {
-        return array(
-            array(true, false),
-            array(false, true),
-        );
+        return [
+            [true, false],
+            [false, true],
+        ];
     }
 
     public function testLegacyResultHasLayout()
@@ -152,10 +152,10 @@ class LegacyResponseManagerTest extends TestCase
             ->method('getParameter')
             ->will(
                 $this->returnValueMap(
-                    array(
-                        array('module_default_layout', 'ezpublish_legacy', null, $customLayout),
-                        array('legacy_mode', null, null, $legacyMode),
-                    )
+                    [
+                        ['module_default_layout', 'ezpublish_legacy', null, $customLayout],
+                        ['legacy_mode', null, null, $legacyMode],
+                    ]
                 )
             );
         $this->templateEngine
@@ -171,15 +171,15 @@ class LegacyResponseManagerTest extends TestCase
 
         $manager = new LegacyResponseManager($this->templateEngine, $this->configResolver, $requestStack);
         $content = 'foobar';
-        $moduleResult = array(
+        $moduleResult = [
             'content' => $content,
             'errorCode' => 200,
-        );
+        ];
         if ($moduleResultLayout) {
             $moduleResult['pagelayout'] = 'design:some_page_layout.tpl';
         }
 
-        $kernelResult = new ezpKernelResult($content, array('module_result' => $moduleResult));
+        $kernelResult = new ezpKernelResult($content, ['module_result' => $moduleResult]);
 
         $response = $manager->generateResponseFromModuleResult($kernelResult);
         $this->assertInstanceOf(LegacyResponse::class, $response);
@@ -189,14 +189,14 @@ class LegacyResponseManagerTest extends TestCase
 
     public function generateResponseNoCustomLayoutProvider()
     {
-        return array(
-            array(null, false, false, false),
-            array('foo.html.twig', true, false, false),
-            array('foo.html.twig', false, true, false),
-            array(null, false, true, false),
-            array(null, true, true, false),
-            array(null, false, false, false, true),
-        );
+        return [
+            [null, false, false, false],
+            ['foo.html.twig', true, false, false],
+            ['foo.html.twig', false, true, false],
+            [null, false, true, false],
+            [null, true, true, false],
+            [null, false, false, false, true],
+        ];
     }
 
     /**
@@ -205,33 +205,33 @@ class LegacyResponseManagerTest extends TestCase
     public function testGenerateResponseWithCustomLayout($customLayout, $content)
     {
         $contentWithLayout = "<div id=\"i-am-a-twig-layout\">$content</div>";
-        $moduleResult = array(
+        $moduleResult = [
             'content' => $content,
             'errorCode' => 200,
-        );
+        ];
 
         $this->configResolver
             ->expects($this->any())
             ->method('getParameter')
             ->will(
                 $this->returnValueMap(
-                    array(
-                        array('module_default_layout', 'ezpublish_legacy', null, $customLayout),
-                        array('legacy_mode', null, null, false),
-                    )
+                    [
+                        ['module_default_layout', 'ezpublish_legacy', null, $customLayout],
+                        ['legacy_mode', null, null, false],
+                    ]
                 )
             );
         $this->templateEngine
             ->expects($this->once())
             ->method('render')
-            ->with($customLayout, array('module_result' => $moduleResult))
+            ->with($customLayout, ['module_result' => $moduleResult])
             ->will($this->returnValue($contentWithLayout));
 
         $requestStack = new RequestStack();
         $requestStack->push(new Request());
         $manager = new LegacyResponseManager($this->templateEngine, $this->configResolver, $requestStack);
 
-        $kernelResult = new ezpKernelResult($content, array('module_result' => $moduleResult));
+        $kernelResult = new ezpKernelResult($content, ['module_result' => $moduleResult]);
 
         $response = $manager->generateResponseFromModuleResult($kernelResult);
         $this->assertInstanceOf(LegacyResponse::class, $response);
@@ -242,15 +242,15 @@ class LegacyResponseManagerTest extends TestCase
 
     public function generateResponseWithCustomLayoutProvider()
     {
-        return array(
-            array('foo.html.twig', 'Hello world!'),
-            array('foo.html.twig', 'שלום עולם!'),
-            array('bar.html.twig', 'こんにちは、世界'),
-            array('i_am_a_custom_layout.html.twig', 'Know what? I\'m a legacy content!'),
-            array('custom.twig', 'I love content management.'),
-            array('custom.twig', '私は、コンテンツ管理が大好きです。'),
-            array('custom.twig', 'אני אוהב את ניהול תוכן.'),
-        );
+        return [
+            ['foo.html.twig', 'Hello world!'],
+            ['foo.html.twig', 'שלום עולם!'],
+            ['bar.html.twig', 'こんにちは、世界'],
+            ['i_am_a_custom_layout.html.twig', 'Know what? I\'m a legacy content!'],
+            ['custom.twig', 'I love content management.'],
+            ['custom.twig', '私は、コンテンツ管理が大好きです。'],
+            ['custom.twig', 'אני אוהב את ניהול תוכן.'],
+        ];
     }
 
     /**
@@ -269,12 +269,12 @@ class LegacyResponseManagerTest extends TestCase
 
     public function generateRedirectResponseProvider()
     {
-        return array(
-            array('/foo', null, 302, null),
-            array('/foo', '302', 302, 'bar'),
-            array('/foo/bar', '301: blablabla', 301, 'Hello world!'),
-            array('/foo/bar?some=thing&toto=titi', '303: See other', 303, 'こんにちは、世界!'),
-        );
+        return [
+            ['/foo', null, 302, null],
+            ['/foo', '302', 302, 'bar'],
+            ['/foo/bar', '301: blablabla', 301, 'Hello world!'],
+            ['/foo/bar?some=thing&toto=titi', '303: See other', 303, 'こんにちは、世界!'],
+        ];
     }
 
     public function testMapHeaders()
@@ -282,15 +282,15 @@ class LegacyResponseManagerTest extends TestCase
         $etag = '86fb269d190d2c85f6e0468ceca42a20';
         $date = new DateTime();
         $dateForCache = $date->format('D, d M Y H:i:s') . ' GMT';
-        $headers = array('X-Foo: Bar', "Etag: $etag", "Last-Modified: $dateForCache", "Expires: $dateForCache");
+        $headers = ['X-Foo: Bar', "Etag: $etag", "Last-Modified: $dateForCache", "Expires: $dateForCache"];
 
         // Partially mock the manager to simulate calls to header_remove()
         $manager = $this->getMockBuilder(LegacyResponseManager::class)
-            ->setConstructorArgs(array($this->templateEngine, $this->configResolver, new RequestStack()))
-            ->setMethods(array('removeHeader'))
+            ->setConstructorArgs([$this->templateEngine, $this->configResolver, new RequestStack()])
+            ->setMethods(['removeHeader'])
             ->getMock();
         $manager
-            ->expects($this->exactly(count($headers)))
+            ->expects($this->exactly(\count($headers)))
             ->method('removeHeader');
         /** @var \eZ\Bundle\EzPublishLegacyBundle\LegacyResponse\LegacyResponseManager|\PHPUnit_Framework_MockObject_MockObject $manager */
         $response = new LegacyResponse();
@@ -305,11 +305,11 @@ class LegacyResponseManagerTest extends TestCase
     public function testEmptyHeaderValueShouldNotRaiseNotice()
     {
         $manager = $this->getMockBuilder(LegacyResponseManager::class)
-            ->setConstructorArgs(array($this->templateEngine, $this->configResolver, new RequestStack()))
-            ->setMethods(array('removeHeader'))
+            ->setConstructorArgs([$this->templateEngine, $this->configResolver, new RequestStack()])
+            ->setMethods(['removeHeader'])
             ->getMock();
         /** @var \eZ\Bundle\EzPublishLegacyBundle\LegacyResponse\LegacyResponseManager|\PHPUnit_Framework_MockObject_MockObject $manager */
-        $headers = array('X-Foo: Bar', 'Pragma:');
+        $headers = ['X-Foo: Bar', 'Pragma:'];
         $response = new LegacyResponse();
 
         $manager->mapHeaders($headers, $response);

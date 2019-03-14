@@ -46,9 +46,9 @@ class Session implements EventSubscriberInterface
 
     public static function getSubscribedEvents()
     {
-        return array(
-            LegacyEvents::PRE_BUILD_LEGACY_KERNEL => array('onBuildKernelHandler', 128),
-        );
+        return [
+            LegacyEvents::PRE_BUILD_LEGACY_KERNEL => ['onBuildKernelHandler', 128],
+        ];
     }
 
     /**
@@ -59,14 +59,14 @@ class Session implements EventSubscriberInterface
      */
     public function onBuildKernelHandler(PreBuildKernelEvent $event)
     {
-        $sessionInfos = array(
+        $sessionInfos = [
             'configured' => false,
             'started' => false,
             'name' => false,
             'namespace' => false,
             'has_previous' => false,
             'storage' => false,
-        );
+        ];
         if (isset($this->session)) {
             $request = $this->getCurrentRequest();
             $sessionInfos['configured'] = true;
@@ -82,13 +82,13 @@ class Session implements EventSubscriberInterface
 
         // Deactivate session cookie settings in legacy kernel.
         // This will force using settings defined in Symfony.
-        $sessionSettings = array(
+        $sessionSettings = [
             'site.ini/Session/CookieTimeout' => false,
             'site.ini/Session/CookiePath' => false,
             'site.ini/Session/CookieDomain' => false,
             'site.ini/Session/CookieSecure' => false,
             'site.ini/Session/CookieHttponly' => false,
-        );
+        ];
         $legacyKernelParameters->set(
             'injected-settings',
             $sessionSettings + (array)$legacyKernelParameters->get('injected-settings')

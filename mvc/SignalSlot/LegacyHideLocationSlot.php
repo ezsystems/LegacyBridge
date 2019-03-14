@@ -30,7 +30,7 @@ class LegacyHideLocationSlot extends AbstractLegacySlot
         }
 
         $this->runLegacyKernelCallback(
-            function () use ($signal) {
+            static function () use ($signal) {
                 $node = eZContentObjectTreeNode::fetch($signal->locationId);
                 eZContentObjectTreeNode::clearViewCacheForSubtree($node);
                 eZSearch::updateNodeVisibility($signal->locationId, 'hide');

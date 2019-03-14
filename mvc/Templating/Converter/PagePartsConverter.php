@@ -18,8 +18,8 @@ class PagePartsConverter implements ObjectConverter
 {
     public function convert($object)
     {
-        if (!is_object($object)) {
-            throw new InvalidArgumentException('Transferred object must be a Page\\Parts\\Block object. Got ' . gettype($object));
+        if (!\is_object($object)) {
+            throw new InvalidArgumentException('Transferred object must be a Page\\Parts\\Block object. Got ' . \gettype($object));
         }
 
         if ($object instanceof Block) {
@@ -28,6 +28,6 @@ class PagePartsConverter implements ObjectConverter
             return new ZoneAdapter($object);
         }
 
-        throw new InvalidArgumentException('Transferred object must be a Page\\Parts\\Block object. Got ' . get_class($object));
+        throw new InvalidArgumentException('Transferred object must be a Page\\Parts\\Block object. Got ' . \get_class($object));
     }
 }

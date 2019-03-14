@@ -34,11 +34,11 @@ class SetupListener implements EventSubscriberInterface
 
     public static function getSubscribedEvents()
     {
-        return array(
-            KernelEvents::REQUEST => array(
-                array('onKernelRequestSetup', 190),
-            ),
-        );
+        return [
+            KernelEvents::REQUEST => [
+                ['onKernelRequestSetup', 190],
+            ],
+        ];
     }
 
     /**

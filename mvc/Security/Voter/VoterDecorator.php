@@ -65,14 +65,14 @@ class VoterDecorator implements VoterInterface
 
     private function voteLegacy(TokenInterface $token, $object, array $attributes)
     {
-        $legacyKernel = call_user_func($this->legacyKernelClosure);
+        $legacyKernel = \call_user_func($this->legacyKernelClosure);
         foreach ($attributes as $attribute) {
             if (!$this->supportsAttribute($attribute)) {
                 continue;
             }
 
             $result = $legacyKernel->runCallback(
-                function () use ($attribute) {
+                static function () use ($attribute) {
                     $currentUser = eZUser::currentUser();
 
                     return $currentUser->hasAccessTo($attribute->module, $attribute->function);

@@ -29,7 +29,7 @@ class LegacyUpdateLocationSlot extends AbstractLegacySlot
         }
 
         $this->runLegacyKernelCallback(
-            function () use ($signal) {
+            static function () use ($signal) {
                 eZContentCacheManager::clearContentCacheIfNeeded($signal->contentId);
                 eZContentObject::clearCache(); // Clear all object memory cache to free memory
             }

@@ -33,7 +33,7 @@ class LegacyEngine implements EngineInterface
     {
         $this->legacyKernelClosure = $legacyKernelClosure;
         $this->objectConverter = $objectConverter;
-        $this->supportedTemplates = array();
+        $this->supportedTemplates = [];
     }
 
     /**
@@ -58,24 +58,24 @@ class LegacyEngine implements EngineInterface
      *
      * @api
      */
-    public function render($name, array $parameters = array())
+    public function render($name, array $parameters = [])
     {
         $objectConverter = $this->objectConverter;
-        $legacyVars = array();
+        $legacyVars = [];
         foreach ($parameters as $varName => $param) {
             // If $param is an array, we recursively convert all objects contained in it (if any).
             // Scalar parameters are passed as is
-            if (is_array($param)) {
+            if (\is_array($param)) {
                 array_walk_recursive(
                     $param,
-                    function (&$element) use ($objectConverter) {
-                        if (is_object($element) && !($element instanceof LegacyCompatible)) {
+                    static function (&$element) use ($objectConverter) {
+                        if (\is_object($element) && !($element instanceof LegacyCompatible)) {
                             $element = $objectConverter->convert($element);
                         }
                     }
                 );
                 $legacyVars[$varName] = $param;
-            } elseif (!is_object($param) || $param instanceof LegacyCompatible) {
+            } elseif (!\is_object($param) || $param instanceof LegacyCompatible) {
                 $legacyVars[$varName] = $param;
             } else {
                 $objectConverter->register($param, $varName);
@@ -84,7 +84,7 @@ class LegacyEngine implements EngineInterface
         $legacyVars += $objectConverter->convertAll();
 
         return $this->getLegacyKernel()->runCallback(
-            function () use ($name, $legacyVars) {
+            static function () use ($name, $legacyVars) {
                 $tpl = eZTemplate::factory();
 
                 foreach ($legacyVars as $varName => $value) {
@@ -107,7 +107,7 @@ class LegacyEngine implements EngineInterface
     public function exists($name)
     {
         return $this->getLegacyKernel()->runCallback(
-            function () use ($name) {
+            static function () use ($name) {
                 $legacyTemplate = eZTemplate::factory()->loadURIRoot($name, false, $extraParameters);
 
                 return !empty($legacyTemplate);
@@ -136,7 +136,7 @@ class LegacyEngine implements EngineInterface
                 strpos($name, 'design:') === 0 ||
                 strpos($name, 'file:') === 0
             ) &&
-            (substr($name, -strlen(self::SUPPORTED_SUFFIX)) === self::SUPPORTED_SUFFIX);
+            (substr($name, -\strlen(self::SUPPORTED_SUFFIX)) === self::SUPPORTED_SUFFIX);
 
         return $this->supportedTemplates[$name];
     }

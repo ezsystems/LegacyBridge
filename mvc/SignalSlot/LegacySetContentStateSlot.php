@@ -30,9 +30,9 @@ class LegacySetContentStateSlot extends AbstractLegacySlot
         }
 
         $this->runLegacyKernelCallback(
-            function () use ($signal) {
+            static function () use ($signal) {
                 eZContentCacheManager::clearContentCacheIfNeeded($signal->contentId);
-                eZSearch::updateObjectState($signal->contentId, array($signal->objectStateId));
+                eZSearch::updateObjectState($signal->contentId, [$signal->objectStateId]);
                 eZContentObject::clearCache(); // Clear all object memory cache to free memory
             }
         );

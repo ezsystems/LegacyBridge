@@ -92,27 +92,27 @@ class WebsiteToolbarController extends Controller
             $template = 'design:parts/website_toolbar_versionview.tpl';
             $previewedContent = $authValueObject = $this->previewHelper->getPreviewedContent();
             $previewedVersionInfo = $previewedContent->versionInfo;
-            $parameters = array(
+            $parameters = [
                 'object' => $previewedContent,
                 'version' => $previewedVersionInfo,
                 'language' => $previewedVersionInfo->initialLanguageCode,
                 'is_creator' => $previewedVersionInfo->creatorId === $this->getRepository()->getCurrentUser()->id,
-            );
+            ];
         } elseif ($locationId === null) {
             return $response;
         } else {
             $authValueObject = $this->loadContentByLocationId($locationId);
             $template = 'design:parts/website_toolbar.tpl';
-            $parameters = array(
+            $parameters = [
                 'current_node_id' => $locationId,
                 'redirect_uri' => $originalSemanticPathInfo ? $originalSemanticPathInfo : $request->attributes->get('semanticPathinfo'),
-            );
+            ];
         }
 
         $authorizationAttribute = new AuthorizationAttribute(
             'websitetoolbar',
             'use',
-            array('valueObject' => $authValueObject)
+            ['valueObject' => $authValueObject]
         );
 
         if (!$this->authChecker->isGranted($authorizationAttribute)) {

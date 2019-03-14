@@ -23,9 +23,9 @@ class LegacySrcSymlinkCommand extends ContainerAwareCommand
         $this
             ->setName('ezpublish:legacy:symlink')
             ->setDefinition(
-                array(
+                [
                     new InputArgument('src', InputArgument::OPTIONAL, 'The src directory for legacy files', 'src/legacy_files'),
-                )
+                ]
             )
             ->addOption('create', 'c', InputOption::VALUE_NONE, 'DEPRECATED: Use ezpublish:legacy:init instead!')
             ->addOption('force', null, InputOption::VALUE_NONE, 'Force symlinking folders even if target already exists')

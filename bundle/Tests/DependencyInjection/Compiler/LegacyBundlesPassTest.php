@@ -34,17 +34,17 @@ class LegacyBundlesPassTest extends AbstractCompilerPassTestCase
         $this->getKernelMock()
             ->expects($this->any())
             ->method('getBundles')
-            ->will($this->returnValue(array($bundle1, $bundle2)));
+            ->will($this->returnValue([$bundle1, $bundle2]));
 
         $this->getLocatorMock()
             ->expects($this->any())
             ->method('getExtensionNames')
             ->will(
                 $this->returnValueMap(
-                    array(
-                        array($bundle1, array('legacy_extension_a', 'legacy_extension_b')),
-                        array($bundle2, array('legacy_extension_b', 'legacy_extension_c')),
-                    )
+                    [
+                        [$bundle1, ['legacy_extension_a', 'legacy_extension_b']],
+                        [$bundle2, ['legacy_extension_b', 'legacy_extension_c']],
+                    ]
                 )
             );
         $this->container->set(
@@ -55,7 +55,7 @@ class LegacyBundlesPassTest extends AbstractCompilerPassTestCase
 
         $this->assertContainerBuilderHasParameter(
             'ezpublish_legacy.legacy_bundles_extensions',
-            array('legacy_extension_a', 'legacy_extension_b', 'legacy_extension_c')
+            ['legacy_extension_a', 'legacy_extension_b', 'legacy_extension_c']
         );
     }
 

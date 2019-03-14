@@ -52,7 +52,7 @@ class SwitchableHttpCachePurger implements PurgeClientInterface
      * @param int $contentId
      * @param array $locationIds
      */
-    public function purgeForContent($contentId, $locationIds = array())
+    public function purgeForContent($contentId, $locationIds = [])
     {
         if ($this->isSwitchedOff() || !method_exists($this->purgeClient, 'purgeForContent')) {
             return;

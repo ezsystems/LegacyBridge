@@ -62,10 +62,10 @@ class SecurityTest extends TestCase
     public function testGetSubscribedEvents()
     {
         $this->assertSame(
-            array(
+            [
                 LegacyEvents::POST_BUILD_LEGACY_KERNEL => 'onKernelBuilt',
                 LegacyEvents::PRE_BUILD_LEGACY_KERNEL_WEB => 'onLegacyKernelWebBuild',
-            ),
+            ],
             Security::getSubscribedEvents()
         );
     }
@@ -75,7 +75,7 @@ class SecurityTest extends TestCase
         $kernelHandler = $this->createMock(ezpKernelHandler::class);
         $legacyKernel = $this
             ->getMockBuilder(Kernel::class)
-            ->setConstructorArgs(array($kernelHandler, 'foo', 'bar'))
+            ->setConstructorArgs([$kernelHandler, 'foo', 'bar'])
             ->getMock();
         $event = new PostBuildKernelEvent($legacyKernel, $kernelHandler);
 
@@ -95,7 +95,7 @@ class SecurityTest extends TestCase
         $kernelHandler = $this->createMock(ezpWebBasedKernelHandler::class);
         $legacyKernel = $this
             ->getMockBuilder(Kernel::class)
-            ->setConstructorArgs(array($kernelHandler, 'foo', 'bar'))
+            ->setConstructorArgs([$kernelHandler, 'foo', 'bar'])
             ->getMock();
         $event = new PostBuildKernelEvent($legacyKernel, $kernelHandler);
 
@@ -120,7 +120,7 @@ class SecurityTest extends TestCase
         $kernelHandler = $this->createMock(ezpWebBasedKernelHandler::class);
         $legacyKernel = $this
             ->getMockBuilder(Kernel::class)
-            ->setConstructorArgs(array($kernelHandler, 'foo', 'bar'))
+            ->setConstructorArgs([$kernelHandler, 'foo', 'bar'])
             ->getMock();
         $event = new PostBuildKernelEvent($legacyKernel, $kernelHandler);
 
@@ -141,7 +141,7 @@ class SecurityTest extends TestCase
         $kernelHandler = $this->createMock(ezpWebBasedKernelHandler::class);
         $legacyKernel = $this
             ->getMockBuilder(Kernel::class)
-            ->setConstructorArgs(array($kernelHandler, 'foo', 'bar'))
+            ->setConstructorArgs([$kernelHandler, 'foo', 'bar'])
             ->getMock();
         $event = new PostBuildKernelEvent($legacyKernel, $kernelHandler);
 
@@ -179,7 +179,7 @@ class SecurityTest extends TestCase
         $kernelHandler = $this->createMock(ezpWebBasedKernelHandler::class);
         $legacyKernel = $this
             ->getMockBuilder(Kernel::class)
-            ->setConstructorArgs(array($kernelHandler, 'foo', 'bar'))
+            ->setConstructorArgs([$kernelHandler, 'foo', 'bar'])
             ->getMock();
         $event = new PostBuildKernelEvent($legacyKernel, $kernelHandler);
 
@@ -228,14 +228,14 @@ class SecurityTest extends TestCase
         $versionInfo
             ->expects($this->any())
             ->method('getContentInfo')
-            ->will($this->returnValue(new ContentInfo(array('id' => $userId))));
+            ->will($this->returnValue(new ContentInfo(['id' => $userId])));
         $content = $this->getMockForAbstractClass(Content::class);
         $content
             ->expects($this->any())
             ->method('getVersionInfo')
             ->will($this->returnValue($versionInfo));
 
-        return new User(array('content' => $content));
+        return new User(['content' => $content]);
     }
 
     public function testOnLegacyKernelWebBuildLegacyMode()
@@ -246,7 +246,7 @@ class SecurityTest extends TestCase
             ->with('legacy_mode')
             ->will($this->returnValue(true));
 
-        $parameters = array('foo' => 'bar');
+        $parameters = ['foo' => 'bar'];
         $event = new PreBuildKernelWebHandlerEvent(new ParameterBag($parameters), new Request());
         $listener = new Security($this->repository, $this->configResolver, $this->tokenStorage, $this->authChecker);
         $listener->onLegacyKernelWebBuild($event);
@@ -272,108 +272,79 @@ class SecurityTest extends TestCase
 
     public function onLegacyKernelWebBuildProvider()
     {
-        return array(
-            array(
-                array(),
-                array(
-                    'injected-merge-settings' => array(
-                        'site.ini/SiteAccessRules/Rules' => array(
+        return [
+            [
+                [],
+                [
+                    'injected-merge-settings' => [
+                        'site.ini/SiteAccessRules/Rules' => [
                             'access;disable',
                             'module;user/login',
                             'module;user/logout',
-                        ),
-                    ),
-                ),
-            ),
-            array(
-                array(
+                        ],
+                    ],
+                ],
+            ],
+            [
+                [
                     'foo' => 'bar',
-                    'some' => array('thing'),
-                ),
-                array(
+                    'some' => ['thing'],
+                ],
+                [
                     'foo' => 'bar',
-                    'some' => array('thing'),
-                    'injected-merge-settings' => array(
-                        'site.ini/SiteAccessRules/Rules' => array(
+                    'some' => ['thing'],
+                    'injected-merge-settings' => [
+                        'site.ini/SiteAccessRules/Rules' => [
                             'access;disable',
                             'module;user/login',
                             'module;user/logout',
-                        ),
-                    ),
-                ),
-            ),
-            array(
-                array(
+                        ],
+                    ],
+                ],
+            ],
+            [
+                [
                     'foo' => 'bar',
-                    'some' => array('thing'),
-                    'injected-merge-settings' => array(
-                        'Empire' => array('Darth Vader', 'Emperor', 'Moff Tarkin'),
-                        'Rebellion' => array('Luke Skywalker', 'Leïa Organa', 'Obi-Wan Kenobi', 'Han Solo'),
+                    'some' => ['thing'],
+                    'injected-merge-settings' => [
+                        'Empire' => ['Darth Vader', 'Emperor', 'Moff Tarkin'],
+                        'Rebellion' => ['Luke Skywalker', 'Leïa Organa', 'Obi-Wan Kenobi', 'Han Solo'],
                         'Chewbacca' => 'Arrrrrhhhhhh!',
-                    ),
-                ),
-                array(
+                    ],
+                ],
+                [
                     'foo' => 'bar',
-                    'some' => array('thing'),
-                    'injected-merge-settings' => array(
-                        'Empire' => array('Darth Vader', 'Emperor', 'Moff Tarkin'),
-                        'Rebellion' => array('Luke Skywalker', 'Leïa Organa', 'Obi-Wan Kenobi', 'Han Solo'),
+                    'some' => ['thing'],
+                    'injected-merge-settings' => [
+                        'Empire' => ['Darth Vader', 'Emperor', 'Moff Tarkin'],
+                        'Rebellion' => ['Luke Skywalker', 'Leïa Organa', 'Obi-Wan Kenobi', 'Han Solo'],
                         'Chewbacca' => 'Arrrrrhhhhhh!',
-                        'site.ini/SiteAccessRules/Rules' => array(
+                        'site.ini/SiteAccessRules/Rules' => [
                             'access;disable',
                             'module;user/login',
                             'module;user/logout',
-                        ),
-                    ),
-                ),
-            ),
-            array(
-                array(
+                        ],
+                    ],
+                ],
+            ],
+            [
+                [
                     'foo' => 'bar',
-                    'some' => array('thing'),
-                    'injected-merge-settings' => array(
-                        'site.ini/SiteAccessRules/Rules' => array(
+                    'some' => ['thing'],
+                    'injected-merge-settings' => [
+                        'site.ini/SiteAccessRules/Rules' => [
                             'access;disable',
                             'module;ezinfo/about',
                             'access;enable',
                             'module;foo',
-                        ),
-                    ),
-                ),
-                array(
+                        ],
+                    ],
+                ],
+                [
                     'foo' => 'bar',
-                    'some' => array('thing'),
-                    'injected-merge-settings' => array(
-                        'site.ini/SiteAccessRules/Rules' => array(
-                            'access;disable',
-                            'module;ezinfo/about',
-                            'access;enable',
-                            'module;foo',
-                            'access;disable',
-                            'module;user/login',
-                            'module;user/logout',
-                        ),
-                    ),
-                ),
-            ),
-            array(
-                array(
-                    'foo' => 'bar',
-                    'some' => array('thing'),
-                    'injected-merge-settings' => array(
-                        'site.ini/SiteAccessRules/Rules' => array(
-                            'access;disable',
-                            'module;ezinfo/about',
-                            'access;enable',
-                            'module;foo',
-                        ),
-                    ),
-                ),
-                array(
-                    'foo' => 'bar',
-                    'some' => array('thing'),
-                    'injected-merge-settings' => array(
-                        'site.ini/SiteAccessRules/Rules' => array(
+                    'some' => ['thing'],
+                    'injected-merge-settings' => [
+                        'site.ini/SiteAccessRules/Rules' => [
                             'access;disable',
                             'module;ezinfo/about',
                             'access;enable',
@@ -381,10 +352,39 @@ class SecurityTest extends TestCase
                             'access;disable',
                             'module;user/login',
                             'module;user/logout',
-                        ),
-                    ),
-                ),
-            ),
-        );
+                        ],
+                    ],
+                ],
+            ],
+            [
+                [
+                    'foo' => 'bar',
+                    'some' => ['thing'],
+                    'injected-merge-settings' => [
+                        'site.ini/SiteAccessRules/Rules' => [
+                            'access;disable',
+                            'module;ezinfo/about',
+                            'access;enable',
+                            'module;foo',
+                        ],
+                    ],
+                ],
+                [
+                    'foo' => 'bar',
+                    'some' => ['thing'],
+                    'injected-merge-settings' => [
+                        'site.ini/SiteAccessRules/Rules' => [
+                            'access;disable',
+                            'module;ezinfo/about',
+                            'access;enable',
+                            'module;foo',
+                            'access;disable',
+                            'module;user/login',
+                            'module;user/logout',
+                        ],
+                    ],
+                ],
+            ],
+        ];
     }
 }

@@ -22,11 +22,11 @@ class LegacyConfigurationCommand extends ContainerAwareCommand
         $this
             ->setName('ezpublish:configure')
             ->setDefinition(
-                array(
+                [
                     new InputArgument('package', InputArgument::REQUIRED, 'Name of the installed package. Used to generate the settings group name. Example: ezdemo_site'),
                     new InputArgument('adminsiteaccess', InputArgument::REQUIRED, 'Name of your admin siteaccess. Example: ezdemo_site_admin'),
                     new InputOption('backup', null, InputOption::VALUE_NONE, 'Makes a backup of existing files if any'),
-                )
+                ]
             )
             ->setDescription('Creates the ezpublish 5 configuration based on an existing ezpublish_legacy')
             ->setHelp(

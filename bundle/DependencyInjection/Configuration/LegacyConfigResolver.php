@@ -80,7 +80,7 @@ class LegacyConfigResolver implements ConfigResolverInterface
         list($iniGroup, $paramName) = explode('.', $paramName, 2);
 
         return $this->getLegacyKernel()->runCallback(
-            function () use ($iniGroup, $paramName, $namespace, $scope) {
+            static function () use ($iniGroup, $paramName, $namespace, $scope) {
                 if (isset($scope)) {
                     $ini = eZINI::getSiteAccessIni($scope, "$namespace.ini");
                 } else {
@@ -115,7 +115,7 @@ class LegacyConfigResolver implements ConfigResolverInterface
         $namespace = str_replace('.ini', '', $namespace);
 
         return $this->getLegacyKernel()->runCallback(
-            function () use ($groupName, $namespace, $scope) {
+            static function () use ($groupName, $namespace, $scope) {
                 if (isset($scope)) {
                     $ini = eZINI::getSiteAccessIni($scope, "$namespace.ini");
                 } else {
@@ -155,7 +155,7 @@ class LegacyConfigResolver implements ConfigResolverInterface
         list($iniGroup, $paramName) = explode('.', $paramName, 2);
 
         return $this->getLegacyKernel()->runCallback(
-            function () use ($iniGroup, $paramName, $namespace, $scope) {
+            static function () use ($iniGroup, $paramName, $namespace, $scope) {
                 if (isset($scope)) {
                     $ini = eZINI::getSiteAccessIni($scope, "$namespace.ini");
                 } else {

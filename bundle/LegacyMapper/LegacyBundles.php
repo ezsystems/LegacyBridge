@@ -37,7 +37,7 @@ class LegacyBundles implements EventSubscriberInterface
 
     public function __construct(
         ConfigResolverInterface $configResolver,
-        array $options = array()
+        array $options = []
     ) {
         $this->configResolver = $configResolver;
         $this->options = $options;
@@ -55,9 +55,9 @@ class LegacyBundles implements EventSubscriberInterface
 
     public static function getSubscribedEvents()
     {
-        return array(
-            LegacyEvents::PRE_BUILD_LEGACY_KERNEL => array('onBuildKernel', 128),
-        );
+        return [
+            LegacyEvents::PRE_BUILD_LEGACY_KERNEL => ['onBuildKernel', 128],
+        ];
     }
 
     /**
@@ -77,7 +77,7 @@ class LegacyBundles implements EventSubscriberInterface
             return;
         }
 
-        $settings = array('site.ini/ExtensionSettings/ActiveExtensions' => $this->options['extensions']);
+        $settings = ['site.ini/ExtensionSettings/ActiveExtensions' => $this->options['extensions']];
 
         $event->getParameters()->set(
             'injected-merge-settings',

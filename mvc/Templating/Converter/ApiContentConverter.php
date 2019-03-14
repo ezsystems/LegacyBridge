@@ -32,7 +32,7 @@ class ApiContentConverter implements MultipleObjectConverter
     public function __construct(\Closure $legacyKernelClosure)
     {
         $this->legacyKernelClosure = $legacyKernelClosure;
-        $this->apiObjects = array();
+        $this->apiObjects = [];
     }
 
     /**
@@ -56,12 +56,12 @@ class ApiContentConverter implements MultipleObjectConverter
      */
     public function convert($object)
     {
-        if (!is_object($object)) {
-            throw new \InvalidArgumentException('Transferred object must be a real object. Got ' . gettype($object));
+        if (!\is_object($object)) {
+            throw new \InvalidArgumentException('Transferred object must be a real object. Got ' . \gettype($object));
         }
 
         return $this->getLegacyKernel()->runCallback(
-            function () use ($object) {
+            static function () use ($object) {
                 if ($object instanceof Content) {
                     return eZContentObject::fetch($object->getVersionInfo()->getContentInfo()->id);
                 } elseif ($object instanceof Location) {
@@ -86,8 +86,8 @@ class ApiContentConverter implements MultipleObjectConverter
      */
     public function register($object, $alias)
     {
-        if (!is_object($object)) {
-            throw new \InvalidArgumentException('Transferred object must be a real object. Got ' . gettype($object));
+        if (!\is_object($object)) {
+            throw new \InvalidArgumentException('Transferred object must be a real object. Got ' . \gettype($object));
         }
 
         $this->apiObjects[$alias] = $object;
@@ -102,12 +102,12 @@ class ApiContentConverter implements MultipleObjectConverter
     {
         $apiObjects = $this->apiObjects;
         if (empty($apiObjects)) {
-            return array();
+            return [];
         }
 
         return $this->getLegacyKernel()->runCallback(
-            function () use ($apiObjects) {
-                $convertedObjects = array();
+            static function () use ($apiObjects) {
+                $convertedObjects = [];
                 foreach ($apiObjects as $alias => $apiObject) {
                     if ($apiObject instanceof Content) {
                         $convertedObjects[$alias] = eZContentObject::fetch($apiObject->getVersionInfo()->getContentInfo()->id);

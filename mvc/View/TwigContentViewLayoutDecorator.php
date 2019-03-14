@@ -36,7 +36,7 @@ class TwigContentViewLayoutDecorator implements View
     /**
      * @var array
      */
-    protected $configHash = array();
+    protected $configHash = [];
 
     /**
      * @var \eZ\Publish\Core\MVC\ConfigResolverInterface
@@ -61,7 +61,7 @@ class TwigContentViewLayoutDecorator implements View
     public function __construct(Twig_Environment $twig, array $options, ConfigResolverInterface $configResolver)
     {
         $this->twig = $twig;
-        $this->options = $options + array('contentBlockName' => 'content');
+        $this->options = $options + ['contentBlockName' => 'content'];
         $this->configResolver = $configResolver;
     }
 
@@ -108,7 +108,7 @@ class TwigContentViewLayoutDecorator implements View
         $twig = $this->twig;
         $layout = $this->configResolver->getParameter('view_default_layout', 'ezpublish_legacy');
 
-        return function (array $params) use ($options, $contentView, $twig, $layout) {
+        return static function (array $params) use ($options, $contentView, $twig, $layout) {
             $contentViewClosure = $contentView->getTemplateIdentifier();
             if (isset($params['noLayout']) && $params['noLayout']) {
                 $layout = $options['viewbaseLayout'];
@@ -123,9 +123,9 @@ EOT;
 
             return $twig->render(
                 $twigContentTemplate,
-                $params + array(
+                $params + [
                     'viewResult' => $contentViewClosure($params),
-                )
+                ]
             );
         };
     }

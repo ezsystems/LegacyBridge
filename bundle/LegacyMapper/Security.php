@@ -67,10 +67,10 @@ class Security implements EventSubscriberInterface
 
     public static function getSubscribedEvents()
     {
-        return array(
+        return [
             LegacyEvents::POST_BUILD_LEGACY_KERNEL => 'onKernelBuilt',
             LegacyEvents::PRE_BUILD_LEGACY_KERNEL_WEB => 'onLegacyKernelWebBuild',
-        );
+        ];
     }
 
     /**
@@ -92,7 +92,7 @@ class Security implements EventSubscriberInterface
 
         $currentUser = $this->repository->getCurrentUser();
         $event->getLegacyKernel()->runCallback(
-            function () use ($currentUser) {
+            static function () use ($currentUser) {
                 $legacyUser = eZUser::fetch($currentUser->id);
                 eZUser::setCurrentlyLoggedInUser($legacyUser, $legacyUser->attribute('contentobject_id'), eZUser::NO_SESSION_REGENERATE);
             },
@@ -125,12 +125,12 @@ class Security implements EventSubscriberInterface
             return;
         }
 
-        $injectedMergeSettings = $event->getParameters()->get('injected-merge-settings', array());
-        $accessRules = array(
+        $injectedMergeSettings = $event->getParameters()->get('injected-merge-settings', []);
+        $accessRules = [
             'access;disable',
             'module;user/login',
             'module;user/logout',
-        );
+        ];
         // Merge existing settings with the new ones if needed.
         if (isset($injectedMergeSettings['site.ini/SiteAccessRules/Rules'])) {
             $accessRules = array_merge($injectedMergeSettings['site.ini/SiteAccessRules/Rules'], $accessRules);

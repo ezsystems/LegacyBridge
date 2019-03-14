@@ -23,7 +23,7 @@ class LegacyEngineTest extends TestCase
     {
         parent::setUp();
         $this->engine = new LegacyEngine(
-            function () {
+            static function () {
             },
             $this->createMock(MultipleObjectConverter::class)
         );
@@ -44,14 +44,14 @@ class LegacyEngineTest extends TestCase
 
     public function supportTestProvider()
     {
-        return array(
-            array('design:foo/bar.tpl', true),
-            array('file:some/path.tpl', true),
-            array('unsupported.php', false),
-            array('unsupported.tpl', false),
-            array('design:unsupported.php', false),
-            array('design:foo/bar.php', false),
-            array('file:some/path.php', false),
-        );
+        return [
+            ['design:foo/bar.tpl', true],
+            ['file:some/path.tpl', true],
+            ['unsupported.php', false],
+            ['unsupported.tpl', false],
+            ['design:unsupported.php', false],
+            ['design:foo/bar.php', false],
+            ['file:some/path.php', false],
+        ];
     }
 }

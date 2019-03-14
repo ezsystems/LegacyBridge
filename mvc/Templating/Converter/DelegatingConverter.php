@@ -32,8 +32,8 @@ class DelegatingConverter implements MultipleObjectConverter
 
     public function __construct(ObjectConverter $genericConverter)
     {
-        $this->convertersMap = array();
-        $this->objectsToConvert = array();
+        $this->convertersMap = [];
+        $this->objectsToConvert = [];
         $this->genericConverter = $genericConverter;
     }
 
@@ -69,11 +69,11 @@ class DelegatingConverter implements MultipleObjectConverter
      */
     public function convertAll()
     {
-        $convertedObjects = array();
-        $delegatingConverters = array();
+        $convertedObjects = [];
+        $delegatingConverters = [];
 
         foreach ($this->objectsToConvert as $alias => $obj) {
-            $className = get_class($obj);
+            $className = \get_class($obj);
             if (isset($this->convertersMap[$className])) {
                 $converter = $this->convertersMap[$className];
                 // MultipleObjectConverter => Register it for later conversion
@@ -109,7 +109,7 @@ class DelegatingConverter implements MultipleObjectConverter
      */
     public function convert($object)
     {
-        $className = get_class($object);
+        $className = \get_class($object);
         if (isset($this->convertersMap[$className])) {
             $converter = $this->convertersMap[$className];
         } else {

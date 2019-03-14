@@ -49,11 +49,11 @@ class CLIHandler implements ezpKernelHandler
      * @param \eZ\Publish\Core\MVC\Symfony\SiteAccess $siteAccess
      * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
      */
-    public function __construct(array $settings = array(), SiteAccess $siteAccess = null, ContainerInterface $container = null)
+    public function __construct(array $settings = [], SiteAccess $siteAccess = null, ContainerInterface $container = null)
     {
         $this->container = $container;
         if (isset($settings['injected-settings'])) {
-            $injectedSettings = array();
+            $injectedSettings = [];
             foreach ($settings['injected-settings'] as $keySetting => $injectedSetting) {
                 list($file, $section, $setting) = explode('/', $keySetting);
                 $injectedSettings[$file][$section][$setting] = $injectedSetting;
@@ -64,7 +64,7 @@ class CLIHandler implements ezpKernelHandler
         }
 
         if (isset($settings['injected-merge-settings'])) {
-            $injectedSettings = array();
+            $injectedSettings = [];
             foreach ($settings['injected-merge-settings'] as $keySetting => $injectedSetting) {
                 list($file, $section, $setting) = explode('/', $keySetting);
                 $injectedSettings[$file][$section][$setting] = $injectedSetting;
@@ -106,7 +106,7 @@ class CLIHandler implements ezpKernelHandler
 
         // start output buffering before including legacy script to filter unwanted output.
         ob_start(
-            function ($buffer) {
+            static function ($buffer) {
                 static $startFlag = false;
                 // remove shebang line from start of script, if any
                 if (!$startFlag) {

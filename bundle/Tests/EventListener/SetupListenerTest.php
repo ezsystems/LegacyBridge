@@ -33,11 +33,11 @@ class SetupListenerTest extends TestCase
     public function testSubscribedEvents()
     {
         $this->assertSame(
-            array(
-                KernelEvents::REQUEST => array(
-                    array('onKernelRequestSetup', 190),
-                ),
-            ),
+            [
+                KernelEvents::REQUEST => [
+                    ['onKernelRequestSetup', 190],
+                ],
+            ],
             $this->getListener()->getSubscribedEvents()
         );
     }

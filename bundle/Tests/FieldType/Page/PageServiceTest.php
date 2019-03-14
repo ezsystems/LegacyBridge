@@ -17,33 +17,33 @@ class PageServiceTest extends BaseTest
 
     protected function getZoneDefinition()
     {
-        return parent::getZoneDefinition() + array(
-            'layoutLegacy1' => array(
+        return parent::getZoneDefinition() + [
+            'layoutLegacy1' => [
                 'zoneTypeName' => 'Layout legacy 1',
-                'zones' => array(
-                    'main' => array('name' => 'Global zone'),
-                ),
+                'zones' => [
+                    'main' => ['name' => 'Global zone'],
+                ],
                 'zoneThumbnail' => 'globalzone_layout.gif',
                 'template' => 'legacytemplate.tpl',
-                'availableForClasses' => array('frontpage'),
-            ),
-            'layoutLegacy2' => array(
+                'availableForClasses' => ['frontpage'],
+            ],
+            'layoutLegacy2' => [
                 'zoneTypeName' => 'Layout legacy 2',
-                'zones' => array(
-                    'main' => array('name' => 'Global zone'),
-                ),
+                'zones' => [
+                    'main' => ['name' => 'Global zone'],
+                ],
                 'zoneThumbnail' => 'globalzone_layout.gif',
                 'template' => 'design:foo/legacytemplate.tpl',
-                'availableForClasses' => array('frontpage'),
-            ),
-        );
+                'availableForClasses' => ['frontpage'],
+            ],
+        ];
     }
 
     public function getLayoutTemplateProvider()
     {
-        return parent::getLayoutTemplateProvider() + array(
-            array('layoutLegacy1', 'design:zone/legacytemplate.tpl'),
-            array('layoutLegacy2', 'design:zone/foo/legacytemplate.tpl'),
-        );
+        return parent::getLayoutTemplateProvider() + [
+            ['layoutLegacy1', 'design:zone/legacytemplate.tpl'],
+            ['layoutLegacy2', 'design:zone/foo/legacytemplate.tpl'],
+        ];
     }
 }

@@ -33,7 +33,7 @@ class KernelTest extends TestCase
         $iterations = 1;
         do {
             try {
-                $this->getLegacyKernel()->runCallback(function () {});
+                $this->getLegacyKernel()->runCallback(static function () {});
             }
             // this will occur on the 2nd iteration if the kernel state hasn't been correctly reset
             catch (RuntimeException $e) {

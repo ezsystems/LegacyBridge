@@ -19,10 +19,10 @@ class LegacyExtensionsLocator implements LegacyExtensionsLocatorInterface
         $legacyPath = "$bundlePath/ezpublish_legacy/";
 
         if (!is_dir($legacyPath)) {
-            return array();
+            return [];
         }
 
-        $return = array();
+        $return = [];
         /** @var $item DirectoryIterator */
         foreach (new DirectoryIterator($legacyPath) as $item) {
             if (!$item->isDir() || $item->isDot()) {
@@ -42,7 +42,7 @@ class LegacyExtensionsLocator implements LegacyExtensionsLocatorInterface
         $extensions = $this->getExtensionDirectories($bundle->getPath());
         array_walk(
             $extensions,
-            function (&$path) {
+            static function (&$path) {
                 $path = basename($path);
             }
         );

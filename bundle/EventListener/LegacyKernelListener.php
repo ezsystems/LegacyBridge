@@ -48,7 +48,7 @@ class LegacyKernelListener implements EventSubscriberInterface
     public function onKernelReset(PreResetLegacyKernelEvent $event)
     {
         $event->getLegacyKernel()->runCallback(
-            function () {
+            static function () {
                 eZINI::resetAllInstances();
             },
             true,

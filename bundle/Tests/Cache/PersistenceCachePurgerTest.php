@@ -11,7 +11,6 @@ namespace eZ\Bundle\EzPublishLegacyBundle\Tests\Cache;
 use eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger;
 use eZ\Publish\SPI\Persistence\Content\Location;
 use eZ\Publish\SPI\Persistence\Content\Location\Handler;
-use eZ\Publish\Core\Base\Exceptions\NotFoundException;
 use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
 use PHPUnit\Framework\TestCase;
 
@@ -150,7 +149,7 @@ class PersistenceCachePurgerTest extends TestCase
         $locationId3 = 3;
         $contentId3 = 30;
 
-        $locationIds = array($locationId1, $locationId2, $locationId3);
+        $locationIds = [$locationId1, $locationId2, $locationId3];
 
         $this->locationHandler
             ->expects($this->once())
@@ -167,16 +166,16 @@ class PersistenceCachePurgerTest extends TestCase
             ->method('clear')
             ->will(
                 $this->returnValueMap(
-                    array(
-                        array('content', $contentId1, null),
-                        array('content', 'info', $contentId1, null),
-                        array('content', $contentId2, null),
-                        array('content', 'info', $contentId2, null),
-                        array('content', $contentId3, null),
-                        array('content', 'info', $contentId3, null),
-                        array('urlAlias', null),
-                        array('location', null),
-                    )
+                    [
+                        ['content', $contentId1, null],
+                        ['content', 'info', $contentId1, null],
+                        ['content', $contentId2, null],
+                        ['content', 'info', $contentId2, null],
+                        ['content', $contentId3, null],
+                        ['content', 'info', $contentId3, null],
+                        ['urlAlias', null],
+                        ['location', null],
+                    ]
                 )
             );
 
@@ -202,17 +201,17 @@ class PersistenceCachePurgerTest extends TestCase
             ->method('clear')
             ->will(
                 $this->returnValueMap(
-                    array(
-                        array('content', $contentId, null),
-                        array('content', 'info', $contentId, null),
-                        array('content', 'info', 'remoteId', null),
-                        array('urlAlias', null),
-                        array('location', null),
-                    )
+                    [
+                        ['content', $contentId, null],
+                        ['content', 'info', $contentId, null],
+                        ['content', 'info', 'remoteId', null],
+                        ['urlAlias', null],
+                        ['location', null],
+                    ]
                 )
             );
 
-        $this->assertSame(array($locationId), $this->cachePurger->content($locationId));
+        $this->assertSame([$locationId], $this->cachePurger->content($locationId));
     }
 
     /**
@@ -223,20 +222,20 @@ class PersistenceCachePurgerTest extends TestCase
     private function buildLocation($locationId, $contentId)
     {
         return new Location(
-            array(
+            [
                 'id' => $locationId,
                 'contentId' => $contentId,
-            )
+            ]
         );
     }
 
     /**
-     * @expectedException \eZ\Publish\Core\Base\Exceptions\InvalidArgumentType
-     *
      * @covers \eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger::content
      */
     public function testClearContentFail()
     {
+        $this->expectException(\eZ\Publish\Core\Base\Exceptions\InvalidArgumentType::class);
+
         $this->cachePurger->content(new \stdClass());
     }
 
@@ -267,12 +266,12 @@ class PersistenceCachePurgerTest extends TestCase
     }
 
     /**
-     * @expectedException \eZ\Publish\Core\Base\Exceptions\InvalidArgumentType
-     *
      * @covers \eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger::contentType
      */
     public function testClearContentTypeFail()
     {
+        $this->expectException(\eZ\Publish\Core\Base\Exceptions\InvalidArgumentType::class);
+
         $this->cachePurger->contentType(new \stdClass());
     }
 
@@ -290,12 +289,12 @@ class PersistenceCachePurgerTest extends TestCase
     }
 
     /**
-     * @expectedException \eZ\Publish\Core\Base\Exceptions\InvalidArgumentType
-     *
      * @covers \eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger::contentTypeGroup
      */
     public function testClearContentTypeGroupFail()
     {
+        $this->expectException(\eZ\Publish\Core\Base\Exceptions\InvalidArgumentType::class);
+
         $this->cachePurger->contentTypeGroup(new \stdClass());
     }
 
@@ -313,12 +312,12 @@ class PersistenceCachePurgerTest extends TestCase
     }
 
     /**
-     * @expectedException \eZ\Publish\Core\Base\Exceptions\InvalidArgumentType
-     *
      * @covers \eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger::section
      */
     public function testClearSectionFail()
     {
+        $this->expectException(\eZ\Publish\Core\Base\Exceptions\InvalidArgumentType::class);
+
         $this->cachePurger->section(new \stdClass());
     }
 
@@ -336,7 +335,7 @@ class PersistenceCachePurgerTest extends TestCase
             ->method('invalidateTags')
             ->with(['language-123', 'language-456', 'language-789']);
 
-        $this->cachePurger->languages(array($languageId1, $languageId2, $languageId3));
+        $this->cachePurger->languages([$languageId1, $languageId2, $languageId3]);
     }
 
     /**
@@ -382,12 +381,12 @@ class PersistenceCachePurgerTest extends TestCase
     }
 
     /**
-     * @expectedException \eZ\Publish\Core\Base\Exceptions\InvalidArgumentType
-     *
      * @covers \eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger::user
      */
     public function testClearUserFail()
     {
+        $this->expectException(\eZ\Publish\Core\Base\Exceptions\InvalidArgumentType::class);
+
         $this->cachePurger->user(new \stdClass());
     }
 

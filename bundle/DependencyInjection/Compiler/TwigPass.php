@@ -28,6 +28,6 @@ class TwigPass implements CompilerPassInterface
         // Mentioned side effects are losing extensions/loaders addition for which method calls are added in the TwigEnvironmentPass
         $container->getDefinition('twig')
             ->setClass(Environment::class)
-            ->addMethodCall('setEzLegacyEngine', array(new Reference('templating.engine.eztpl')));
+            ->addMethodCall('setEzLegacyEngine', [new Reference('templating.engine.eztpl')]);
     }
 }

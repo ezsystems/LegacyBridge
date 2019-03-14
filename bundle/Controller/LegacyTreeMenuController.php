@@ -19,7 +19,7 @@ class LegacyTreeMenuController extends Controller
      */
     protected $treeMenuKernel;
 
-    public function __construct(\Closure $treeMenuKernelHandler, Loader $legacyKernelFactory, array $options = array())
+    public function __construct(\Closure $treeMenuKernelHandler, Loader $legacyKernelFactory, array $options = [])
     {
         $kernelClosure = $legacyKernelFactory->buildLegacyKernel($treeMenuKernelHandler);
         $this->treeMenuKernel = $kernelClosure();

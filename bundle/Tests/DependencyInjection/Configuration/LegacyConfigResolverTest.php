@@ -31,7 +31,7 @@ class LegacyConfigResolverTest extends TestCase
     {
         parent::setUp();
         $legacyKernel = $this->legacyKernel = $this->createMock(ezpKernelHandler::class);
-        $kernelClosure = function () use ($legacyKernel) {
+        $kernelClosure = static function () use ($legacyKernel) {
             return $legacyKernel;
         };
 
@@ -69,18 +69,17 @@ class LegacyConfigResolverTest extends TestCase
 
     public function hasParameterProvider()
     {
-        return array(
-            array('Foo.Bar', null, true),
-            array('Foo.Bar.baz', null, false),
-            array('Foo.Babar', 'foo.ini', true),
-        );
+        return [
+            ['Foo.Bar', null, true],
+            ['Foo.Bar.baz', null, false],
+            ['Foo.Babar', 'foo.ini', true],
+        ];
     }
 
-    /**
-     * @expectedException \eZ\Publish\Core\MVC\Exception\ParameterNotFoundException
-     */
     public function testGetParameterInvalidParam()
     {
+        $this->expectException(\eZ\Publish\Core\MVC\Exception\ParameterNotFoundException::class);
+
         $this->legacyKernel
             ->expects($this->never())
             ->method('runCallback');
@@ -102,18 +101,17 @@ class LegacyConfigResolverTest extends TestCase
 
     public function getParameterProvider()
     {
-        return array(
-            array('Foo.Bar', null, 'something'),
-            array('Foo.Bar.baz', null, array('blabla')),
-            array('Foo.Babar', 'foo.ini', 'enabled'),
-        );
+        return [
+            ['Foo.Bar', null, 'something'],
+            ['Foo.Bar.baz', null, ['blabla']],
+            ['Foo.Babar', 'foo.ini', 'enabled'],
+        ];
     }
 
-    /**
-     * @expectedException \eZ\Publish\Core\MVC\Exception\ParameterNotFoundException
-     */
     public function testGetNonExistentParameter()
     {
+        $this->expectException(\eZ\Publish\Core\MVC\Exception\ParameterNotFoundException::class);
+
         $paramName = 'Foo.Bar';
         $namespace = 'foo';
         $this->legacyKernel
