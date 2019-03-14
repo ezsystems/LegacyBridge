@@ -12,13 +12,14 @@
     "minimum-stability": "stable",
     "require": {
         "ezsystems/ezpublish-legacy-installer": "^2.0.4",
-        "ezsystems/ezpublish-legacy": "^2018.09 | ^2019.02",
+        "ezsystems/ezpublish-legacy": "^2018.09 || ^2019.02",
         "ezsystems/ezpublish-kernel": "^7.4",
         "ezsystems/ezplatform-xmltext-fieldtype": "^1.8",
         "sensio/distribution-bundle": "^5.0.22",
-        "twig/twig": "^1.35 | ^2.5"
+        "twig/twig": "^1.35 || ^2.5"
     },
     "require-dev": {
+      "friendsofphp/php-cs-fixer": "v2.14.2",
         "ezsystems/ezplatform-http-cache": "*",
         "matthiasnoback/symfony-dependency-injection-test": "^2.3",
         "phpunit/phpunit": "^6.5",
@@ -30,8 +31,9 @@
             "eZ\\Publish\\Core\\MVC\\Legacy\\": "mvc"
         }
     },
-    "config": {
-        "bin-dir": "bin"
+    "scripts": {
+        "fix-cs": "php-cs-fixer fix -v --show-progress=estimating",
+        "test": "phpunit"
     },
     "extra": {
         "ezpublish-legacy-dir": "ezpublish_legacy",
