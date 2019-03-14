@@ -1,37 +1,45 @@
-sudo: false
+dist: xenial
 language: php
 
+env:
+  global:
+    # In order to specify extra flags like ignoring platform reqs, using only stable packages and so on.
+    - COMPOSER_FLAGS=""
+
 # run tests on php misc php versions
-php:
-  - 5.6
-  - 7.0
-  - 7.1
+matrix:
+  fast_finish: true
+  include:
+    - php: 5.6
+    - php: 7.0
+    - php: 7.1
+    - php: 7.2
+      env: CHECK_CS=true
 
 cache:
   directories:
-    - $HOME/.composer/cache/files
+    - "$HOME/.composer/cache"
 
 # test only master (+ Pull requests)
 branches:
   only:
     - master
-    - 1.5
+    - /^\d.\d+$/
 
 # setup requirements for running unit tests
 before_script:
-  # Disable xdebug to speed things up as we don't currently generate coverge on travis
-  - if [ $TRAVIS_PHP_VERSION != "hhvm" ]; then phpenv config-rm xdebug.ini ; fi
-  # Avoid issues on composer install since we pull in both legacy and platform stack
+  # Disable xdebug and remove memory limit to speed things up
+  - phpenv config-rm xdebug.ini
   - echo "memory_limit=-1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
   # Setup github key to avoid api rate limit (pure auth read only key, no rights, for use in ezsystems repos only)
   - composer config -g github-oauth.github.com "d0285ed5c8644f30547572ead2ed897431c1fc09"
   # Install packages using composer
-  - travis_retry composer install --dev --prefer-dist
-  # Copy default test configuration
-  - cp config.php-DEVELOPMENT config.php
+  - travis_retry composer install --dev --prefer-dist  --no-interaction --no-progress $COMPOSER_FLAGS
 
 # execute phpunit as the script command
-script: "php -d date.timezone='America/New_York' -d memory_limit=-1 bin/phpunit"
+script:
+  - composer test
+  - if [ "$CHECK_CS" != "" ]; then ./vendor/bin/php-cs-fixer fix -v --dry-run --diff --show-progress=estimating; fi
 
 # disable mail notifications
 notifications:
@@ -39,4 +47,4 @@ notifications:
 
 # reduce depth (history) of git checkout
 git:
-  depth: 30
+  depth: 2

@@ -19,6 +19,7 @@
         "twig/twig": "^1.35 | ^2.5"
     },
     "require-dev": {
+        "friendsofphp/php-cs-fixer": "v2.14.2",
         "matthiasnoback/symfony-dependency-injection-test": "^1.1",
         "phpunit/phpunit": "^5.7.27",
         "mikey179/vfsStream": "~1.1.0"
@@ -29,8 +30,9 @@
             "eZ\\Publish\\Core\\MVC\\Legacy\\": "mvc"
         }
     },
-    "config": {
-        "bin-dir": "bin"
+    "scripts": {
+        "fix-cs": "php-cs-fixer fix -v --show-progress=estimating",
+        "test": "phpunit"
     },
     "extra": {
         "ezpublish-legacy-dir": "ezpublish_legacy",
