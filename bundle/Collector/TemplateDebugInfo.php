@@ -23,7 +23,7 @@ class TemplateDebugInfo
      */
     public static function getLegacyTemplatesList(\Closure $legacyKernel)
     {
-        $templateList = array('compact' => array(), 'full' => array());
+        $templateList = ['compact' => [], 'full' => []];
         // Only retrieve legacy templates list if the kernel has been booted at least once.
         if (!LegacyKernel::hasInstance()) {
             return $templateList;
@@ -31,7 +31,7 @@ class TemplateDebugInfo
 
         try {
             $templateStats = $legacyKernel()->runCallback(
-                function () {
+                static function () {
                     if (eZTemplate::isTemplatesUsageStatisticsEnabled()) {
                         return eZTemplate::templatesUsageStatistics();
                     } else {
@@ -53,7 +53,7 @@ class TemplateDebugInfo
         } catch (RuntimeException $e) {
             // Ignore the exception thrown by legacy kernel as this would break debug toolbar (and thus debug info display).
             // Furthermore, some legacy kernel handlers don't support runCallback (e.g. ezpKernelTreeMenu)
-            $templateStats = array();
+            $templateStats = [];
         }
 
         foreach ($templateStats as $tplInfo) {
@@ -61,10 +61,10 @@ class TemplateDebugInfo
             $actualTpl = $tplInfo['actual-template-name'];
             $fullPath = $tplInfo['template-filename'];
 
-            $templateList['full'][$actualTpl] = array(
+            $templateList['full'][$actualTpl] = [
                 'loaded' => $requestedTpl,
                 'fullPath' => $fullPath,
-            );
+            ];
             if (!isset($templateList['compact'][$actualTpl])) {
                 $templateList['compact'][$actualTpl] = 1;
             } else {

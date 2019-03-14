@@ -22,18 +22,18 @@ class SiteAccess implements EventSubscriberInterface
 {
     use ContainerAwareTrait;
 
-    protected $options = array();
+    protected $options = [];
 
-    public function __construct(array $options = array())
+    public function __construct(array $options = [])
     {
         $this->options = $options;
     }
 
     public static function getSubscribedEvents()
     {
-        return array(
-            LegacyEvents::PRE_BUILD_LEGACY_KERNEL_WEB => array('onBuildKernelWebHandler', 128),
-        );
+        return [
+            LegacyEvents::PRE_BUILD_LEGACY_KERNEL_WEB => ['onBuildKernelWebHandler', 128],
+        ];
     }
 
     /**
@@ -45,7 +45,7 @@ class SiteAccess implements EventSubscriberInterface
     {
         $siteAccess = $this->container->get('ezpublish.siteaccess');
         $request = $event->getRequest();
-        $uriPart = array();
+        $uriPart = [];
 
         // Convert matching type
         switch ($siteAccess->matchingType) {
@@ -104,19 +104,19 @@ class SiteAccess implements EventSubscriberInterface
                 throw new \RuntimeException('Compound matcher used but not submatchers found.');
             }
 
-            if (count($subMatchers) == 2 && isset($subMatchers['Map\Host']) && isset($subMatchers['Map\URI'])) {
+            if (\count($subMatchers) == 2 && isset($subMatchers['Map\Host']) && isset($subMatchers['Map\URI'])) {
                 $legacyAccessType = eZSiteAccess::TYPE_HTTP_HOST_URI;
-                $uriPart = array($subMatchers['Map\URI']->getMapKey());
+                $uriPart = [$subMatchers['Map\URI']->getMapKey()];
             }
         }
 
         $event->getParameters()->set(
             'siteaccess',
-            array(
+            [
                 'name' => $siteAccess->name,
                 'type' => $legacyAccessType,
                 'uri_part' => $uriPart,
-            )
+            ]
         );
     }
 
@@ -130,6 +130,6 @@ class SiteAccess implements EventSubscriberInterface
             return explode('/', trim($this->options['fragment_path'], '/'));
         }
 
-        return array('_fragment');
+        return ['_fragment'];
     }
 }

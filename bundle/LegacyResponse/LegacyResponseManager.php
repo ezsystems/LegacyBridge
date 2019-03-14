@@ -86,7 +86,7 @@ class LegacyResponseManager
 
             $response = $this->render(
                 $this->legacyLayout,
-                array('module_result' => $moduleResult)
+                ['module_result' => $moduleResult]
             );
 
             $response->setModuleResult($moduleResult);
@@ -168,7 +168,7 @@ class LegacyResponseManager
      *
      * @return \eZ\Bundle\EzPublishLegacyBundle\LegacyResponse A LegacyResponse instance
      */
-    private function render($view, array $parameters = array())
+    private function render($view, array $parameters = [])
     {
         $response = new LegacyResponse();
         $response->setContent($this->templateEngine->render($view, $parameters));

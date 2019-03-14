@@ -37,7 +37,7 @@ class LegacyHelper extends ParameterBag
         $that = $this;
 
         $kernelClosure()->runCallback(
-            function () use ($moduleResult, $that) {
+            static function () use ($moduleResult, $that) {
                 // Injecting all $moduleResult entries in the legacy helper
                 foreach ($moduleResult as $key => $val) {
                     if ($key === 'content') {

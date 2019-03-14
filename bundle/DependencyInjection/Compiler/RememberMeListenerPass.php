@@ -22,6 +22,6 @@ class RememberMeListenerPass implements CompilerPassInterface
 
         $container->findDefinition('security.authentication.listener.rememberme')
             ->setClass('eZ\Bundle\EzPublishLegacyBundle\Security\RememberMeListener')
-            ->addMethodCall('setConfigResolver', array(new Reference('ezpublish.config.resolver')));
+            ->addMethodCall('setConfigResolver', [new Reference('ezpublish.config.resolver')]);
     }
 }

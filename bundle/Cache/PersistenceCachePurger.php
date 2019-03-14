@@ -116,12 +116,12 @@ class PersistenceCachePurger implements CacheClearerInterface
         if ($locationIds === null) {
             $this->cache->clear('content');
             goto relatedCache;
-        } elseif (!is_array($locationIds)) {
-            $locationIds = array($locationIds);
+        } elseif (!\is_array($locationIds)) {
+            $locationIds = [$locationIds];
         }
 
         if ($contentIds === null) {
-            $contentIds = array();
+            $contentIds = [];
         }
 
         foreach ($locationIds as $id) {

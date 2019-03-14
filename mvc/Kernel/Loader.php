@@ -121,7 +121,7 @@ class Loader
         $logger = $this->logger;
         $that = $this;
 
-        return function () use ($legacyKernelHandler, $legacyRootDir, $webrootDir, $eventDispatcher, $logger, $that) {
+        return static function () use ($legacyKernelHandler, $legacyRootDir, $webrootDir, $eventDispatcher, $logger, $that) {
             if (LegacyKernel::hasInstance()) {
                 return LegacyKernel::instance();
             }
@@ -150,7 +150,7 @@ class Loader
      *
      * @return \Closure
      */
-    public function buildLegacyKernelHandlerWeb($webHandlerClass, array $defaultLegacyOptions = array())
+    public function buildLegacyKernelHandlerWeb($webHandlerClass, array $defaultLegacyOptions = [])
     {
         $legacyRootDir = $this->legacyRootDir;
         $webrootDir = $this->webrootDir;
@@ -221,7 +221,7 @@ class Loader
         $container = $this->container;
         $that = $this;
 
-        return function () use ($legacyRootDir, $container, $eventDispatcher, $that) {
+        return static function () use ($legacyRootDir, $container, $eventDispatcher, $that) {
             if (!$that->getCLIHandler()) {
                 $currentDir = getcwd();
                 chdir($legacyRootDir);
@@ -264,10 +264,10 @@ class Loader
     {
         return $this->buildLegacyKernelHandlerWeb(
             $this->container->getParameter('ezpublish_legacy.kernel_handler.treemenu.class'),
-            array(
+            [
                 'use-cache-headers' => false,
                 'use-exceptions' => true,
-            )
+            ]
         );
     }
 

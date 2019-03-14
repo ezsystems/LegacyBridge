@@ -20,7 +20,7 @@ class PostBuildKernelEventTest extends TestCase
         $kernelHandler = $this->createMock(ezpKernelHandler::class);
         $legacyKernel = $this
             ->getMockBuilder(Kernel::class)
-            ->setConstructorArgs(array($kernelHandler, 'foo', 'bar'))
+            ->setConstructorArgs([$kernelHandler, 'foo', 'bar'])
             ->getMock();
         $event = new PostBuildKernelEvent($legacyKernel, $kernelHandler);
         $this->assertSame($legacyKernel, $event->getLegacyKernel());

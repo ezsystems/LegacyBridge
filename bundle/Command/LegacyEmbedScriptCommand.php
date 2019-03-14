@@ -60,7 +60,7 @@ EOT
         }
 
         $siteAccess = $input->getOption('siteaccess');
-        if ($siteAccess && !in_array("--siteaccess=$siteAccess", $_SERVER['argv'])) {
+        if ($siteAccess && !\in_array("--siteaccess=$siteAccess", $_SERVER['argv'])) {
             $_SERVER['argv'][] = "--siteaccess=$siteAccess";
             $GLOBALS['argv'][] = "--siteaccess=$siteAccess";
         }

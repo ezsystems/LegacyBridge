@@ -41,16 +41,16 @@ class Location extends Provider implements ViewProvider
         $logger = $this->logger;
         $legacyHelper = $this->legacyHelper;
         $currentViewProvider = $this;
-        $viewParameters = array();
+        $viewParameters = [];
         $request = $this->getCurrentRequest();
         if (isset($request)) {
-            $viewParameters = $request->attributes->get('viewParameters', array());
+            $viewParameters = $request->attributes->get('viewParameters', []);
         }
 
         $viewType = $view->getViewType();
         $location = $view->getLocation();
 
-        $legacyContentClosure = function (array $params) use ($location, $viewType, $logger, $legacyHelper, $viewParameters, $currentViewProvider) {
+        $legacyContentClosure = static function (array $params) use ($location, $viewType, $logger, $legacyHelper, $viewParameters, $currentViewProvider) {
             $content = isset($params['content']) ? $params['content'] : null;
             // Additional parameters (aka user parameters in legacy) are expected to be scalar
             foreach ($params as $paramName => $param) {
@@ -59,7 +59,7 @@ class Location extends Provider implements ViewProvider
                     if (isset($logger)) {
                         $logger->notice(
                             "'$paramName' is not scalar, cannot pass it to legacy content module. Skipping.",
-                            array(__METHOD__)
+                            [__METHOD__]
                         );
                     }
                 }
@@ -96,15 +96,15 @@ class Location extends Provider implements ViewProvider
      */
     public function renderPublishedView(APILocation $location, $viewType, array $params, LegacyHelper $legacyHelper)
     {
-        $moduleResult = array();
+        $moduleResult = [];
 
         // Filling up moduleResult
         $result = $this->getLegacyKernel()->runCallback(
-            function () use ($location, $viewType, $params, &$moduleResult) {
+            static function () use ($location, $viewType, $params, &$moduleResult) {
                 $contentViewModule = eZModule::findModule('content');
                 $moduleResult = $contentViewModule->run(
                     'view',
-                    array($viewType, $location->id),
+                    [$viewType, $location->id],
                     false,
                     $params
                 );
@@ -132,17 +132,17 @@ class Location extends Provider implements ViewProvider
     {
         /** @var \eZ\Publish\Core\MVC\Symfony\SiteAccess $siteAccess */
         $siteAccess = $this->getCurrentRequest()->attributes->get('siteaccess');
-        $moduleResult = array();
+        $moduleResult = [];
 
         // Filling up moduleResult
         $result = $this->getLegacyKernel()->runCallback(
-            function () use ($content, $params, $siteAccess, &$moduleResult) {
+            static function () use ($content, $params, $siteAccess, &$moduleResult) {
                 $contentViewModule = eZModule::findModule('content');
                 $moduleResult = $contentViewModule->run(
                     'versionview',
-                    array($content->contentInfo->id, $content->getVersionInfo()->versionNo, $content->getVersionInfo()->languageCodes[0]),
+                    [$content->contentInfo->id, $content->getVersionInfo()->versionNo, $content->getVersionInfo()->languageCodes[0]],
                     false,
-                    array('site_access' => $siteAccess->name) + $params
+                    ['site_access' => $siteAccess->name] + $params
                 );
 
                 return ezpEvent::getInstance()->filter('response/output', $moduleResult['content']);

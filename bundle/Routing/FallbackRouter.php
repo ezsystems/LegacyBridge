@@ -102,7 +102,7 @@ class FallbackRouter implements RouterInterface, RequestMatcherInterface
      *
      * @api
      */
-    public function generate($name, $parameters = array(), $referenceType = self::ABSOLUTE_PATH)
+    public function generate($name, $parameters = [], $referenceType = self::ABSOLUTE_PATH)
     {
         if ($name === self::ROUTE_NAME) {
             if (!isset($parameters['module_uri'])) {
@@ -129,10 +129,10 @@ class FallbackRouter implements RouterInterface, RequestMatcherInterface
                      . $request->attributes->get('viewParametersString', '')
                      . '?' . $request->getQueryString();
 
-        return array(
+        return [
             '_route' => self::ROUTE_NAME,
             '_controller' => 'ezpublish_legacy.controller:indexAction',
             'module_uri' => $moduleUri,
-        );
+        ];
     }
 }

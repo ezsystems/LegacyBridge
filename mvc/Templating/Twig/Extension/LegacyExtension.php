@@ -65,16 +65,16 @@ class LegacyExtension extends Twig_Extension implements Twig_Extension_InitRunti
      *
      * @deprecated since 5.1
      */
-    public function renderTemplate($tplPath, array $params = array())
+    public function renderTemplate($tplPath, array $params = [])
     {
         return $this->legacyEngine->render($tplPath, $params);
     }
 
     public function getTokenParsers()
     {
-        return array(
+        return [
             new LegacyIncludeParser(),
-        );
+        ];
     }
 
     /**
@@ -84,7 +84,7 @@ class LegacyExtension extends Twig_Extension implements Twig_Extension_InitRunti
      */
     public function getName()
     {
-        return get_class($this);
+        return \get_class($this);
     }
 
     /**
@@ -104,18 +104,18 @@ class LegacyExtension extends Twig_Extension implements Twig_Extension_InitRunti
      */
     public function getFunctions()
     {
-        return array(
+        return [
             new Twig_SimpleFunction(
                 'ez_legacy_render_js',
-                array($this, 'renderLegacyJs'),
-                array('is_safe' => array('html'))
+                [$this, 'renderLegacyJs'],
+                ['is_safe' => ['html']]
             ),
             new Twig_SimpleFunction(
                 'ez_legacy_render_css',
-                array($this, 'renderLegacyCss'),
-                array('is_safe' => array('html'))
+                [$this, 'renderLegacyCss'],
+                ['is_safe' => ['html']]
             ),
-        );
+        ];
     }
 
     /**
@@ -125,10 +125,10 @@ class LegacyExtension extends Twig_Extension implements Twig_Extension_InitRunti
      */
     public function renderLegacyJs()
     {
-        $jsFiles = array();
-        $jsCodeLines = array();
+        $jsFiles = [];
+        $jsCodeLines = [];
 
-        foreach ($this->legacyHelper->get('js_files', array()) as $jsItem) {
+        foreach ($this->legacyHelper->get('js_files', []) as $jsItem) {
             // List of items can contain empty elements, path to files or code
             if (!empty($jsItem)) {
                 if (isset($jsItem[4]) && $this->isFile($jsItem, '.js')) {
@@ -141,10 +141,10 @@ class LegacyExtension extends Twig_Extension implements Twig_Extension_InitRunti
 
         return $this->environment->render(
             $this->jsTemplate,
-            array(
+            [
                 'js_files' => $jsFiles,
                 'js_code_lines' => $jsCodeLines,
-            )
+            ]
         );
     }
 
@@ -155,10 +155,10 @@ class LegacyExtension extends Twig_Extension implements Twig_Extension_InitRunti
      */
     public function renderLegacyCss()
     {
-        $cssFiles = array();
-        $cssCodeLines = array();
+        $cssFiles = [];
+        $cssCodeLines = [];
 
-        foreach ($this->legacyHelper->get('css_files', array()) as $cssItem) {
+        foreach ($this->legacyHelper->get('css_files', []) as $cssItem) {
             // List of items can contain empty elements, path to files or code
             if (!empty($cssItem)) {
                 if (isset($cssItem[5]) && $this->isFile($cssItem, '.css')) {
@@ -171,10 +171,10 @@ class LegacyExtension extends Twig_Extension implements Twig_Extension_InitRunti
 
         return $this->environment->render(
             $this->cssTemplate,
-            array(
+            [
                 'css_files' => $cssFiles,
                 'css_code_lines' => $cssCodeLines,
-            )
+            ]
         );
     }
 
@@ -191,6 +191,6 @@ class LegacyExtension extends Twig_Extension implements Twig_Extension_InitRunti
         return
             strpos($item, 'http://') === 0
             || strpos($item, 'https://') === 0
-            || strripos($item, $extension) === (strlen($item) - strlen($extension));
+            || strripos($item, $extension) === (\strlen($item) - \strlen($extension));
     }
 }

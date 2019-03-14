@@ -26,7 +26,7 @@ abstract class AbstractLegacyObjectStateSlot extends AbstractLegacySlot
     public function receive(Signal $signal)
     {
         $this->runLegacyKernelCallback(
-            function () {
+            static function () {
                 // Passing null as $cacheItem parameter is not used by this method
                 eZCache::clearStateLimitations(null);
             }

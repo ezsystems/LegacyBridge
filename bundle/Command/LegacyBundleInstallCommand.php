@@ -36,11 +36,11 @@ EOT
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $options = array(
+        $options = [
             'copy' => (bool)$input->getOption('copy'),
             'relative' => (bool)$input->getOption('relative'),
             'force' => (bool)$input->getOption('force'),
-        );
+        ];
 
         $legacyExtensionsLocator = $this->getContainer()->get('ezpublish_legacy.legacy_bundles.extension_locator');
         $kernel = $this->getContainer()->get('kernel');
@@ -67,9 +67,9 @@ EOT
      * @throws \RuntimeException If a target link/directory exists and $options[force] isn't set to true
      * @return string The resulting link/directory
      */
-    protected function linkLegacyExtension($extensionPath, array $options = array(), OutputInterface $output)
+    protected function linkLegacyExtension($extensionPath, array $options = [], OutputInterface $output)
     {
-        $options += array('force' => false, 'copy' => false, 'relative' => false);
+        $options += ['force' => false, 'copy' => false, 'relative' => false];
         $filesystem = $this->getContainer()->get('filesystem');
         $legacyRootDir = rtrim($this->getContainer()->getParameter('ezpublish_legacy.root_dir'), '/');
 

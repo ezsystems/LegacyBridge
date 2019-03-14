@@ -61,7 +61,7 @@ class SSOListener extends AbstractPreAuthenticatedListener
         $logger = $this->logger;
 
         $legacyUser = $legacyKernel->runCallback(
-            function () use ($logger) {
+            static function () use ($logger) {
                 foreach (eZINI::instance()->variable('UserSettings', 'SingleSignOnHandlerArray') as $ssoHandlerName) {
                     $className = 'eZ' . $ssoHandlerName . 'SSOHandler';
                     if (!class_exists($className)) {
@@ -88,14 +88,14 @@ class SSOListener extends AbstractPreAuthenticatedListener
 
         // No matched user with legacy.
         if (!$legacyUser instanceof eZUser) {
-            return array('', '');
+            return ['', ''];
         }
 
         $user = new User(
             $this->userService->loadUser($legacyUser->attribute('contentobject_id')),
-            array('ROLE_USER')
+            ['ROLE_USER']
         );
 
-        return array($user, $user->getPassword());
+        return [$user, $user->getPassword()];
     }
 }

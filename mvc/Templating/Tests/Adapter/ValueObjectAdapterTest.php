@@ -40,26 +40,26 @@ class ValueObjectAdapterTest extends TestCase
         parent::setUp();
         $block = new \stdClass();
         $block->id = 123456;
-        $this->validProperties = array(
+        $this->validProperties = [
             'id' => 123,
             'identifier' => 'some_identifier',
             'action' => 'some_action',
-            'blocks' => array($block),
-        );
-        $this->map = array(
+            'blocks' => [$block],
+        ];
+        $this->map = [
             'id' => 'id',
             'zone_identifier' => 'identifier',
             'all_blocks' => 'blocks',
-            'dynamic_prop' => function (ValueObject $valueObject) {
+            'dynamic_prop' => static function (ValueObject $valueObject) {
                 return $valueObject;
             },
-        );
+        ];
         $this->valueObject = $this
             ->getMockBuilder(Zone::class)
             ->setConstructorArgs(
-                array(
+                [
                     $this->validProperties,
-                )
+                ]
             )
             ->getMockForAbstractClass();
         $this->adapter = $this->getAdapter($this->valueObject, $this->map);
@@ -92,14 +92,14 @@ class ValueObjectAdapterTest extends TestCase
 
     public function hasAttributeProvider()
     {
-        return array(
-            array('id', true),
-            array('action', false),
-            array('zone_identifier', true),
-            array('all_blocks', true),
-            array('dynamic_prop', true),
-            array('non_existent', false),
-        );
+        return [
+            ['id', true],
+            ['action', false],
+            ['zone_identifier', true],
+            ['all_blocks', true],
+            ['dynamic_prop', true],
+            ['non_existent', false],
+        ];
     }
 
     /**
@@ -128,14 +128,14 @@ class ValueObjectAdapterTest extends TestCase
 
     public function getAttributeProvider()
     {
-        return array(
-            array('id', $this->validProperties['id']),
-            array('action', null),
-            array('zone_identifier', $this->validProperties['identifier']),
-            array('all_blocks', $this->validProperties['blocks']),
-            array('dynamic_prop', $this->valueObject),
-            array('non_existent', null),
-        );
+        return [
+            ['id', $this->validProperties['id']],
+            ['action', null],
+            ['zone_identifier', $this->validProperties['identifier']],
+            ['all_blocks', $this->validProperties['blocks']],
+            ['dynamic_prop', $this->valueObject],
+            ['non_existent', null],
+        ];
     }
 
     /**

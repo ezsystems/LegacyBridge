@@ -80,7 +80,7 @@ class Configuration implements EventSubscriberInterface
         UrlAliasGenerator $urlAliasGenerator,
         DatabaseHandler $legacyDbHandler,
         AliasCleanerInterface $aliasCleaner,
-        array $options = array()
+        array $options = []
     ) {
         if (!$gatewayCachePurger instanceof GatewayCachePurger && !$gatewayCachePurger instanceof PurgeClientInterface) {
             throw new RuntimeException(
@@ -114,9 +114,9 @@ class Configuration implements EventSubscriberInterface
 
     public static function getSubscribedEvents()
     {
-        return array(
-            LegacyEvents::PRE_BUILD_LEGACY_KERNEL => array('onBuildKernel', 128),
-        );
+        return [
+            LegacyEvents::PRE_BUILD_LEGACY_KERNEL => ['onBuildKernel', 128],
+        ];
     }
 
     /**
@@ -131,9 +131,9 @@ class Configuration implements EventSubscriberInterface
         }
 
         $databaseSettings = $this->legacyDbHandler->getConnection()->getParams();
-        $settings = array();
+        $settings = [];
         foreach (
-            array(
+            [
                 'host' => 'Server',
                 'port' => 'Port',
                 'user' => 'User',
@@ -141,18 +141,18 @@ class Configuration implements EventSubscriberInterface
                 'dbname' => 'Database',
                 'unix_socket' => 'Socket',
                 'driver' => 'DatabaseImplementation',
-            ) as $key => $iniKey
+            ] as $key => $iniKey
         ) {
             if (isset($databaseSettings[$key])) {
                 $iniValue = $databaseSettings[$key];
 
                 switch ($key) {
                     case 'driver':
-                        $driverMap = array(
+                        $driverMap = [
                             'pdo_mysql' => 'ezmysqli',
                             'pdo_pgsql' => 'ezpostgresql',
                             'oci8' => 'ezoracle',
-                        );
+                        ];
                         if (!isset($driverMap[$iniValue])) {
                             throw new RuntimeException(
                                 "Could not map database driver to Legacy Stack database implementation.\n" .
@@ -179,10 +179,10 @@ class Configuration implements EventSubscriberInterface
         // Image settings
         $settings += $this->getImageSettings();
         // File settings
-        $settings += array(
+        $settings += [
             'site.ini/FileSettings/VarDir' => $this->configResolver->getParameter('var_dir'),
             'site.ini/FileSettings/StorageDir' => $this->configResolver->getParameter('storage_dir'),
-        );
+        ];
         // Multisite settings (PathPrefix and co)
         $settings += $this->getMultiSiteSettings();
 
@@ -218,43 +218,43 @@ class Configuration implements EventSubscriberInterface
 
         // Register http cache content/cache event listener
         $ezpEvent = ezpEvent::getInstance();
-        $ezpEvent->attach('content/cache', array($this->gatewayCachePurger, 'purge'));
-        $ezpEvent->attach('content/cache/all', array($this->gatewayCachePurger, 'purgeAll'));
+        $ezpEvent->attach('content/cache', [$this->gatewayCachePurger, 'purge']);
+        $ezpEvent->attach('content/cache/all', [$this->gatewayCachePurger, 'purgeAll']);
 
         // Register persistence cache event listeners
-        $ezpEvent->attach('content/cache', array($this->persistenceCachePurger, 'content'));
-        $ezpEvent->attach('content/cache/all', array($this->persistenceCachePurger, 'all'));
-        $ezpEvent->attach('content/cache/version', array($this->persistenceCachePurger, 'contentVersion'));
-        $ezpEvent->attach('content/class/cache/all', array($this->persistenceCachePurger, 'contentType'));
-        $ezpEvent->attach('content/class/cache', array($this->persistenceCachePurger, 'contentType'));
-        $ezpEvent->attach('content/class/group/cache', array($this->persistenceCachePurger, 'contentTypeGroup'));
-        $ezpEvent->attach('content/section/cache', array($this->persistenceCachePurger, 'section'));
-        $ezpEvent->attach('user/cache/all', array($this->persistenceCachePurger, 'user'));
-        $ezpEvent->attach('content/translations/cache', array($this->persistenceCachePurger, 'languages'));
-        $ezpEvent->attach('content/state/assign', array($this->persistenceCachePurger, 'stateAssign'));
+        $ezpEvent->attach('content/cache', [$this->persistenceCachePurger, 'content']);
+        $ezpEvent->attach('content/cache/all', [$this->persistenceCachePurger, 'all']);
+        $ezpEvent->attach('content/cache/version', [$this->persistenceCachePurger, 'contentVersion']);
+        $ezpEvent->attach('content/class/cache/all', [$this->persistenceCachePurger, 'contentType']);
+        $ezpEvent->attach('content/class/cache', [$this->persistenceCachePurger, 'contentType']);
+        $ezpEvent->attach('content/class/group/cache', [$this->persistenceCachePurger, 'contentTypeGroup']);
+        $ezpEvent->attach('content/section/cache', [$this->persistenceCachePurger, 'section']);
+        $ezpEvent->attach('user/cache/all', [$this->persistenceCachePurger, 'user']);
+        $ezpEvent->attach('content/translations/cache', [$this->persistenceCachePurger, 'languages']);
+        $ezpEvent->attach('content/state/assign', [$this->persistenceCachePurger, 'stateAssign']);
 
         // Register image alias removal listeners
-        $ezpEvent->attach('image/removeAliases', array($this->aliasCleaner, 'removeAliases'));
-        $ezpEvent->attach('image/trashAliases', array($this->aliasCleaner, 'removeAliases'));
-        $ezpEvent->attach('image/purgeAliases', array($this->aliasCleaner, 'removeAliases'));
+        $ezpEvent->attach('image/removeAliases', [$this->aliasCleaner, 'removeAliases']);
+        $ezpEvent->attach('image/trashAliases', [$this->aliasCleaner, 'removeAliases']);
+        $ezpEvent->attach('image/purgeAliases', [$this->aliasCleaner, 'removeAliases']);
     }
 
     private function getImageSettings()
     {
-        $imageSettings = array(
+        $imageSettings = [
             // Basic settings
             'image.ini/FileSettings/TemporaryDir' => $this->configResolver->getParameter('image.temporary_dir'),
             'image.ini/FileSettings/PublishedImages' => $this->configResolver->getParameter('image.published_images_dir'),
             'image.ini/FileSettings/VersionedImages' => $this->configResolver->getParameter('image.versioned_images_dir'),
-            'image.ini/AliasSettings/AliasList' => array(),
+            'image.ini/AliasSettings/AliasList' => [],
             // ImageMagick configuration
             'image.ini/ImageMagick/IsEnabled' => $this->options['imagemagick_enabled'] ? 'true' : 'false',
             'image.ini/ImageMagick/ExecutablePath' => $this->options['imagemagick_executable_path'],
             'image.ini/ImageMagick/Executable' => $this->options['imagemagick_executable'],
             'image.ini/ImageMagick/PreParameters' => $this->configResolver->getParameter('imagemagick.pre_parameters'),
             'image.ini/ImageMagick/PostParameters' => $this->configResolver->getParameter('imagemagick.post_parameters'),
-            'image.ini/ImageMagick/Filters' => array(),
-        );
+            'image.ini/ImageMagick/Filters' => [],
+        ];
 
         // Aliases configuration
         $imageVariations = $this->configResolver->getParameter('image_variations');
@@ -273,7 +273,7 @@ class Configuration implements EventSubscriberInterface
         }
 
         foreach ($this->options['imagemagick_filters'] as $filterName => $filter) {
-            $imageSettings['image.ini/ImageMagick/Filters'][] = "$filterName=" . strtr($filter, array('{' => '%', '}' => ''));
+            $imageSettings['image.ini/ImageMagick/Filters'][] = "$filterName=" . strtr($filter, ['{' => '%', '}' => '']);
         }
 
         return $imageSettings;
@@ -286,7 +286,7 @@ class Configuration implements EventSubscriberInterface
         $defaultPage = $this->configResolver->getParameter('default_page');
         if ($rootLocationId === null) {
             // return SiteSettings if there is no MultiSite (rootLocation is not defined)
-            $result = array();
+            $result = [];
             if ($indexPage !== null) {
                 $result['site.ini/SiteSettings/IndexPage'] = $indexPage;
             }
@@ -308,26 +308,26 @@ class Configuration implements EventSubscriberInterface
         }
 
         $pathPrefixExcludeItems = array_map(
-            function ($value) {
+            static function ($value) {
                 return trim($value, '/');
             },
             $this->configResolver->getParameter('content.tree_root.excluded_uri_prefixes')
         );
 
-        return array(
+        return [
             'site.ini/SiteAccessSettings/PathPrefix' => $pathPrefix,
             'site.ini/SiteAccessSettings/PathPrefixExclude' => $pathPrefixExcludeItems,
             'logfile.ini/AccessLogFileSettings/PathPrefix' => $pathPrefix,
             'site.ini/SiteSettings/IndexPage' => $indexPage !== null ? $indexPage : "/content/view/full/$rootLocationId/",
             'site.ini/SiteSettings/DefaultPage' => $defaultPage !== null ? $defaultPage : "/content/view/full/$rootLocationId/",
-        );
+        ];
     }
 
     private function getClusterSettings()
     {
-        $clusterSettings = array();
+        $clusterSettings = [];
         if ($this->container->hasParameter('dfs_nfs_path')) {
-            $clusterSettings += array(
+            $clusterSettings += [
                 'file.ini/ClusteringSettings/FileHandler' => 'eZDFSFileHandler',
                 'file.ini/eZDFSClusteringSettings/MountPointPath' => $this->container->getParameter('dfs_nfs_path'),
                 'file.ini/eZDFSClusteringSettings/DBHost' => $this->container->getParameter('dfs_database_host'),
@@ -335,7 +335,7 @@ class Configuration implements EventSubscriberInterface
                 'file.ini/eZDFSClusteringSettings/DBName' => $this->container->getParameter('dfs_database_name'),
                 'file.ini/eZDFSClusteringSettings/DBUser' => $this->container->getParameter('dfs_database_user'),
                 'file.ini/eZDFSClusteringSettings/DBPassword' => $this->container->getParameter('dfs_database_password'),
-            );
+            ];
         }
 
         return $clusterSettings;

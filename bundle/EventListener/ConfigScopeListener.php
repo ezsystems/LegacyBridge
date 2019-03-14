@@ -27,10 +27,10 @@ class ConfigScopeListener implements EventSubscriberInterface
 
     public static function getSubscribedEvents()
     {
-        return array(
+        return [
             MVCEvents::CONFIG_SCOPE_CHANGE => 'onConfigScopeChange',
             MVCEvents::CONFIG_SCOPE_RESTORE => 'onConfigScopeChange',
-        );
+        ];
     }
 
     public function onConfigScopeChange(ScopeChangeEvent $event)

@@ -40,7 +40,7 @@ class LegacyIncludeParser extends Twig_TokenParser
             $stream->next();
             $params = $exprParser->parseExpression();
         } else {
-            $params = new Twig_Node_Expression_Array(array(), $token->getLine());
+            $params = new Twig_Node_Expression_Array([], $token->getLine());
         }
 
         $stream->expect(Twig_Token::BLOCK_END_TYPE);

@@ -61,38 +61,38 @@ class ConfigurationConverter
         $settings['ezpublish']['siteaccess']['default_siteaccess'] = $defaultSiteaccess;
         $siteList = $this->getParameter('SiteAccessSettings', 'AvailableSiteAccessList');
 
-        if (!is_array($siteList) || empty($siteList)) {
+        if (!\is_array($siteList) || empty($siteList)) {
             throw new InvalidArgumentException('siteList', 'can not be empty');
         }
 
-        if (!in_array($adminSiteaccess, $siteList)) {
+        if (!\in_array($adminSiteaccess, $siteList)) {
             throw new InvalidArgumentException('adminSiteaccess', "Siteaccess $adminSiteaccess wasn't found in SiteAccessSettings.AvailableSiteAccessList");
         }
 
         $settings['ezpublish']['siteaccess']['list'] = $siteList;
-        $settings['ezpublish']['siteaccess']['groups'] = array();
+        $settings['ezpublish']['siteaccess']['groups'] = [];
         $groupName = $sitePackage . '_group';
         $settings['ezpublish']['siteaccess']['groups'][$groupName] = $siteList;
         $settings['ezpublish']['siteaccess']['match'] = $this->resolveMatching();
-        $settings['ezpublish']['system'] = array();
-        $settings['ezpublish']['system'][$groupName] = array();
+        $settings['ezpublish']['system'] = [];
+        $settings['ezpublish']['system'][$groupName] = [];
 
-        $settings['ezpublish']['system'][$defaultSiteaccess] = array();
-        $settings['ezpublish']['system'][$adminSiteaccess] = array();
+        $settings['ezpublish']['system'][$defaultSiteaccess] = [];
+        $settings['ezpublish']['system'][$adminSiteaccess] = [];
 
         // Database settings
         $databaseSettings = $this->getGroup('DatabaseSettings', 'site.ini', $defaultSiteaccess);
         $repositoryName = "{$defaultSiteaccess}_repository";
-        $settings['doctrine'] = array(
-            'dbal' => array(
-                'connections' => array(
+        $settings['doctrine'] = [
+            'dbal' => [
+                'connections' => [
                     "{$repositoryName}_connection" => $this->getDoctrineSettings($databaseSettings),
-                ),
-            ),
-        );
-        $settings['ezpublish']['repositories'] = array(
-            $repositoryName => array('engine' => 'legacy', 'connection' => "{$repositoryName}_connection"),
-        );
+                ],
+            ],
+        ];
+        $settings['ezpublish']['repositories'] = [
+            $repositoryName => ['engine' => 'legacy', 'connection' => "{$repositoryName}_connection"],
+        ];
         $settings['ezpublish']['system'][$groupName]['repository'] = $repositoryName;
 
         // If package is not supported, all siteaccesses will have individually legacy_mode to true, forcing legacy fallback
@@ -147,7 +147,7 @@ class ConfigurationConverter
                 $this->getParameter('Session', 'SessionNameHandler', 'site.ini', $siteaccess) === 'custom' &&
                 $this->getParameter('Session', 'SessionNamePerSiteAccess', 'site.ini', $siteaccess) !== 'enabled'
             ) {
-                $settings['ezpublish']['system'][$siteaccess]['session'] = array('name' => $this->getParameter('Session', 'SessionNamePrefix', 'site.ini'));
+                $settings['ezpublish']['system'][$siteaccess]['session'] = ['name' => $this->getParameter('Session', 'SessionNamePrefix', 'site.ini')];
             }
         }
 
@@ -168,7 +168,7 @@ class ConfigurationConverter
      */
     protected function getDoctrineSettings(array $databaseSettings)
     {
-        $databaseMapping = array(
+        $databaseMapping = [
             'ezmysqli' => 'pdo_mysql',
             'eZMySQLiDB' => 'pdo_mysql',
             'ezmysql' => 'pdo_mysql',
@@ -179,7 +179,7 @@ class ConfigurationConverter
             'pgsql' => 'pdo_pgsql',
             'oracle' => 'oci8',
             'ezoracle' => 'oci8',
-        );
+        ];
 
         $databaseType = $databaseSettings['DatabaseImplementation'];
         if (isset($databaseMapping[$databaseType])) {
@@ -187,14 +187,14 @@ class ConfigurationConverter
         }
 
         $databasePassword = $databaseSettings['Password'] != '' ? $databaseSettings['Password'] : null;
-        $doctrineSettings = array(
+        $doctrineSettings = [
             'driver' => $databaseType,
             'host' => $databaseSettings['Server'],
             'user' => $databaseSettings['User'],
             'password' => $databasePassword,
             'dbname' => $databaseSettings['Database'],
             'charset' => 'UTF8',
-        );
+        ];
         if (isset($databaseSettings['Port']) && !empty($databaseSettings['Port'])) {
             $doctrineSettings['port'] = $databaseSettings['Port'];
         }
@@ -220,17 +220,17 @@ class ConfigurationConverter
     protected function getStashCacheSettings()
     {
         // Should only contain one out of the box
-        $handlers = array();
+        $handlers = [];
         $inMemory = false;
-        $handlerSetting = array();
+        $handlerSetting = [];
         if (FileSystemDriver::isAvailable()) {
             $handlers[] = 'FileSystem';
             $inMemory = true;
             // If running on Windows, use "crc32" keyHashFunction
             if (stripos(php_uname(), 'win') === 0) {
-                $handlerSetting['FileSystem'] = array(
+                $handlerSetting['FileSystem'] = [
                     'keyHashFunction' => 'crc32',
-                );
+                ];
             }
         } else {
             // '/dev/null' fallback driver, no cache at all
@@ -238,16 +238,16 @@ class ConfigurationConverter
             $inMemory = true;
         }
 
-        return array(
-            'caches' => array(
-                'default' => array(
+        return [
+            'caches' => [
+                'default' => [
                     'drivers' => $handlers,
                     // inMemory will enable/disable "Ephemeral", not allowed as separate handler in stash-bundle
                     'inMemory' => $inMemory,
                     'registerDoctrineAdapter' => false,
-                ) + $handlerSetting,
-            ),
-        );
+                ] + $handlerSetting,
+            ],
+        ];
     }
 
     /**
@@ -261,7 +261,7 @@ class ConfigurationConverter
      */
     protected function getLanguages(array $siteList, $groupName)
     {
-        $result = array();
+        $result = [];
         $allSame = true;
         $previousSA = null;
         foreach ($siteList as $siteaccess) {
@@ -274,7 +274,7 @@ class ConfigurationConverter
             $previousSA = $siteaccess;
         }
         if ($allSame) {
-            return array($groupName => $result[$previousSA]);
+            return [$groupName => $result[$previousSA]];
         }
 
         return $result;
@@ -292,7 +292,7 @@ class ConfigurationConverter
      */
     protected function getImageVariations(array $siteList, $groupName)
     {
-        $result = array();
+        $result = [];
         $allSame = true;
         $previousSA = null;
         foreach ($siteList as $siteaccess) {
@@ -303,7 +303,7 @@ class ConfigurationConverter
             $previousSA = $siteaccess;
         }
         if ($allSame) {
-            return array($groupName => $result[$previousSA]);
+            return [$groupName => $result[$previousSA]];
         }
 
         return $result;
@@ -318,18 +318,18 @@ class ConfigurationConverter
      */
     protected function getImageVariationsForSiteaccess($siteaccess)
     {
-        $variations = array();
+        $variations = [];
         $imageAliasesList = $this->getGroup('AliasSettings', 'image.ini', $siteaccess);
         foreach ($imageAliasesList['AliasList'] as $imageAliasIdentifier) {
-            $variationSettings = array('reference' => null, 'filters' => array());
+            $variationSettings = ['reference' => null, 'filters' => []];
             $aliasSettings = $this->getGroup($imageAliasIdentifier, 'image.ini', $siteaccess);
             if (isset($aliasSettings['Reference']) && $aliasSettings['Reference'] != '') {
                 $variationSettings['reference'] = $aliasSettings['Reference'];
             }
-            if (isset($aliasSettings['Filters']) && is_array($aliasSettings['Filters'])) {
+            if (isset($aliasSettings['Filters']) && \is_array($aliasSettings['Filters'])) {
                 // parse filters. Format: filtername=param1;param2...paramN
                 foreach ($aliasSettings['Filters'] as $filterString) {
-                    $filteringSettings = array();
+                    $filteringSettings = [];
 
                     if (strstr($filterString, '=') !== false) {
                         list($filteringSettings['name'], $filterParams) = explode('=', $filterString);
@@ -338,7 +338,7 @@ class ConfigurationConverter
                         // make sure integers are actually integers, not strings
                         array_walk(
                             $filterParams,
-                            function (&$value) {
+                            static function (&$value) {
                                 if (preg_match('/^[0-9]+$/', $value)) {
                                     $value = (int)$value;
                                 }
@@ -378,10 +378,10 @@ class ConfigurationConverter
         }
 
         return $this->legacyKernel->runCallback(
-            function () use ($file, $groupName, $siteaccess) {
+            static function () use ($file, $groupName, $siteaccess) {
                 // @todo: do reset injected settings everytime
                 // and make sure to restore the previous injected settings
-                eZINI::injectSettings(array());
+                eZINI::injectSettings([]);
 
                 return eZSiteAccess::getIni($siteaccess, $file)->group($groupName);
             },
@@ -411,10 +411,10 @@ class ConfigurationConverter
         }
 
         return $this->legacyKernel->runCallback(
-            function () use ($file, $groupName, $parameterName, $siteaccess) {
+            static function () use ($file, $groupName, $parameterName, $siteaccess) {
                 // @todo: do reset injected settings everytime
                 // and make sure to restore the previous injected settings
-                eZINI::injectSettings(array());
+                eZINI::injectSettings([]);
 
                 return eZSiteAccess::getIni($siteaccess, $file)
                     ->variable($groupName, $parameterName);
@@ -428,7 +428,7 @@ class ConfigurationConverter
     {
         $siteaccessSettings = $this->getGroup('SiteAccessSettings');
 
-        $matching = array();
+        $matching = [];
         $match = false;
         foreach (explode(';', $siteaccessSettings['MatchOrder']) as $matchMethod) {
             switch ($matchMethod) {
@@ -442,7 +442,7 @@ class ConfigurationConverter
                     $match = false;
                     break;
                 case 'port':
-                    $match = array('Map\Port' => $this->getGroup('PortAccessSettings'));
+                    $match = ['Map\Port' => $this->getGroup('PortAccessSettings')];
                     break;
             }
             if ($match !== false) {
@@ -460,16 +460,16 @@ class ConfigurationConverter
                 return false;
 
             case 'map':
-                return array('Map\\URI' => $this->resolveMapMatch($siteaccessSettings['URIMatchMapItems']));
+                return ['Map\\URI' => $this->resolveMapMatch($siteaccessSettings['URIMatchMapItems'])];
 
             case 'element':
-                return array('URIElement' => $siteaccessSettings['URIMatchElement']);
+                return ['URIElement' => $siteaccessSettings['URIMatchElement']];
 
             case 'text':
-                return array('URIText' => $this->resolveTextMatch($siteaccessSettings, 'URIMatchSubtextPre', 'URIMatchSubtextPost'));
+                return ['URIText' => $this->resolveTextMatch($siteaccessSettings, 'URIMatchSubtextPre', 'URIMatchSubtextPost')];
 
             case 'regexp':
-                return array('Regex\\URI' => array($siteaccessSettings['URIMatchRegexp'], $siteaccessSettings['URIMatchRegexpItem']));
+                return ['Regex\\URI' => [$siteaccessSettings['URIMatchRegexp'], $siteaccessSettings['URIMatchRegexpItem']]];
         }
     }
 
@@ -488,16 +488,16 @@ class ConfigurationConverter
                 return false;
 
             case 'map':
-                return array('Map\\Host' => $this->resolveMapMatch($siteaccessSettings['HostMatchMapItems']));
+                return ['Map\\Host' => $this->resolveMapMatch($siteaccessSettings['HostMatchMapItems'])];
 
             case 'element':
-                return array('HostElement' => $siteaccessSettings['HostMatchElement']);
+                return ['HostElement' => $siteaccessSettings['HostMatchElement']];
 
             case 'text':
-                return array('HostText' => $this->resolveTextMatch($siteaccessSettings, 'HostMatchSubtextPre', 'HostMatchSubtextPost'));
+                return ['HostText' => $this->resolveTextMatch($siteaccessSettings, 'HostMatchSubtextPre', 'HostMatchSubtextPost')];
 
             case 'regexp':
-                return array('Regex\\Host' => array($siteaccessSettings['HostMatchRegexp'], $siteaccessSettings['HostMatchRegexpItem']));
+                return ['Regex\\Host' => [$siteaccessSettings['HostMatchRegexp'], $siteaccessSettings['HostMatchRegexpItem']]];
 
             default:
                 throw new InvalidArgumentException('HostMatchType', "Invalid value for legacy setting site.ini '{$siteaccessSettings['HostMatchType']}'");
@@ -506,7 +506,7 @@ class ConfigurationConverter
 
     protected function resolveTextMatch($siteaccessSettings, $prefixKey, $suffixKey)
     {
-        $settings = array();
+        $settings = [];
         if (isset($siteaccessSettings[$prefixKey])) {
             $settings['prefix'] = $siteaccessSettings[$prefixKey];
         }
@@ -519,10 +519,10 @@ class ConfigurationConverter
 
     protected function resolveMapMatch($mapArray)
     {
-        $map = array();
+        $map = [];
         foreach ($mapArray as $mapItem) {
             $elements = explode(';', $mapItem);
-            $map[$elements[0]] = count($elements) > 2 ? array_slice($elements, 1) : $elements[1];
+            $map[$elements[0]] = \count($elements) > 2 ? \array_slice($elements, 1) : $elements[1];
         }
 
         return $map;

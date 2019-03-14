@@ -25,18 +25,18 @@ class ZoneAdapter extends DefinitionBasedAdapter
      */
     protected function definition()
     {
-        return array(
+        return [
             'id' => 'id',
             'action' => 'action',
             'zone_identifier' => 'identifier',
-            'blocks' => function (Zone $zone) {
-                $legacyBlocks = array();
+            'blocks' => static function (Zone $zone) {
+                $legacyBlocks = [];
                 foreach ($zone->blocks as $block) {
                     $legacyBlocks[] = new BlockAdapter($block);
                 }
 
                 return $legacyBlocks;
             },
-        );
+        ];
     }
 }

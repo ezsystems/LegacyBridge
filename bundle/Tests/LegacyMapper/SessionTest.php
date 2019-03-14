@@ -47,7 +47,7 @@ class SessionTest extends TestCase
         $this->session = $this->createMock(SessionInterface::class);
         $this->request = $this
             ->getMockBuilder(Request::class)
-            ->setMethods(array('hasPreviousSession'))
+            ->setMethods(['hasPreviousSession'])
             ->getMock();
         $this->requestStack = new RequestStack();
         $this->requestStack->push($this->request);
@@ -56,9 +56,9 @@ class SessionTest extends TestCase
     public function testGetSubscribedEvents()
     {
         $this->assertSame(
-            array(
-                LegacyEvents::PRE_BUILD_LEGACY_KERNEL => array('onBuildKernelHandler', 128),
-            ),
+            [
+                LegacyEvents::PRE_BUILD_LEGACY_KERNEL => ['onBuildKernelHandler', 128],
+            ],
             SessionMapper::getSubscribedEvents()
         );
     }
@@ -70,23 +70,23 @@ class SessionTest extends TestCase
         $sessionMapper->onBuildKernelHandler($event);
 
         $this->assertSame(
-            array(
-                'session' => array(
+            [
+                'session' => [
                     'configured' => false,
                     'started' => false,
                     'name' => false,
                     'namespace' => false,
                     'has_previous' => false,
                     'storage' => false,
-                ),
-                'injected-settings' => array(
+                ],
+                'injected-settings' => [
                     'site.ini/Session/CookieTimeout' => false,
                     'site.ini/Session/CookiePath' => false,
                     'site.ini/Session/CookieDomain' => false,
                     'site.ini/Session/CookieSecure' => false,
                     'site.ini/Session/CookieHttponly' => false,
-                ),
-            ),
+                ],
+            ],
             $event->getParameters()->all()
         );
     }
@@ -115,34 +115,34 @@ class SessionTest extends TestCase
 
         $sessionMapper->onBuildKernelHandler($event);
         $this->assertSame(
-            array(
-                'session' => array(
+            [
+                'session' => [
                     'configured' => true,
                     'started' => $isStarted,
                     'name' => $sessionName,
                     'namespace' => $storageKey,
                     'has_previous' => $hasPreviousSession,
                     'storage' => $this->sessionStorage,
-                ),
-                'injected-settings' => array(
+                ],
+                'injected-settings' => [
                     'site.ini/Session/CookieTimeout' => false,
                     'site.ini/Session/CookiePath' => false,
                     'site.ini/Session/CookieDomain' => false,
                     'site.ini/Session/CookieSecure' => false,
                     'site.ini/Session/CookieHttponly' => false,
-                ),
-            ),
+                ],
+            ],
             $event->getParameters()->all()
         );
     }
 
     public function buildKernelProvider()
     {
-        return array(
-            array('some_session_name', false, '_symfony', true),
-            array('my_session', true, '_symfony', false),
-            array('my_session', true, 'foobar', true),
-            array('eZSESSID', true, '_ezpublish', true),
-        );
+        return [
+            ['some_session_name', false, '_symfony', true],
+            ['my_session', true, '_symfony', false],
+            ['my_session', true, 'foobar', true],
+            ['eZSESSID', true, '_ezpublish', true],
+        ];
     }
 }

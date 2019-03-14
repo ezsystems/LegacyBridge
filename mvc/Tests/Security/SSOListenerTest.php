@@ -57,7 +57,7 @@ class SSOListenerTest extends TestCase
         );
 
         $legacyKernel = $this->legacyKernel = $this->createMock(ezpKernelHandler::class);
-        $this->legacyKernelClosure = function () use ($legacyKernel) {
+        $this->legacyKernelClosure = static function () use ($legacyKernel) {
             return $legacyKernel;
         };
 
@@ -82,7 +82,7 @@ class SSOListenerTest extends TestCase
         $refListener = new ReflectionObject($this->ssoListener);
         $refMethod = $refListener->getMethod('getPreAuthenticatedData');
         $refMethod->setAccessible(true);
-        $this->assertSame(array('', ''), $refMethod->invoke($this->ssoListener, new Request()));
+        $this->assertSame(['', ''], $refMethod->invoke($this->ssoListener, new Request()));
     }
 
     public function testGetPreAuthenticatedData()
@@ -93,23 +93,23 @@ class SSOListenerTest extends TestCase
         $userId = 123;
         $passwordHash = md5('password');
         // Specifically silence E_DEPRECATED on constructor name for php7
-        $legacyUser = @new eZUser(array('contentobject_id' => $userId));
+        $legacyUser = @new eZUser(['contentobject_id' => $userId]);
         $apiUser = new CoreUser(
-            array(
+            [
                 'passwordHash' => $passwordHash,
                 'content' => new Content(
-                    array(
+                    [
                         'versionInfo' => new VersionInfo(
-                            array(
+                            [
                                 'contentInfo' => new ContentInfo(),
-                            )
+                            ]
                         ),
-                    )
+                    ]
                 ),
-            )
+            ]
         );
 
-        $finalUser = new User($apiUser, array('ROLE_USER'));
+        $finalUser = new User($apiUser, ['ROLE_USER']);
 
         $this->userService
             ->expects($this->once())
@@ -126,6 +126,6 @@ class SSOListenerTest extends TestCase
         $refListener = new ReflectionObject($this->ssoListener);
         $refMethod = $refListener->getMethod('getPreAuthenticatedData');
         $refMethod->setAccessible(true);
-        $this->assertEquals(array($finalUser, $passwordHash), $refMethod->invoke($this->ssoListener, new Request()));
+        $this->assertEquals([$finalUser, $passwordHash], $refMethod->invoke($this->ssoListener, new Request()));
     }
 }

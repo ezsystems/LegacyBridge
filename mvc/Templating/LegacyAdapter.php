@@ -44,7 +44,7 @@ class LegacyAdapter implements LegacyCompatible
 
         // Registering available public properties
         $this->properties = array_map(
-            function () {
+            static function () {
                 return true;
             },
             get_object_vars($transferredObject)
@@ -54,7 +54,7 @@ class LegacyAdapter implements LegacyCompatible
         $this->getters = array_fill_keys(
             array_filter(
                 get_class_methods($transferredObject),
-                function ($method) {
+                static function ($method) {
                     return strpos($method, 'get') === 0;
                 }
             ),
@@ -94,7 +94,7 @@ class LegacyAdapter implements LegacyCompatible
             return $this->object->$getterName();
         }
 
-        throw new \InvalidArgumentException("Unsupported attribute '$name' for " . get_class($this->object));
+        throw new \InvalidArgumentException("Unsupported attribute '$name' for " . \get_class($this->object));
     }
 
     /**
@@ -107,7 +107,7 @@ class LegacyAdapter implements LegacyCompatible
         $getters = $this->getters;
         array_walk(
             $getters,
-            function ($methodName) {
+            static function ($methodName) {
                 return lcfirst(substr($methodName, 3));
             }
         );

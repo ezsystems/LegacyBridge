@@ -47,9 +47,9 @@ class APIContentExceptionListener implements EventSubscriberInterface
 
     public static function getSubscribedEvents()
     {
-        return array(
+        return [
             MVCEvents::API_CONTENT_EXCEPTION => 'onAPIContentException',
-        );
+        ];
     }
 
     public function onAPIContentException(APIContentExceptionEvent $event)
@@ -60,7 +60,7 @@ class APIContentExceptionListener implements EventSubscriberInterface
             if (isset($this->logger)) {
                 $this->logger->notice(
                     'Missing field converter in legacy storage engine, forwarding to legacy kernel.',
-                    array('content' => $contentMeta)
+                    ['content' => $contentMeta]
                 );
             }
 
@@ -68,18 +68,18 @@ class APIContentExceptionListener implements EventSubscriberInterface
             $contentView->setViewType($contentMeta['viewType']);
 
             if (isset($contentMeta['locationId'])) {
-                $contentView->setLocation(new Location(array('id' => $contentMeta['locationId'])));
+                $contentView->setLocation(new Location(['id' => $contentMeta['locationId']]));
                 $event->setContentView($this->legacyLVP->getView($contentView));
             } elseif (isset($contentMeta['contentId'])) {
                 $contentView->setContent(
                     new Content(
-                        array(
+                        [
                             'versionInfo' => new VersionInfo(
-                                array(
-                                    'contentInfo' => new ContentInfo(array('id' => $contentMeta['contentId'])),
-                                )
+                                [
+                                    'contentInfo' => new ContentInfo(['id' => $contentMeta['contentId']]),
+                                ]
                             ),
-                        )
+                        ]
                     )
                 );
                 $event->setContentView($this->legacyCVP->getView($contentView));

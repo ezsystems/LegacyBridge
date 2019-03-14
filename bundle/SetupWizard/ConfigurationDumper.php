@@ -79,9 +79,9 @@ class ConfigurationDumper implements ConfigDumperInterface
         foreach (array_keys($this->envs) as $env) {
             $configFile = "$configPath/ezpublish_{$env}.yml";
             // Add the import statement for the root YAML file
-            $envConfigArray = array(
-                'imports' => array(array('resource' => 'ezpublish.yml')),
-            );
+            $envConfigArray = [
+                'imports' => [['resource' => 'ezpublish.yml']],
+            ];
 
             // File already exists, handle possible options
             if ($this->fs->exists($configFile) && $options & static::OPT_BACKUP_CONFIG) {

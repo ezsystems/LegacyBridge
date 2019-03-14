@@ -37,9 +37,9 @@ class RestListener implements EventSubscriberInterface
      */
     public static function getSubscribedEvents()
     {
-        return array(
+        return [
             RestEvents::REST_CSRF_TOKEN_VALIDATED => 'setCsrfIntention',
-        );
+        ];
     }
 
     /**

@@ -65,7 +65,7 @@ class AliasGenerator implements VariationHandler
      *
      * @return \eZ\Publish\SPI\Variation\Values\ImageVariation
      */
-    public function getVariation(Field $field, VersionInfo $versionInfo, $variationName, array $parameters = array())
+    public function getVariation(Field $field, VersionInfo $versionInfo, $variationName, array $parameters = [])
     {
         $variationIdentifier = "$field->id-$versionInfo->versionNo-$variationName";
         if (isset($this->variations[$variationIdentifier])) {
@@ -77,7 +77,7 @@ class AliasGenerator implements VariationHandler
         $allVariations = &$this->variations;
 
         return $this->getLegacyKernel()->runCallback(
-            function () use ($field, $versionInfo, $variationName, &$allAliasHandlers, &$allVariations, $variationIdentifier) {
+            static function () use ($field, $versionInfo, $variationName, &$allAliasHandlers, &$allVariations, $variationIdentifier) {
                 $aliasHandlerIdentifier = "$field->id-$versionInfo->versionNo";
                 if (!isset($allAliasHandlers[$aliasHandlerIdentifier])) {
                     $allAliasHandlers[$aliasHandlerIdentifier] = new eZImageAliasHandler(
@@ -93,7 +93,7 @@ class AliasGenerator implements VariationHandler
                 }
 
                 $allVariations[$variationIdentifier] = new ImageVariation(
-                    array(
+                    [
                         'name' => $variationName,
                         'fileName' => $aliasArray['filename'],
                         'dirPath' => $aliasArray['dirpath'],
@@ -104,7 +104,7 @@ class AliasGenerator implements VariationHandler
                         'width' => $aliasArray['width'],
                         'height' => $aliasArray['height'],
                         'imageId' => sprintf('%d-%d', $versionInfo->contentInfo->id, $field->id),
-                    )
+                    ]
                 );
 
                 return $allVariations[$variationIdentifier];

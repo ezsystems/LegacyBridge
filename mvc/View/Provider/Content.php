@@ -76,12 +76,12 @@ class Content extends Provider implements ViewProvider
                         );
                     }
 
-                    $children = array();
+                    $children = [];
                     $funcObject->process(
                         $tpl, $children, 'content_view_gui', false,
-                        array(
-                            'content_object' => array(
-                                array(
+                        [
+                            'content_object' => [
+                                [
                                     eZTemplate::TYPE_ARRAY,
                                     // eZTemplate::TYPE_OBJECT does not exist because
                                     // it's not possible to create "inline" objects in
@@ -92,18 +92,18 @@ class Content extends Provider implements ViewProvider
                                     // (TYPE_STRING, TYPE_BOOLEAN, ... have the same
                                     // behaviour, see eZTemplate::elementValue())
                                     eZContentObject::fetch($contentInfo->id),
-                                ),
-                            ),
-                            'view' => array(
-                                array(
+                                ],
+                            ],
+                            'view' => [
+                                [
                                     eZTemplate::TYPE_STRING,
                                     $viewType,
-                                ),
-                            ),
-                        ),
-                        array(), '', ''
+                                ],
+                            ],
+                        ],
+                        [], '', ''
                     );
-                    if (is_array($children) && isset($children[0])) {
+                    if (\is_array($children) && isset($children[0])) {
                         return ezpEvent::getInstance()->filter('response/output', $children[0]);
                     }
 
@@ -129,7 +129,7 @@ class Content extends Provider implements ViewProvider
      */
     protected function legalizeLinkParameters(array $linkParameters)
     {
-        $parameters = array();
+        $parameters = [];
 
         if (isset($linkParameters['href'])) {
             $parameters['href'] = $linkParameters['href'];

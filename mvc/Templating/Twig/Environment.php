@@ -24,7 +24,7 @@ class Environment extends Twig_Environment
      *
      * @var \eZ\Publish\Core\MVC\Legacy\Templating\Twig\Template[]
      */
-    protected $legacyTemplatesCache = array();
+    protected $legacyTemplatesCache = [];
 
     public function setEzLegacyEngine(LegacyEngine $legacyEngine)
     {
@@ -34,11 +34,11 @@ class Environment extends Twig_Environment
     public function loadTemplate($name, $index = null)
     {
         // If legacy engine supports given template, delegate it.
-        if (is_string($name) && isset($this->legacyTemplatesCache[$name])) {
+        if (\is_string($name) && isset($this->legacyTemplatesCache[$name])) {
             return $this->legacyTemplatesCache[$name];
         }
 
-        if (is_string($name) && $this->legacyEngine->supports($name)) {
+        if (\is_string($name) && $this->legacyEngine->supports($name)) {
             if (!$this->legacyEngine->exists($name)) {
                 throw new Twig_Error_Loader("Unable to find the template \"$name\"");
             }

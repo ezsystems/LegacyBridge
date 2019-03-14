@@ -26,9 +26,9 @@ class LegacyWrapperInstallCommand extends ContainerAwareCommand
         $this
             ->setName('ezpublish:legacy:assets_install')
             ->setDefinition(
-                array(
+                [
                     new InputArgument('target', InputArgument::OPTIONAL, 'The target directory', 'web'),
-                )
+                ]
             )
             ->addOption('symlink', null, InputOption::VALUE_NONE, 'Symlinks the assets instead of copying it')
             ->addOption('relative', null, InputOption::VALUE_NONE, 'Make relative symlinks')
@@ -62,7 +62,7 @@ EOT
         $relative = $input->getOption('relative');
         $force = (bool)$input->getOption('force');
 
-        foreach (array('design', 'extension', 'share', 'var') as $folder) {
+        foreach (['design', 'extension', 'share', 'var'] as $folder) {
             $targetDir = "$targetArg/$folder";
             $originDir = "$legacyRootDir/$folder";
 
@@ -123,7 +123,7 @@ EOT
         }
 
         $output->writeln("Installing wrappers for eZ Publish legacy front controllers (rest & cluster) with path $legacyRootDir");
-        foreach (array('index_rest.php', 'index_cluster.php') as $frontController) {
+        foreach (['index_rest.php', 'index_cluster.php'] as $frontController) {
             $newFrontController = "$targetArg/$frontController";
             $filesystem->remove($newFrontController);
 

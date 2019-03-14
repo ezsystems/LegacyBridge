@@ -53,7 +53,7 @@ class TemplateTest extends TestCase
      */
     public function testRender()
     {
-        $tplParams = array('foo' => 'bar', 'truc' => 'muche');
+        $tplParams = ['foo' => 'bar', 'truc' => 'muche'];
         $this->legacyEngine
             ->expects($this->once())
             ->method('render')

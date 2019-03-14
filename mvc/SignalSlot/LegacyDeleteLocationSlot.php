@@ -31,7 +31,7 @@ class LegacyDeleteLocationSlot extends AbstractLegacySlot
         }
 
         $this->runLegacyKernelCallback(
-            function () use ($signal) {
+            static function () use ($signal) {
                 // First clear object memory cache to prevent false detection of possibly deleted Content
                 eZContentObject::clearCache($signal->contentId);
 
@@ -43,8 +43,8 @@ class LegacyDeleteLocationSlot extends AbstractLegacySlot
                     eZSearch::removeObjectById($signal->contentId);
                 }
 
-                eZContentCacheManager::clearContentCacheIfNeeded($signal->contentId, true, array($signal->locationId));
-                eZSearch::removeNodes(array($signal->locationId));
+                eZContentCacheManager::clearContentCacheIfNeeded($signal->contentId, true, [$signal->locationId]);
+                eZSearch::removeNodes([$signal->locationId]);
                 eZContentObject::clearCache(); // Clear all object memory cache to free memory
             }
         );

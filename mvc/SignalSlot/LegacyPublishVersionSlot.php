@@ -30,7 +30,7 @@ class LegacyPublishVersionSlot extends AbstractLegacySlot
         }
 
         $this->runLegacyKernelCallback(
-            function () use ($signal) {
+            static function () use ($signal) {
                 eZContentCacheManager::clearContentCacheIfNeeded($signal->contentId);
                 eZContentOperationCollection::registerSearchObject($signal->contentId);
                 eZContentObject::clearCache(); // Clear all object memory cache to free memory

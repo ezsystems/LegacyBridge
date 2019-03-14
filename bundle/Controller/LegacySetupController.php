@@ -96,17 +96,17 @@ class LegacySetupController implements ContainerAwareInterface
             case 'Welcome':
             case 'SystemCheck':
                 $this->getLegacyKernel()->runCallback(
-                    function () {
+                    static function () {
                         eZINI::injectSettings(
-                            array(
-                                'setup.ini' => array(
+                            [
+                                'setup.ini' => [
                                     // checked folders are relative to the ezpublish_legacy folder
-                                    'directory_permissions' => array(
+                                    'directory_permissions' => [
                                         'CheckList' => '../app/logs;../app/cache;../app/config;' .
                                         eZINI::instance('setup.ini')->variable('directory_permissions', 'CheckList'),
-                                    ),
-                                ),
-                            )
+                                    ],
+                                ],
+                            ]
                         );
                     }
                 );
@@ -122,8 +122,8 @@ class LegacySetupController implements ContainerAwareInterface
 
         // Clear INI cache since setup has written new files
         $this->getLegacyKernel()->runCallback(
-            function () {
-                eZINI::injectSettings(array());
+            static function () {
+                eZINI::injectSettings([]);
                 eZCache::clearByTag('ini');
                 eZINI::resetAllInstances();
             }

@@ -19,18 +19,17 @@ class DefaultRouterTest extends BaseTest
         return DefaultRouter::class;
     }
 
-    /**
-     * @expectedException \Symfony\Component\Routing\Exception\ResourceNotFoundException
-     */
     public function testMatchRequestLegacyMode()
     {
+        $this->expectException(\Symfony\Component\Routing\Exception\ResourceNotFoundException::class);
+
         $pathinfo = '/siteaccess/foo/bar';
         $semanticPathinfo = '/foo/bar';
         $request = Request::create($pathinfo);
         $request->attributes->set('semanticPathinfo', $semanticPathinfo);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|\eZ\Bundle\EzPublishLegacyBundle\Routing\DefaultRouter $router */
-        $router = $this->generateRouter(array('match'));
+        $router = $this->generateRouter(['match']);
 
         $this->configResolver
             ->expects($this->once())
@@ -38,7 +37,7 @@ class DefaultRouterTest extends BaseTest
             ->with('legacy_mode')
             ->will($this->returnValue(true));
 
-        $matchedParameters = array('_route' => 'my_route');
+        $matchedParameters = ['_route' => 'my_route'];
         $router
             ->expects($this->once())
             ->method('match')
@@ -56,10 +55,10 @@ class DefaultRouterTest extends BaseTest
         $request->attributes->set('semanticPathinfo', $semanticPathinfo);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|\eZ\Bundle\EzPublishLegacyBundle\Routing\DefaultRouter $router */
-        $router = $this->generateRouter(array('match'));
-        $router->setLegacyAwareRoutes(array('my_legacy_aware_route'));
+        $router = $this->generateRouter(['match']);
+        $router->setLegacyAwareRoutes(['my_legacy_aware_route']);
 
-        $matchedParameters = array('_route' => 'my_legacy_aware_route');
+        $matchedParameters = ['_route' => 'my_legacy_aware_route'];
         $router
             ->expects($this->once())
             ->method('match')

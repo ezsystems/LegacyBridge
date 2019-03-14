@@ -28,7 +28,7 @@ class LegacyDeleteLanguageSlot extends AbstractLegacySlot
         }
 
         $this->runLegacyKernelCallback(
-            function () {
+            static function () {
                 eZContentLanguage::expireCache();
             }
         );

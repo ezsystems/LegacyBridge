@@ -61,7 +61,7 @@ class LoaderString implements Twig_LoaderInterface, Twig_ExistsLoaderInterface
     public function exists($name)
     {
         $suffix = '.twig';
-        $endsWithSuffix = strtolower(substr($name, -strlen($suffix))) === $suffix;
+        $endsWithSuffix = strtolower(substr($name, -\strlen($suffix))) === $suffix;
 
         return !$endsWithSuffix;
     }

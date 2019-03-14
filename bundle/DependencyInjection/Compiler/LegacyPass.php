@@ -29,10 +29,10 @@ class LegacyPass implements CompilerPassInterface
 
                 $definition->addMethodCall(
                     'addConverter',
-                    array(
+                    [
                         new Reference($id),
                         $attribute['for'],
-                    )
+                    ]
                 );
             }
         }

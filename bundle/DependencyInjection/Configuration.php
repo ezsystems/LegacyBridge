@@ -24,7 +24,7 @@ class Configuration extends SiteAccessConfiguration
                 ->scalarNode('root_dir')
                     ->validate()
                         ->ifTrue(
-                            function ($v) {
+                            static function ($v) {
                                 return !file_exists($v);
                             }
                         )

@@ -20,7 +20,7 @@ class LegacyRestController extends Controller
      */
     protected $restKernel;
 
-    public function __construct(\Closure $restKernelHandler, Loader $legacyKernelFactory, array $options = array())
+    public function __construct(\Closure $restKernelHandler, Loader $legacyKernelFactory, array $options = [])
     {
         $kernelClosure = $legacyKernelFactory->buildLegacyKernel($restKernelHandler);
         $this->restKernel = $kernelClosure();
@@ -41,7 +41,7 @@ class LegacyRestController extends Controller
         return new Response(
             $result->getContent(),
             $result->hasAttribute('statusCode') ? $result->getAttribute('statusCode') : 200,
-            $result->hasAttribute('headers') ? $result->getAttribute('headers') : array()
+            $result->hasAttribute('headers') ? $result->getAttribute('headers') : []
         );
     }
 }

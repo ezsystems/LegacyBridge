@@ -40,12 +40,12 @@ class IOServiceFactory
      */
     public function buildService($class)
     {
-        $options = array(
+        $options = [
             'var_dir' => $this->configResolver->getParameter('var_dir'),
             'storage_dir' => $this->configResolver->getParameter('storage_dir'),
             'draft_images_dir' => $this->configResolver->getParameter('image.versioned_images_dir'),
             'published_images_dir' => $this->configResolver->getParameter('image.published_images_dir'),
-        );
+        ];
 
         return new $class($this->publishedIOService, $this->draftIOService, $options);
     }

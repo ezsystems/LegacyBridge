@@ -30,8 +30,8 @@ class LegacyCreateLocationSlot extends AbstractLegacySlot
         }
 
         $this->runLegacyKernelCallback(
-            function () use ($signal) {
-                eZContentCacheManager::clearContentCacheIfNeeded($signal->contentId, true, array($signal->locationId));
+            static function () use ($signal) {
+                eZContentCacheManager::clearContentCacheIfNeeded($signal->contentId, true, [$signal->locationId]);
                 $object = eZContentObject::fetch($signal->contentId);
                 eZSearch::addNodeAssignment($object->mainNodeID(), $signal->contentId, $signal->locationId);
                 eZContentObject::clearCache(); // Clear all object memory cache to free memory

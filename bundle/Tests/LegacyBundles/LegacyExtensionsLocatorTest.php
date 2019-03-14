@@ -29,10 +29,10 @@ class LegacyExtensionsLocatorTest extends TestCase
         $locator = new LegacyExtensionsLocator($this->vfsRoot);
 
         self::assertEquals(
-            array(
+            [
                 vfsStream::url('eZ/TestBundle/ezpublish_legacy/extension1'),
                 vfsStream::url('eZ/TestBundle/ezpublish_legacy/extension2'),
-            ),
+            ],
             $locator->getExtensionDirectories(vfsStream::url('eZ/TestBundle/'))
         );
     }
@@ -42,7 +42,7 @@ class LegacyExtensionsLocatorTest extends TestCase
         $locator = new LegacyExtensionsLocator($this->vfsRoot);
 
         self::assertEquals(
-            array(),
+            [],
             $locator->getExtensionDirectories(vfsStream::url('No/Such/Bundle/'))
         );
     }
@@ -57,34 +57,34 @@ class LegacyExtensionsLocatorTest extends TestCase
 
         $bundle->expects($this->once())
             ->method('getLegacyExtensionsNames')
-            ->willReturn(array('extension3'));
+            ->willReturn(['extension3']);
 
         $locator = new LegacyExtensionsLocator($this->vfsRoot);
 
         self::assertEquals(
-            array(
+            [
                 'extension1',
                 'extension2',
                 'extension3',
-            ),
+            ],
             $locator->getExtensionNames($bundle)
         );
     }
 
     protected function initVfs()
     {
-        $structure = array(
-            'eZ' => array(
-                'TestBundle' => array(
-                    'ezpublish_legacy' => array(
-                        'extension1' => array('extension.xml' => ''),
-                        'extension2' => array('extension.xml' => ''),
-                        'not_extension' => array(),
-                    ),
-                    'Resources' => array('config' => array()),
-                ),
-            ),
-        );
+        $structure = [
+            'eZ' => [
+                'TestBundle' => [
+                    'ezpublish_legacy' => [
+                        'extension1' => ['extension.xml' => ''],
+                        'extension2' => ['extension.xml' => ''],
+                        'not_extension' => [],
+                    ],
+                    'Resources' => ['config' => []],
+                ],
+            ],
+        ];
         $this->vfsRoot = vfsStream::setup('_root_', null, $structure);
     }
 }

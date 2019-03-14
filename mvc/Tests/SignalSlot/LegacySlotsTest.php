@@ -67,28 +67,28 @@ class LegacySlotsTest extends TestCase
 
     public function providerForTestLegacySlots()
     {
-        return array(
-            array('LegacyAssignSectionSlot', 'SectionService\\AssignSectionSignal', array()),
-            array('LegacyCopyContentSlot', 'ContentService\\CopyContentSignal', array()),
-            array('LegacyCreateLocationSlot', 'LocationService\\CreateLocationSignal', array()),
-            array('LegacyDeleteContentSlot', 'ContentService\\DeleteContentSignal', array()),
-            array('LegacyDeleteLocationSlot', 'LocationService\\DeleteLocationSignal', array()),
-            array('LegacyDeleteVersionSlot', 'ContentService\\DeleteVersionSignal', array()),
-            array('LegacyHideLocationSlot', 'LocationService\\HideLocationSignal', array()),
-            array('LegacyMoveSubtreeSlot', 'LocationService\\MoveSubtreeSignal', array()),
-            array('LegacyPublishVersionSlot', 'ContentService\\PublishVersionSignal', array()),
-            array('LegacySetContentStateSlot', 'ObjectStateService\\SetContentStateSignal', array()),
-            array('LegacySwapLocationSlot', 'LocationService\\SwapLocationSignal', array()),
-            array('LegacyUnhideLocationSlot', 'LocationService\\UnhideLocationSignal', array()),
-            array('LegacyUpdateLocationSlot', 'LocationService\\UpdateLocationSignal', array()),
-            array('LegacyPublishContentTypeDraftSlot', 'ContentTypeService\\PublishContentTypeDraftSignal', array()),
-        );
+        return [
+            ['LegacyAssignSectionSlot', 'SectionService\\AssignSectionSignal', []],
+            ['LegacyCopyContentSlot', 'ContentService\\CopyContentSignal', []],
+            ['LegacyCreateLocationSlot', 'LocationService\\CreateLocationSignal', []],
+            ['LegacyDeleteContentSlot', 'ContentService\\DeleteContentSignal', []],
+            ['LegacyDeleteLocationSlot', 'LocationService\\DeleteLocationSignal', []],
+            ['LegacyDeleteVersionSlot', 'ContentService\\DeleteVersionSignal', []],
+            ['LegacyHideLocationSlot', 'LocationService\\HideLocationSignal', []],
+            ['LegacyMoveSubtreeSlot', 'LocationService\\MoveSubtreeSignal', []],
+            ['LegacyPublishVersionSlot', 'ContentService\\PublishVersionSignal', []],
+            ['LegacySetContentStateSlot', 'ObjectStateService\\SetContentStateSignal', []],
+            ['LegacySwapLocationSlot', 'LocationService\\SwapLocationSignal', []],
+            ['LegacyUnhideLocationSlot', 'LocationService\\UnhideLocationSignal', []],
+            ['LegacyUpdateLocationSlot', 'LocationService\\UpdateLocationSignal', []],
+            ['LegacyPublishContentTypeDraftSlot', 'ContentTypeService\\PublishContentTypeDraftSignal', []],
+        ];
     }
 
     /**
      * @dataProvider providerForTestLegacySlots
      */
-    public function testLegacySlotsValidSignal($slotName, $signalName, array $signalProperties = array())
+    public function testLegacySlotsValidSignal($slotName, $signalName, array $signalProperties = [])
     {
         $ezpKernelHandlerMock = $this->ezpKernelHandlerMock;
         $signalClassName = self::SIGNAL_SLOT_NS . '\\Signal\\' . $signalName;
@@ -98,7 +98,7 @@ class LegacySlotsTest extends TestCase
          * @var \eZ\Publish\Core\SignalSlot\Slot
          */
         $slot = new $slotClassName(
-            function () use ($ezpKernelHandlerMock) {
+            static function () use ($ezpKernelHandlerMock) {
                 return $ezpKernelHandlerMock;
             },
             $this->persistenceCachePurgerMock,
@@ -129,7 +129,7 @@ class LegacySlotsTest extends TestCase
          * @var \eZ\Publish\Core\SignalSlot\Slot
          */
         $slot = new $slotClassName(
-            function () use ($ezpKernelHandlerMock) {
+            static function () use ($ezpKernelHandlerMock) {
                 return $ezpKernelHandlerMock;
             },
             $this->persistenceCachePurgerMock,

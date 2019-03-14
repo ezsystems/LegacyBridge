@@ -22,11 +22,11 @@ class LegacyIncludeNode extends Twig_Node
     public function __construct(Twig_Node_Expression $tplPath, Twig_Node_Expression $params, $lineno, $tag = null)
     {
         return parent::__construct(
-            array(
+            [
                 'tplPath' => $tplPath,
                 'params' => $params,
-            ),
-            array(),
+            ],
+            [],
             $lineno,
             $tag
         );

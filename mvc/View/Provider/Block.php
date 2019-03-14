@@ -49,9 +49,9 @@ class Block extends Provider implements ViewProvider
         $block = $view->getBlock();
 
         $legacyKernel = $this->getLegacyKernel();
-        $legacyBlockClosure = function (array $params) use ($block, $legacyKernel) {
+        $legacyBlockClosure = static function (array $params) use ($block, $legacyKernel) {
             return $legacyKernel->runCallback(
-                function () use ($block, $params) {
+                static function () use ($block, $params) {
                     $tpl = eZTemplate::factory();
                     /**
                      * @var \eZObjectForwarder
@@ -61,12 +61,12 @@ class Block extends Provider implements ViewProvider
                         return '';
                     }
 
-                    $children = array();
+                    $children = [];
                     $funcObject->process(
                         $tpl, $children, 'block_view_gui', false,
-                        array(
-                            'block' => array(
-                                array(
+                        [
+                            'block' => [
+                                [
                                     eZTemplate::TYPE_ARRAY,
                                     // eZTemplate::TYPE_OBJECT does not exist because
                                     // it's not possible to create "inline" objects in
@@ -77,12 +77,12 @@ class Block extends Provider implements ViewProvider
                                     // (TYPE_STRING, TYPE_BOOLEAN, ... have the same
                                     // behaviour, see eZTemplate::elementValue())
                                     new BlockAdapter($block),
-                                ),
-                            ),
-                        ),
-                        array(), '', ''
+                                ],
+                            ],
+                        ],
+                        [], '', ''
                     );
-                    if (is_array($children) && isset($children[0])) {
+                    if (\is_array($children) && isset($children[0])) {
                         return ezpEvent::getInstance()->filter('response/output', $children[0]);
                     }
 

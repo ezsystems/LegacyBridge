@@ -34,7 +34,7 @@ class LegacyBundlesPass implements CompilerPassInterface
 
         $locator = $container->get('ezpublish_legacy.legacy_bundles.extension_locator');
 
-        $extensionNames = array();
+        $extensionNames = [];
         foreach ($this->kernel->getBundles() as $bundle) {
             $extensionNames += array_flip($locator->getExtensionNames($bundle));
         }

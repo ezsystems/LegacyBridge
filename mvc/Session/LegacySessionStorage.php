@@ -88,14 +88,14 @@ class LegacySessionStorage extends NativeSessionStorage
         if ($success && !$destroy) {
             $kernelClosure = $this->legacyKernelClosure;
             $kernelClosure()->runCallback(
-                function () use ($oldSessionId, $newSessionId) {
-                    ezpEvent::getInstance()->notify('session/regenerate', array($oldSessionId, $newSessionId));
+                static function () use ($oldSessionId, $newSessionId) {
+                    ezpEvent::getInstance()->notify('session/regenerate', [$oldSessionId, $newSessionId]);
                     $db = eZDB::instance();
                     $escOldKey = $db->escapeString($oldSessionId);
                     $escNewKey = $db->escapeString($newSessionId);
                     $escUserID = $db->escapeString(eZSession::userID());
-                    eZSession::triggerCallback('regenerate_pre', array($db, $escNewKey, $escOldKey, $escUserID));
-                    eZSession::triggerCallback('regenerate_post', array($db, $escNewKey, $escOldKey, $escUserID));
+                    eZSession::triggerCallback('regenerate_pre', [$db, $escNewKey, $escOldKey, $escUserID]);
+                    eZSession::triggerCallback('regenerate_post', [$db, $escNewKey, $escOldKey, $escUserID]);
                 },
                 false,
                 false

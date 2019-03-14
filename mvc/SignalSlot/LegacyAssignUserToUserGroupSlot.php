@@ -29,7 +29,7 @@ class LegacyAssignUserToUserGroupSlot extends AbstractLegacySlot
         }
 
         $this->runLegacyKernelCallback(
-            function () {
+            static function () {
                 eZContentCacheManager::clearAllContentCache();
                 eZRole::expireCache();
             }

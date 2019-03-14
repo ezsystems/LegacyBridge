@@ -33,46 +33,48 @@ class PagePartsConverterTest extends TestCase
 
     public function convertProvider()
     {
-        return array(
-            array(
+        return [
+            [
                 $this->createMock(Block::class),
                 BlockAdapter::class,
-            ),
-            array(
+            ],
+            [
                 $this->createMock(Zone::class),
                 ZoneAdapter::class,
-            ),
-        );
+            ],
+        ];
     }
 
     /**
-     * @expectedException \InvalidArgumentException
      * @dataProvider convertFailNotObjectProvider
      * @covers \eZ\Publish\Core\MVC\Legacy\Templating\Converter\PagePartsConverter::convert
      */
     public function testConvertFailNotObject($value)
     {
+        $this->expectException(\InvalidArgumentException::class);
+
         $converter = new PagePartsConverter();
         $converter->convert($value);
     }
 
     public function convertFailNotObjectProvider()
     {
-        return array(
-            array('foo'),
-            array('bar'),
-            array(123),
-            array(true),
-            array(array()),
-        );
+        return [
+            ['foo'],
+            ['bar'],
+            [123],
+            [true],
+            [[]],
+        ];
     }
 
     /**
      * @covers \eZ\Publish\Core\MVC\Legacy\Templating\Converter\PagePartsConverter::convert
-     * @expectedException \InvalidArgumentException
      */
     public function testConvertFailWrongType()
     {
+        $this->expectException(\InvalidArgumentException::class);
+
         $converter = new PagePartsConverter();
         $converter->convert($this->createMock(ValueObject::class));
     }

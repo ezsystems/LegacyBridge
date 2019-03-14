@@ -80,8 +80,8 @@ class LegacySessionProxy extends AbstractProxy implements SessionHandlerInterfac
     public function destroy($sessionId)
     {
         $this->getLegacyKernel()->runCallback(
-            function () use ($sessionId) {
-                ezpEvent::getInstance()->notify('session/destroy', array($sessionId));
+            static function () use ($sessionId) {
+                ezpEvent::getInstance()->notify('session/destroy', [$sessionId]);
             },
             false
         );
@@ -94,14 +94,14 @@ class LegacySessionProxy extends AbstractProxy implements SessionHandlerInterfac
         $sessionHandler = $this->sessionHandler;
 
         return $this->getLegacyKernel()->runCallback(
-            function () use ($maxlifetime, $sessionHandler) {
-                ezpEvent::getInstance()->notify('session/gc', array($maxlifetime));
+            static function () use ($maxlifetime, $sessionHandler) {
+                ezpEvent::getInstance()->notify('session/gc', [$maxlifetime]);
                 $db = eZDB::instance();
-                eZSession::triggerCallback('gc_pre', array($db, $maxlifetime));
+                eZSession::triggerCallback('gc_pre', [$db, $maxlifetime]);
 
                 $success = $sessionHandler->gc($maxlifetime);
 
-                eZSession::triggerCallback('gc_post', array($db, $maxlifetime));
+                eZSession::triggerCallback('gc_post', [$db, $maxlifetime]);
 
                 return $success;
             },

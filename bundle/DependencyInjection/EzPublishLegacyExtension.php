@@ -36,7 +36,7 @@ class EzPublishLegacyExtension extends Extension
         // Conditionally load HTTP cache services compatible with
         // ezsystems/ezplatform-http-cache based on availability of its bundle
         $activatedBundles = $container->getParameter('kernel.bundles');
-        array_key_exists('EzSystemsPlatformHttpCacheBundle', $activatedBundles) ?
+        \array_key_exists('EzSystemsPlatformHttpCacheBundle', $activatedBundles) ?
             $loader->load('http_cache/services.yml') :
             $loader->load('http_cache/legacy_services.yml');
 
@@ -67,7 +67,7 @@ class EzPublishLegacyExtension extends Extension
         $processor = new ConfigurationProcessor($container, 'ezpublish_legacy');
         $processor->mapConfig(
             $config,
-            function (array $scopeSettings, $currentScope, ContextualizerInterface $contextualizer) {
+            static function (array $scopeSettings, $currentScope, ContextualizerInterface $contextualizer) {
                 if (isset($scopeSettings['templating']['view_layout'])) {
                     $contextualizer->setContextualParameter('view_default_layout', $currentScope, $scopeSettings['templating']['view_layout']);
                 }

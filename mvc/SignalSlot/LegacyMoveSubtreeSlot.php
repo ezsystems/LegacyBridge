@@ -30,7 +30,7 @@ class LegacyMoveSubtreeSlot extends AbstractLegacySlot
         }
 
         $this->runLegacyKernelCallback(
-            function () use ($signal) {
+            static function () use ($signal) {
                 $node = eZContentObjectTreeNode::fetch($signal->locationId);
                 eZContentObjectTreeNode::clearViewCacheForSubtree($node);
                 eZContentOperationCollection::registerSearchObject($node->attribute('contentobject_id'));

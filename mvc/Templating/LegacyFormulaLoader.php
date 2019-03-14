@@ -29,6 +29,6 @@ class LegacyFormulaLoader implements FormulaLoaderInterface
      */
     public function load(ResourceInterface $resource)
     {
-        return array();
+        return [];
     }
 }

@@ -32,10 +32,10 @@ class ResponseWriter extends ezpRestHttpResponseWriter
         }
 
         // automatically add content-length header
-        $this->headers['Content-Length'] = strlen($this->response->body);
+        $this->headers['Content-Length'] = \strlen($this->response->body);
 
         ezpKernelRest::setResponse(
-            new ezpKernelResult($this->response->body, array('headers' => $this->headers, 'statusCode' => $responseCode))
+            new ezpKernelResult($this->response->body, ['headers' => $this->headers, 'statusCode' => $responseCode])
         );
     }
 }

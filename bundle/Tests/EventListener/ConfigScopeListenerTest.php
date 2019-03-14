@@ -20,10 +20,10 @@ class ConfigScopeListenerTest extends TestCase
     public function testGetSubscribedEvents()
     {
         $this->assertSame(
-            array(
+            [
                 MVCEvents::CONFIG_SCOPE_CHANGE => 'onConfigScopeChange',
                 MVCEvents::CONFIG_SCOPE_RESTORE => 'onConfigScopeChange',
-            ),
+            ],
             ConfigScopeListener::getSubscribedEvents()
         );
     }

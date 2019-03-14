@@ -44,7 +44,7 @@ class LegacySwitchableHttpCachePurger implements GatewayCachePurger
         $this->gatewayCachePurger->purgeAll();
     }
 
-    public function purgeForContent($contentId, $locationIds = array())
+    public function purgeForContent($contentId, $locationIds = [])
     {
         if ($this->isSwitchedOff()) {
             return;

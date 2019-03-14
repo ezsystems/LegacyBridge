@@ -12,14 +12,14 @@ use EzSystems\BehatBundle\Helper\Gherkin as GherkinHelper;
 use eZ\Bundle\EzPublishLegacyBundle\Features\Context\Legacy;
 use Behat\Behat\Context\Step;
 use Behat\Gherkin\Node\TableNode;
-use PHPUnit_Framework_Assert as Assertion;
+use PHPUnit\Framework\Assert as Assertion;
 
 class Context extends Legacy
 {
     /**
      * @var array This var should have the association between title in setup and package
      */
-    protected $packages = array();
+    protected $packages = [];
 
     /**
      * Initialize parameters.
@@ -28,14 +28,14 @@ class Context extends Legacy
     {
         parent::__construct();
 
-        $this->pageIdentifierMap += array(
+        $this->pageIdentifierMap += [
             'setup wizard' => '/ezsetup',
-        );
+        ];
 
-        $this->packages += array(
+        $this->packages += [
             'ez publish demo site' => 'ezdemo_site',
             'ez publish demo site (without demo content)' => 'ezdemo_site_clean',
-        );
+        ];
     }
 
     /**

@@ -30,7 +30,7 @@ class LegacySwapLocationSlot extends AbstractLegacySlot
         }
 
         $this->runLegacyKernelCallback(
-            function () use ($signal) {
+            static function () use ($signal) {
                 eZContentCacheManager::clearContentCacheIfNeeded($signal->content1Id);
                 eZContentCacheManager::clearContentCacheIfNeeded($signal->content2Id);
                 eZSearch::swapNode($signal->location1Id, $signal->location2Id);

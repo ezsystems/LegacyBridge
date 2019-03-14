@@ -55,7 +55,7 @@ class UrlGenerator extends Generator
         if (strpos($legacyModuleUri, '/') === 0) {
             $legacyModuleUri = substr($legacyModuleUri, 1);
         }
-        if (strrpos($legacyModuleUri, '/') === (strlen($legacyModuleUri) - 1)) {
+        if (strrpos($legacyModuleUri, '/') === (\strlen($legacyModuleUri) - 1)) {
             $legacyModuleUri = substr($legacyModuleUri, 0, -1);
         }
 
@@ -67,7 +67,7 @@ class UrlGenerator extends Generator
         list($moduleName, $viewName) = explode('/', $legacyModuleUri);
 
         return $this->getLegacyKernel()->runCallback(
-            function () use ($legacyModuleUri, $moduleName, $viewName, $parameters, $queryString) {
+            static function () use ($legacyModuleUri, $moduleName, $viewName, $parameters, $queryString) {
                 $module = eZModule::findModule($moduleName);
                 if (!$module instanceof eZModule) {
                     throw new \InvalidArgumentException("Legacy module '$moduleName' doesn't exist. Cannot generate URL.");
@@ -84,7 +84,7 @@ class UrlGenerator extends Generator
                         continue;
                     }
 
-                    if (is_bool($paramValue)) {
+                    if (\is_bool($paramValue)) {
                         $paramValue = (int)$paramValue;
                     }
 
