@@ -132,13 +132,13 @@ class PersistenceCachePurger implements CacheClearerInterface
             $tags[] = 'location-' . $id;
             $tags[] = 'urlAlias-location-' . $id;
             $tags[] = 'urlAlias-location-path-' . $id;
+        }
 
-            if (empty($contentIds)) {
-                // if caller did not provide affected content id's, then try to load location to get it
-                try {
-                    $tags[] = 'content-' . $this->locationHandler->load($id)->contentId;
-                } catch (APINotFoundException $e) {
-                }
+        // if caller did not provide affected content id's, then try to load location to get it
+        if (empty($contentIds)) {
+            $contentIds = [];
+            foreach ($this->locationHandler->loadList($locationIds) as $location) {
+                $contentIds[] = $location->contentId;
             }
         }
 

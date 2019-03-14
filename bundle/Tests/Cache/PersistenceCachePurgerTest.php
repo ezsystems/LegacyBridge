@@ -52,8 +52,9 @@ class PersistenceCachePurgerTest extends TestCase
         $id = 'locationIdThatDoesNotExist';
         $this->locationHandler
             ->expects($this->once())
-            ->method('load')
-            ->will($this->throwException(new NotFoundException('location', $id)));
+            ->method('loadList')
+            ->with([$id])
+            ->willReturn([]);
 
         $this->cachePurger->content($id);
     }
@@ -149,18 +150,17 @@ class PersistenceCachePurgerTest extends TestCase
         $locationId3 = 3;
         $contentId3 = 30;
 
+        $locationIds = array($locationId1, $locationId2, $locationId3);
+
         $this->locationHandler
-            ->expects($this->exactly(3))
-            ->method('load')
-            ->will(
-                $this->returnValueMap(
-                    array(
-                        array($locationId1, $this->buildLocation($locationId1, $contentId1)),
-                        array($locationId2, $this->buildLocation($locationId2, $contentId2)),
-                        array($locationId3, $this->buildLocation($locationId3, $contentId3)),
-                    )
-                )
-            );
+            ->expects($this->once())
+            ->method('loadList')
+            ->with($locationIds)
+            ->willReturn([
+                $locationId1 => $this->buildLocation($locationId1, $contentId1),
+                $locationId2 => $this->buildLocation($locationId2, $contentId2),
+                $locationId3 => $this->buildLocation($locationId3, $contentId3),
+            ]);
 
         $this->cacheService
             ->expects($this->any())
@@ -180,7 +180,6 @@ class PersistenceCachePurgerTest extends TestCase
                 )
             );
 
-        $locationIds = array($locationId1, $locationId2, $locationId3);
         $this->assertSame($locationIds, $this->cachePurger->content($locationIds));
     }
 
@@ -194,8 +193,10 @@ class PersistenceCachePurgerTest extends TestCase
 
         $this->locationHandler
             ->expects($this->once())
-            ->method('load')
-            ->will($this->returnValue($this->buildLocation($locationId, $contentId)));
+            ->method('loadList')
+            ->with([$locationId])
+            ->willReturn([$locationId => $this->buildLocation($locationId, $contentId)]);
+
         $this->cacheService
             ->expects($this->any())
             ->method('clear')
