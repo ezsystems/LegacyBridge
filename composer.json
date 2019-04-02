@@ -12,8 +12,8 @@
     "minimum-stability": "stable",
     "require": {
         "ezsystems/ezpublish-legacy-installer": "^2.0.4",
-        "ezsystems/ezpublish-legacy": "^2018.09 || ^2019.02",
-        "ezsystems/ezpublish-kernel": "^7.4",
+        "ezsystems/ezpublish-legacy": "^2019.03@rc",
+        "ezsystems/ezpublish-kernel": "^7.5",
         "ezsystems/ezplatform-xmltext-fieldtype": "^1.8",
         "sensio/distribution-bundle": "^5.0.22",
         "twig/twig": "^1.35 || ^2.5"
