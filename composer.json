@@ -19,7 +19,7 @@
         "twig/twig": "^1.35 || ^2.5"
     },
     "require-dev": {
-      "friendsofphp/php-cs-fixer": "v2.14.2",
+        "friendsofphp/php-cs-fixer": "v2.14.2",
         "ezsystems/ezplatform-http-cache": "*",
         "matthiasnoback/symfony-dependency-injection-test": "^2.3",
         "phpunit/phpunit": "^6.5",
