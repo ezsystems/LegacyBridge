@@ -80,9 +80,9 @@ EOT
         $filesystem = $this->getContainer()->get('filesystem');
 
         $filesystem->mkdir([
+            "src/AppBundle/ezpublish_legacy",
             $srcArg,
             "$srcArg/design",
-            "$srcArg/AppBundle/ezpublish_legacy",
             "$srcArg/settings",
             "$srcArg/settings/override",
             "$srcArg/settings/siteaccess",
