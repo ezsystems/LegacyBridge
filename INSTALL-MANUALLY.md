@@ -106,7 +106,7 @@ _Tip:_
 Package can be installed using Composer in the following way:
 
 ```
-composer require --update-no-dev "ezsystems/legacy-bridge:^1.5.0"
+composer require --update-with-all-dependencies "ezsystems/legacy-bridge:^1.5.0"
 ```
 
 ### Optional: Add missing legacy extensions

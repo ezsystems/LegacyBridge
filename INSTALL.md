@@ -10,7 +10,7 @@ _TIP:_
 
 1. Installed package using [Composer](https://getcomposer.org/doc/00-intro.md):
 ```
-composer require --update-no-dev "ezsystems/legacy-bridge"
+composer require --update-with-all-dependencies "ezsystems/legacy-bridge"
 ```
 
 2. Enable `EzPublishLegacyBundle`
