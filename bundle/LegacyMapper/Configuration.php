@@ -196,6 +196,9 @@ class Configuration implements EventSubscriberInterface
         // Cluster Settings
         $settings += $this->getClusterSettings();
 
+        // Debug Settings
+        $settings += $this->getDebugSettings();
+
         $event->getParameters()->set(
             'injected-settings',
             $settings + (array)$event->getParameters()->get('injected-settings')
@@ -339,5 +342,37 @@ class Configuration implements EventSubscriberInterface
         }
 
         return $clusterSettings;
+    }
+
+    private function getDebugSettings()
+    {
+        // if disabled, we don't touche any settings
+        if (!$this->container->getParameter('kernel.debug')) {
+            return [];
+        }
+
+        // Set some basic recommended defaults for debug use
+        $debugSettings = [
+            'site.ini/DesignSettings/DesignLocationCache' => 'disabled',
+            'site.ini/TemplateSettings/DevelopmentMode' => 'enabled',
+        ];
+
+        // Enable template debug if it's enabled for Twig
+        if ($this->container->getParameter('twig.debug')) {
+            $debugSettings['site.ini/TemplateSettings/Debug'] = 'enabled';
+        }
+
+        // Enable some common debug output if it's enabled for Web Profiler
+        if ($this->container->getParameter('web_profiler.toolbar')) {
+            $debugSettings['site.ini/DebugSettings/DebugOutput'] = 'enabled';
+            $debugSettings['site.ini/TemplateSettings/ShowUsedTemplates'] = 'enabled';
+        }
+
+        // Enable debug redirection if it's enabled for Web Profiler
+        if ($this->container->getParameter('web_profiler.intercept_redirects')) {
+            $debugSettings['site.ini/DebugSettings/DebugRedirection'] = 'enabled';
+        }
+
+        return $debugSettings;
     }
 }
