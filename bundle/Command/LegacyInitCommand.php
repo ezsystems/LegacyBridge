@@ -10,6 +10,7 @@ namespace eZ\Bundle\EzPublishLegacyBundle\Command;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Output\ConsoleOutputInterface;
 
@@ -24,6 +25,7 @@ class LegacyInitCommand extends ContainerAwareCommand
                     new InputArgument('src', InputArgument::OPTIONAL, 'The src directory for legacy files', 'src/legacy_files'),
                 ]
             )
+            ->addOption('ini', null, InputOption::VALUE_NONE, 'Inits basic INI settings for scenarios where adding legacy bridge to platform (mainly for testing use)')
             ->setDescription('Inits Platform installation for legacy usage')
             ->setHelp(
                 <<<EOT
@@ -52,15 +54,18 @@ EOT
         $this->updateComposeJson($output);
         $this->enableBundles($output);
         $this->enableRoutes($output);
+        $this->generateINI($input, $output);
 
         $output->writeln(<<<'EOT'
 
-<options=bold,underscore>All steps completed!</options>
+<options=bold,underscore>All steps completed!</>
 
 You can now check changes done and start to move over any legacy files (see above).
 
 One done you can run the following command to setup symlinks, dump assets, (...):
 - <info>composer symfony-scripts</info>
+- <info>git add src/legacy_files</info>
+
 EOT
         );
     }
@@ -222,28 +227,86 @@ EOT
 
     protected function enableRoutes(OutputInterface $output)
     {
-        $errOutput = $output instanceof ConsoleOutputInterface ? $output->getErrorOutput() : $output;
-        if (!$text = file_get_contents('app/config/routing.yml')) {
-            $errOutput->writeln('<error>Error: Unable to load app/config/routing.yml</error>');
-
-            return;
-        }
-
-        $changed = false;
-        if (stripos($text, 'resource: @EzPublishLegacyBundle/Resources/config/routing.yml') === false) {
-            // Add routes to the end of routes file
-            $text .= <<<'EOT'
+        if (!$this->appendConditionally(
+            'app/config/routing.yml',
+            'resource: @EzPublishLegacyBundle/Resources/config/routing.yml',
+            <<<'EOT'
 
 # NOTE: ALWAYS keep this at the end of your routing rules so native symfony routes have precedence
 #       To avoid legacy REST pattern overriding possible eZ Platform REST routes and so on.
 _ezpublishLegacyRoutes:
     resource: '@EzPublishLegacyBundle/Resources/config/routing.yml'
-EOT;
-            $changed = true;
+
+EOT
+        )) {
+            $errOutput = $output instanceof ConsoleOutputInterface ? $output->getErrorOutput() : $output;
+            $errOutput->writeln('<error>Error: Unable to load app/config/routing.yml</error>');
+        }
+    }
+
+    protected function generateINI(InputInterface $input, OutputInterface $output)
+    {
+        if (!$input->getOption('ini')) {
+            return;
         }
 
-        if ($changed) {
-            file_put_contents('app/config/routing.yml', $text);
+        /**
+         * @var \Symfony\Component\Filesystem\Filesystem
+         */
+        $filesystem = $this->getContainer()->get('filesystem');
+        $srcArg = rtrim($input->getArgument('src'), '/');
+        $filesystem->mirror(
+            __DIR__ . '/../Resources/init_ini',
+            "$srcArg/settings"
+        );
+
+        if (!$this->appendConditionally(
+            'app/config/ezplatform.yml',
+            'legacy_mode: true',
+            <<<'EOT'
+
+# To use legacy_admin, make sure it's also present in siteaccess.list & siteaccess.groups.site_group above
+ez_publish_legacy:
+    system:
+        legacy_admin:
+            legacy_mode: true
+# Example of setting view and module layout settings
+#        site:
+#            templating:
+#                view_layout: "@ezdesign/view_pagelayout.html.twig"
+#                module_layout: "@ezdesign/module_pagelayout.html.twig"
+
+EOT
+        )) {
+            $errOutput = $output instanceof ConsoleOutputInterface ? $output->getErrorOutput() : $output;
+            $errOutput->writeln('<error>Error: Unable to load app/config/ezplatform.yml</error>');
         }
+
+        $output->writeln('<info>To use legacy_admin, add it to siteaccess.list and siteaccess.groups.site_group in `ezplatform.yml` </info>');
+
+    }
+
+    /**
+     * Append $config to $file if ot does not have $contains.
+     *
+     * @param string $file
+     * @param string $contains
+     * @param string $config
+     *
+     * @return bool False if file was not found
+     */
+    private function appendConditionally($file, $contains, $config)
+    {
+        if (!$text = file_get_contents($file)) {
+            return false;
+        }
+
+        // Unless file already contains $test, append $config to the file content
+        if (stripos($text, $contains) === false) {
+            $text .= $config;
+            file_put_contents($file, $text);
+        }
+
+        return true;
     }
 }
