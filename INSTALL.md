@@ -21,7 +21,7 @@ _NOTE: Pay close attention to the `$this` argument, LegacyBundle needs it to int
 
 3. Run the following command to configure your install for legacy usage:
 ```
-php app/console ezpublish:legacy:init
+php bin/console ezpublish:legacy:init
 ```
 
 During it's execution it will advice you on which command to run **after** you have moved over your legacy files
