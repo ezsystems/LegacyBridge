@@ -8,7 +8,6 @@ LoginPage=custom
 RequireUserLogin=true
 RelatedSiteAccessList[]
 RelatedSiteAccessList[]=site
-#RelatedSiteAccessList[]=admin
 RelatedSiteAccessList[]=legacy_admin
 ShowHiddenNodes=true
 
