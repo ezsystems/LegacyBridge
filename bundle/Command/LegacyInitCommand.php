@@ -25,7 +25,7 @@ class LegacyInitCommand extends ContainerAwareCommand
                     new InputArgument('src', InputArgument::OPTIONAL, 'The src directory for legacy files', 'src/legacy_files'),
                 ]
             )
-            ->addOption('ini', null, InputOption::VALUE_NONE, 'Inits basic INI settings for scenarios where adding legacy bridge to platform (mainly for testing use)')
+            ->addOption('ini', null, InputOption::VALUE_NONE, 'Inits basic INI settings for scenarios where adding legacy bridge to existing platform setup (mainly for testing use)')
             ->setDescription('Inits Platform installation for legacy usage')
             ->setHelp(
                 <<<EOT
@@ -62,7 +62,7 @@ EOT
 
 You can now check changes done and start to move over any legacy files (see above).
 
-One done you can run the following command to setup symlinks, dump assets, (...):
+Once done you can run the following command to setup symlinks, dump assets, (...):
 - <info>composer symfony-scripts</info>
 - <info>git add src/legacy_files</info>
 
@@ -229,7 +229,7 @@ EOT
     {
         if (!$this->appendConditionally(
             'app/config/routing.yml',
-            'resource: @EzPublishLegacyBundle/Resources/config/routing.yml',
+            '@EzPublishLegacyBundle/Resources/config/routing.yml',
             <<<'EOT'
 
 # NOTE: ALWAYS keep this at the end of your routing rules so native symfony routes have precedence
@@ -282,7 +282,8 @@ EOT
             $errOutput->writeln('<error>Error: Unable to load app/config/ezplatform.yml</error>');
         }
 
-        $output->writeln('<info>To use legacy_admin, add it to siteaccess.list and siteaccess.groups.site_group in `ezplatform.yml` </info>');
+        $output->writeln('');
+        $output->writeln('<comment>INI generated: To use legacy_admin, add it to siteaccess.list and siteaccess.groups.site_group in `app/config/ezplatform.yml`</comment>');
 
     }
 
