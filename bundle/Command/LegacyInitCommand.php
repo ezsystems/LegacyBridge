@@ -287,7 +287,7 @@ EOT
     }
 
     /**
-     * Append $config to $file if ot does not have $contains.
+     * Append $config to $file if it does not have $contains.
      *
      * @param string $file
      * @param string $contains
