@@ -80,7 +80,7 @@ EOT
         $filesystem = $this->getContainer()->get('filesystem');
 
         $filesystem->mkdir([
-            "src/AppBundle/ezpublish_legacy",
+            'src/AppBundle/ezpublish_legacy',
             $srcArg,
             "$srcArg/design",
             "$srcArg/settings",
@@ -284,7 +284,6 @@ EOT
 
         $output->writeln('');
         $output->writeln('<comment>INI generated: To use legacy_admin, add it to siteaccess.list and siteaccess.groups.site_group in `app/config/ezplatform.yml`</comment>');
-
     }
 
     /**
