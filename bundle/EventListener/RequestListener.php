@@ -71,10 +71,23 @@ class RequestListener implements EventSubscriberInterface
         }
 
         try {
-            $apiUser = $this->repository->getUserService()->loadUser($session->get('eZUserLoggedInID'));
+            $legacyUserId = (int)$session->get('eZUserLoggedInID');
+            $token = $this->tokenStorage->getToken();
+
+            // Check if token is already legacy token, and user already loaded by Platform
+            if ($token instanceof LegacyToken &&
+                $token->getUser() instanceof User &&
+                $token->getUser()->getAPIUserReference()->getUserId() === $legacyUserId &&
+                $this->repository->getCurrentUserReference()->getUserId() === $legacyUserId
+            ) {
+                // All seems ok, we can skip loading anything here
+                return;
+            }
+
+            // Load user and set as current
+            $apiUser = $this->repository->getUserService()->loadUser($legacyUserId);
             $this->repository->setCurrentUser($apiUser);
 
-            $token = $this->tokenStorage->getToken();
             if ($token instanceof TokenInterface) {
                 $token->setUser(new User($apiUser));
                 // Don't embed if we already have a LegacyToken, to avoid nested session storage.
