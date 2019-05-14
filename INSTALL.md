@@ -35,13 +35,13 @@ _TIP:_
 
 The Legacy Backoffice requires the `legacy_mode` option to be enabled.
 
-This can be done in app/config/config.yml or app/config/ezplatform.yml, where `site_admin` is the name of the admin
+This can be done in `app/config/config.yml` or `app/config/ezplatform.yml`, where `legacy_admin` is the name of the admin
 siteaccess:
 
 ```
 ez_publish_legacy:
     system:
-        site_admin:
+        legacy_admin:
            legacy_mode: true
 ```
 

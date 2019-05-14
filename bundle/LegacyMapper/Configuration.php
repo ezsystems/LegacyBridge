@@ -285,16 +285,7 @@ class Configuration implements EventSubscriberInterface
             return $result;
         }
 
-        $pathPrefix = '';
-
-        try {
-            $pathPrefix = trim($this->urlAliasGenerator->getPathPrefixByRootLocationId($rootLocationId), '/');
-        } catch (Exception $e) {
-            // Ignore any errors
-            // Most probable cause for error is database not being ready yet,
-            // i.e. initial install of the project which includes eZ Publish Legacy
-        }
-
+        $pathPrefix = $this->loadPathPrefix($rootLocationId);
         $pathPrefixExcludeItems = array_map(
             static function ($value) {
                 return trim($value, '/');
@@ -327,5 +318,23 @@ class Configuration implements EventSubscriberInterface
         }
 
         return $clusterSettings;
+    }
+
+    private function loadPathPrefix($rootLocationId)
+    {
+        // If root location is 2 we know path is empty, so we can skip loading location + urlAlias data
+        if ($rootLocationId === 2) {
+            return '';
+        }
+
+        try {
+            return trim($this->urlAliasGenerator->getPathPrefixByRootLocationId($rootLocationId), '/');
+        } catch (Exception $e) {
+            // Ignore any errors
+            // Most probable cause for error is database not being ready yet,
+            // i.e. initial install of the project which includes eZ Publish Legacy
+        }
+
+        return '';
     }
 }
