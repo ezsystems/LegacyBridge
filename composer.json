@@ -12,17 +12,17 @@
     "minimum-stability": "stable",
     "require": {
         "ezsystems/ezpublish-legacy-installer": "^2.0.4",
-        "ezsystems/ezpublish-legacy": "^2017.12",
-        "ezsystems/ezpublish-kernel": "^6.13.4",
+        "ezsystems/ezpublish-legacy": "~2017.12.4",
+        "ezsystems/ezpublish-kernel": "~6.13.4",
         "ezsystems/ezplatform-xmltext-fieldtype": "^1.7",
-        "sensio/distribution-bundle": "^3.0.36 | ^4.0.40 | ^5.0.22",
+        "sensio/distribution-bundle": "^3.0.36 | ^4.0.41 | ^5.0.24",
         "twig/twig": "^1.35 | ^2.5"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "v2.14.2",
-        "matthiasnoback/symfony-dependency-injection-test": "^1.1",
+        "matthiasnoback/symfony-dependency-injection-test": "^1.2",
         "phpunit/phpunit": "^5.7.27",
-        "mikey179/vfsStream": "~1.1.0"
+        "mikey179/vfsstream": "~1.1.0"
     },
     "autoload": {
         "psr-4": {

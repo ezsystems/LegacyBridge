@@ -29,6 +29,7 @@ return PhpCsFixer\Config::create()
             ->exclude([
                 'vendor',
                 'ezpublish_legacy',
+                'bundle/Resources/init_ini',
             ])
             ->files()->name('*.php')
     )

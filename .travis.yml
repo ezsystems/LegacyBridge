@@ -31,10 +31,8 @@ before_script:
   # Disable xdebug and remove memory limit to speed things up
   - phpenv config-rm xdebug.ini
   - echo "memory_limit=-1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
-  # Setup github key to avoid api rate limit (pure auth read only key, no rights, for use in ezsystems repos only)
-  - composer config -g github-oauth.github.com "d0285ed5c8644f30547572ead2ed897431c1fc09"
   # Install packages using composer
-  - travis_retry composer install --dev --prefer-dist  --no-interaction --no-progress $COMPOSER_FLAGS
+  - travis_retry composer install --prefer-dist --no-interaction --no-progress $COMPOSER_FLAGS
 
 # execute phpunit as the script command
 script:
