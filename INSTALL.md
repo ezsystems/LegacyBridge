@@ -30,20 +30,14 @@ _(extensions, settings and optionally designs)_.
 _TIP:_
 > If you are in need of applying these "init" steps manually, see INSTALL-MANUALLY.md.
 
-
-### Enable legacy_mode for your backoffice siteaccess
+4. Complete setup as instructed `ezpublish:legacy:init` by command
 
 The Legacy Backoffice requires the `legacy_mode` option to be enabled.
+When you ran `ezpublish:legacy:init` above, config to enable this for `legacy_admin` siteaccess was added to end of your
+ezplatform.yml. To enable it follow instructions given by the command _(add to siteaccess `list` and `site_group`)_.
 
-This can be done in `app/config/config.yml` or `app/config/ezplatform.yml`, where `legacy_admin` is the name of the admin
-siteaccess:
+After this you'll need to run `composer symfony-scripts` once or twice to make sure assets are generated and symlinked correctly.
 
-```
-ez_publish_legacy:
-    system:
-        legacy_admin:
-           legacy_mode: true
-```
 
 ### Optional: add security rules for the Setup Wizard
 
