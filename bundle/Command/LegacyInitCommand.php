@@ -40,9 +40,11 @@ The command <info>%command.name%</info> prepares install for use with eZ Publish
 
 2. It configures <info>@legacy-scrips</info> in composer.json to make sure all needed scripts are executed on <info>composer install/update</info>
 
-3. It enables <info>EzPublishLegacyBundle</info> and <info>XmlTextFieldTypeBundle</info> in <info>app/AppKernel.php</info> if needed
+3. It enables <info>EzSystemsEzPlatformXmlTextFieldTypeBundle</info> in <info>app/AppKernel.php</info>, if needed.
 
 4. It appends legacy routes to <info>app/config/routing.yml</info> if needed
+
+5. [Optional] If <info>--ini</info> is specified, it generates basic legacy ini config for use with clean eZ Platform install.
 
 EOT
             );
