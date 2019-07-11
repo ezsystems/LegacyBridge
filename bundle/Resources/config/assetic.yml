@@ -1,0 +1,6 @@
+services:
+    assetic.eztpl_formula_loader:
+        class: eZ\Publish\Core\MVC\Legacy\Templating\LegacyFormulaLoader
+        public: false
+        tags:
+            - {name: assetic.formula_loader, alias: eztpl}
