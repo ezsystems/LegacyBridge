@@ -8,6 +8,7 @@
  */
 namespace eZ\Bundle\EzPublishLegacyBundle\DependencyInjection;
 
+use Assetic\Factory\Loader\FormulaLoaderInterface;
 use eZ\Bundle\EzPublishCoreBundle\DependencyInjection\Configuration\SiteAccessAware\ConfigurationProcessor;
 use eZ\Bundle\EzPublishCoreBundle\DependencyInjection\Configuration\SiteAccessAware\ContextualizerInterface;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
@@ -41,6 +42,10 @@ class EzPublishLegacyExtension extends Extension
 
         // Templating
         $loader->load('templating.yml');
+
+        if (interface_exists(FormulaLoaderInterface::class)) {
+            $loader->load('assetic.yml');
+        }
 
         // View
         $loader->load('view.yml');
