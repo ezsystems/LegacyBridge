@@ -1,10 +1,10 @@
 # Installing the eZ Platform legacy bridge
 
-Instructions below will take you through installing legacy bridge and implicit legacy on top of a eZ Platform 2.x
-install.
+Instructions below will take you through installing legacy bridge and implicit eZ Publish legacy 2019.03.x on top of a [eZ Platform 2.5LTS
+install](https://doc.ezplatform.com/en/2.5/getting_started/install_ez_platform/).
 
 _TIP:_
-> Before starting make sure to check-in (e.g. to Git) your eZ Platform project working space so you'll be able to see & verify changes applied to your setup separate from initial clean project install.
+> Before starting make sure to check-in (e.g. to Git) your eZ Platform 2.5LTS project working space so you'll be able to see & verify changes applied to your setup separate from initial clean project install.
 
 ### Install `ezsystems/legacy-bridge` and run `init` command
 
