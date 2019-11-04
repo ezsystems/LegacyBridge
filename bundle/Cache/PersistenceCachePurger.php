@@ -167,8 +167,8 @@ class PersistenceCachePurger implements CacheClearerInterface
             return;
         }
 
-        // todo Once we can require 2.2.2+, simplify to just invalidate "content-{$contentId}-version-{$versionNo}"
-        $this->cache->deleteItem("ez-content-version-info-${contentId}-${versionNo}");
+        // Some extra keys/tags here to make sure we cover differences between misc 7.x kernel versions
+        $this->cache->deleteItems(["ez-content-version-info-${contentId}-${versionNo}", "ez-content-${contentId}-version-list"]);
         $this->cache->invalidateTags(["content-${contentId}-version-list", "content-{$contentId}-version-{$versionNo}"]);
     }
 
