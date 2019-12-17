@@ -398,8 +398,8 @@ class PersistenceCachePurgerTest extends TestCase
     {
         $this->cacheService
             ->expects($this->once())
-            ->method('deleteItem')
-            ->with("ez-content-version-info-${contentId}-${versionNo}");
+            ->method('deleteItems')
+            ->with(["ez-content-version-info-${contentId}-${versionNo}", "ez-content-${contentId}-version-list"]);
 
         $this->cacheService
             ->expects($this->once())
