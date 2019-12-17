@@ -66,6 +66,8 @@ services:
     # Overriding core helper
     ezpublish.templating.global_helper:
         alias: ezpublish.templating.global_helper.legacy
+        # Needs to be public to use the service as a Twig global variable
+        public: true
 
     templating.engine.eztpl:
         class: eZ\Publish\Core\MVC\Legacy\Templating\LegacyEngine
