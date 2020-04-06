@@ -29,7 +29,7 @@ class LegacyExtensionsLocator implements LegacyExtensionsLocatorInterface
                 continue;
             }
 
-            if (file_exists($item->getPathname() . '/extension.xml')) {
+            if (file_exists($item->getPathname() . '/ezinfo.php') || file_exists($item->getPathname() . '/extension.xml')) {
                 $return[] = $item->getPathname();
             }
         }
