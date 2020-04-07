@@ -32,6 +32,7 @@ class LegacyExtensionsLocatorTest extends TestCase
             [
                 vfsStream::url('eZ/TestBundle/ezpublish_legacy/extension1'),
                 vfsStream::url('eZ/TestBundle/ezpublish_legacy/extension2'),
+                vfsStream::url('eZ/TestBundle/ezpublish_legacy/extension3'),
             ],
             $locator->getExtensionDirectories(vfsStream::url('eZ/TestBundle/'))
         );
@@ -57,7 +58,7 @@ class LegacyExtensionsLocatorTest extends TestCase
 
         $bundle->expects($this->once())
             ->method('getLegacyExtensionsNames')
-            ->willReturn(['extension3']);
+            ->willReturn(['extension4']);
 
         $locator = new LegacyExtensionsLocator($this->vfsRoot);
 
@@ -66,6 +67,7 @@ class LegacyExtensionsLocatorTest extends TestCase
                 'extension1',
                 'extension2',
                 'extension3',
+                'extension4',
             ],
             $locator->getExtensionNames($bundle)
         );
@@ -78,7 +80,8 @@ class LegacyExtensionsLocatorTest extends TestCase
                 'TestBundle' => [
                     'ezpublish_legacy' => [
                         'extension1' => ['extension.xml' => ''],
-                        'extension2' => ['extension.xml' => ''],
+                        'extension2' => ['extension.xml' => '', 'ezinfo.php' => ''],
+                        'extension3' => ['ezinfo.php' => ''],
                         'not_extension' => [],
                     ],
                     'Resources' => ['config' => []],
