@@ -9,3 +9,13 @@ parameters:
 
     # Whether to use legacy mode or not. If true, will let the legacy kernel handle url aliases.
     ezsettings.default.legacy_mode: false
+
+    # Override to fix eZ Publish Legacy session namespace. Since Symfony 3.4.39 attribute bag service
+    # is not injected into session any more (https://github.com/symfony/symfony/pull/36063), making the bag
+    # use the default session key, while previously it was customized in eZ kernel.
+    # https://github.com/ezsystems/ezpublish-kernel/blob/7.5/eZ/Bundle/EzPublishCoreBundle/Resources/config/session.yml#L21
+    # This somehow has the effect on login pages when legacy admin UI is ran in "legacy_mode: false"
+    # (e.g. Netgen Admin UI), where the first redirect after a login shows a secondary login form.
+    # This resets the session key to a default value in Symfony, making sure it is compatible
+    # with both previous versions of Symfony as well as 3.4.39+
+    ezpublish.session.attribute_bag.storage_key: "_sf2_attributes"
