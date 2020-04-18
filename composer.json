@@ -33,7 +33,7 @@
     },
     "scripts": {
         "fix-cs": "php-cs-fixer fix -v --show-progress=estimating",
-        "test": "phpunit"
+        "test": "vendor/bin/phpunit"
     },
     "extra": {
         "ezpublish-legacy-dir": "ezpublish_legacy",
