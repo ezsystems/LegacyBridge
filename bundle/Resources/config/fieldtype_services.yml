@@ -4,5 +4,6 @@ services:
         arguments:
             - "@ezpublish.image_alias.imagine.alias_cleaner"
             - "@ezpublish.core.io.image_fieldtype.legacy_url_redecorator"
+            - "@ezpublish.fieldType.ezimage.io_service"
         lazy: true
         public: false

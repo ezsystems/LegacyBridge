@@ -7,6 +7,7 @@
 namespace eZ\Publish\Core\MVC\Legacy\Image;
 
 use eZ\Publish\Core\FieldType\Image\AliasCleanerInterface;
+use eZ\Publish\Core\IO\IOServiceInterface;
 use eZ\Publish\Core\IO\UrlRedecoratorInterface;
 
 class AliasCleaner implements AliasCleanerInterface
@@ -21,18 +22,25 @@ class AliasCleaner implements AliasCleanerInterface
      */
     private $urlRedecorator;
 
+    /**
+     * @var IOServiceInterface
+     */
+    private $IOService;
+
     public function __construct(
         AliasCleanerInterface $innerAliasCleaner,
-        UrlRedecoratorInterface $urlRedecorator
+        UrlRedecoratorInterface $urlRedecorator,
+        IOServiceInterface $IOService
     ) {
         $this->innerAliasCleaner = $innerAliasCleaner;
         $this->urlRedecorator = $urlRedecorator;
+        $this->IOService = $IOService;
     }
 
     public function removeAliases($originalPath)
     {
-        $this->innerAliasCleaner->removeAliases(
-            $this->urlRedecorator->redecorateFromTarget($originalPath)
-        );
+        $uri = $this->urlRedecorator->redecorateFromTarget($originalPath);
+        $binaryFile = $this->IOService->loadBinaryFileByUri($uri);
+        $this->innerAliasCleaner->removeAliases($binaryFile->id);
     }
 }
