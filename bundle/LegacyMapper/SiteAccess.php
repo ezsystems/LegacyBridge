@@ -1,10 +1,8 @@
 <?php
+
 /**
- * File containing the SiteAccess class.
- *
  * @copyright Copyright (C) eZ Systems AS. All rights reserved.
  * @license For full copyright and license information view LICENSE file distributed with this source code.
- * @version //autogentag//
  */
 namespace eZ\Bundle\EzPublishLegacyBundle\LegacyMapper;
 
@@ -122,6 +120,7 @@ class SiteAccess implements EventSubscriberInterface
 
     /**
      * Returns an array with all the components of the fragment_path option.
+     *
      * @return array
      */
     protected function getFragmentPathItems()

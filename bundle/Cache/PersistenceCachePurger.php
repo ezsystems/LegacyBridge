@@ -1,10 +1,8 @@
 <?php
+
 /**
- * File containing the PersistenceCachePurger class.
- *
  * @copyright Copyright (C) eZ Systems AS. All rights reserved.
  * @license For full copyright and license information view LICENSE file distributed with this source code.
- * @version //autogentag//
  */
 namespace eZ\Bundle\EzPublishLegacyBundle\Cache;
 
@@ -179,6 +177,7 @@ class PersistenceCachePurger implements CacheClearerInterface
      * Also used when clearing content type meta data cache in admin cache interface (no id).
      *
      * @param int|null $id Purges all contentType cache if null
+     *
      * @throws \eZ\Publish\Core\Base\Exceptions\InvalidArgumentType On invalid $id type
      */
     public function contentType($id = null)
@@ -202,6 +201,7 @@ class PersistenceCachePurger implements CacheClearerInterface
      * In legacy kernel used when editing/removing content type group, so there is always an id.
      *
      * @param int $id
+     *
      * @throws \eZ\Publish\Core\Base\Exceptions\InvalidArgumentType On invalid $id type
      */
     public function contentTypeGroup($id)
@@ -224,6 +224,7 @@ class PersistenceCachePurger implements CacheClearerInterface
      * In legacy kernel used when editing section, so there is always an id.
      *
      * @param int $id
+     *
      * @throws \eZ\Publish\Core\Base\Exceptions\InvalidArgumentType On invalid $id type
      */
     public function section($id)
@@ -283,6 +284,7 @@ class PersistenceCachePurger implements CacheClearerInterface
      * In legacy kernel used when clearing meta info cache on users in eZUser, never with id.
      *
      * @param int|null $id Purges all users cache if null
+     *
      * @throws \eZ\Publish\Core\Base\Exceptions\InvalidArgumentType On invalid $id type
      */
     public function user($id = null)

@@ -1,10 +1,8 @@
 <?php
+
 /**
- * File containing the PageService class.
- *
  * @copyright Copyright (C) eZ Systems AS. All rights reserved.
  * @license For full copyright and license information view LICENSE file distributed with this source code.
- * @version //autogentag//
  */
 namespace eZ\Bundle\EzPublishLegacyBundle\FieldType\Page;
 
@@ -18,6 +16,7 @@ class PageService extends CorePageService
      * then add the appropriate prefix ("design:zone/", like in ezpage.tpl legacy template).
      *
      * @param string $layoutIdentifier
+     *
      * @return string
      */
     public function getLayoutTemplate($layoutIdentifier)

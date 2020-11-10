@@ -1,10 +1,8 @@
 <?php
+
 /**
- * File containing the ConfigurationConverter class.
- *
  * @copyright Copyright (C) eZ Systems AS. All rights reserved.
  * @license For full copyright and license information view LICENSE file distributed with this source code.
- * @version //autogentag//
  */
 namespace eZ\Bundle\EzPublishLegacyBundle\SetupWizard;
 
@@ -43,6 +41,7 @@ class ConfigurationConverter
 
     /**
      * Converts from legacy settings to an array dumpable to ezpublish.yml.
+     *
      * @param string $sitePackage Name of the chosen install package
      * @param string $adminSiteaccess Name of the admin siteaccess
      *
@@ -427,6 +426,7 @@ class ConfigurationConverter
 
     /**
      * Parses Legacy HostMatching settings to a matching array.
+     *
      * @param mixed[] $siteaccessSettings
      *
      * @throws \eZ\Publish\Core\Base\Exceptions\InvalidArgumentException

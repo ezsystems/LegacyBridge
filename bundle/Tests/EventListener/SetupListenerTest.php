@@ -1,7 +1,6 @@
 <?php
+
 /**
- * This file is part of the legacy-bridge package.
- *
  * @copyright Copyright (C) eZ Systems AS. All rights reserved.
  * @license For full copyright and license information view LICENSE file distributed with this source code.
  */
@@ -99,6 +98,7 @@ class SetupListenerTest extends TestCase
 
     /**
      * @param string $uri
+     *
      * @return \Symfony\Component\HttpKernel\Event\GetResponseEvent
      */
     private function createEvent($uri = null, $requestType = HttpKernelInterface::MASTER_REQUEST)

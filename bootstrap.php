@@ -1,12 +1,8 @@
 <?php
+
 /**
- * File containing the bootstrapping of eZ Publish API for unit test use.
- *
- * Setups class loading.
- *
  * @copyright Copyright (C) eZ Systems AS. All rights reserved.
  * @license For full copyright and license information view LICENSE file distributed with this source code.
- * @version //autogentag//
  */
 use eZ\Publish\Core\MVC\Legacy\Kernel as LegacyKernel;
 use eZ\Publish\Core\MVC\Legacy\Kernel\CLIHandler as LegacyKernelCLI;

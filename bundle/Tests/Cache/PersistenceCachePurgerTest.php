@@ -1,10 +1,8 @@
 <?php
+
 /**
- * File containing the PersistenceCachePurgeTest class.
- *
  * @copyright Copyright (C) eZ Systems AS. All rights reserved.
  * @license For full copyright and license information view LICENSE file distributed with this source code.
- * @version //autogentag//
  */
 namespace eZ\Bundle\EzPublishLegacyBundle\Tests\Cache;
 
@@ -217,6 +215,7 @@ class PersistenceCachePurgerTest extends TestCase
     /**
      * @param $locationId
      * @param $contentId
+     *
      * @return \eZ\Publish\SPI\Persistence\Content\Location
      */
     private function buildLocation($locationId, $contentId)
