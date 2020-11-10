@@ -1,10 +1,8 @@
 <?php
+
 /**
- * File containing the LegacyBundleInstallCommand class.
- *
  * @copyright Copyright (C) eZ Systems AS. All rights reserved.
  * @license For full copyright and license information view LICENSE file distributed with this source code.
- * @version //autogentag//
  */
 namespace eZ\Bundle\EzPublishLegacyBundle\Command;
 
@@ -65,6 +63,7 @@ EOT
      * @param OutputInterface $output
      *
      * @throws \RuntimeException If a target link/directory exists and $options[force] isn't set to true
+     *
      * @return string The resulting link/directory
      */
     protected function linkLegacyExtension($extensionPath, array $options = [], OutputInterface $output)
@@ -135,6 +134,7 @@ EOT
 
     /**
      * Removes the cwd from $path.
+     *
      * @param string $path
      */
     private function removeCwd($path)

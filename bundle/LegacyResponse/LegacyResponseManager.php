@@ -1,10 +1,8 @@
 <?php
+
 /**
- * File containing the LegacyResponseManager class.
- *
  * @copyright Copyright (C) eZ Systems AS. All rights reserved.
  * @license For full copyright and license information view LICENSE file distributed with this source code.
- * @version //autogentag//
  */
 namespace eZ\Bundle\EzPublishLegacyBundle\LegacyResponse;
 
@@ -66,6 +64,7 @@ class LegacyResponseManager
      *
      * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
      * @throws \Symfony\Component\Security\Core\Exception\AccessDeniedException
+     *
      * @return \eZ\Bundle\EzPublishLegacyBundle\LegacyResponse
      */
     public function generateResponseFromModuleResult(ezpKernelResult $result)
@@ -118,6 +117,7 @@ class LegacyResponseManager
      * Typically checks if $moduleResult['pagelayout'] is set or if current request is using /layout/set/ route.
      *
      * @param ezpKernelResult $result
+     *
      * @return bool
      */
     public function legacyResultHasLayout(ezpKernelResult $result)

@@ -1,10 +1,8 @@
 <?php
+
 /**
- * File containing the LegacyKernel class.
- *
  * @copyright Copyright (C) eZ Systems AS. All rights reserved.
  * @license For full copyright and license information view LICENSE file distributed with this source code.
- * @version //autogentag//
  */
 namespace eZ\Publish\Core\MVC\Legacy;
 
@@ -38,6 +36,7 @@ class Kernel extends ezpKernel
 
     /**
      * Directory where kernel was originally running from.
+     *
      * @see self::runCallback()
      *
      * @var string
@@ -130,11 +129,11 @@ class Kernel extends ezpKernel
      * @param bool $postReinitialize Default is true.
      *                               If set to false, the kernel environment will not be reinitialized.
      *                               This can be useful to optimize several calls to the kernel within the same context.
-     *
      * @param bool|null $formTokenEnable Force ezxFormToken to be enabled or disabled, use system settings when null
      *
      * @throws \RuntimeException
      * @throws \Exception
+     *
      * @return mixed The result of the callback
      */
     public function runCallback(\Closure $callback, $postReinitialize = true, $formTokenEnable = null)
