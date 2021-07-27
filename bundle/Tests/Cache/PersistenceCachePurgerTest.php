@@ -246,7 +246,7 @@ class PersistenceCachePurgerTest extends TestCase
         $this->cacheService
             ->expects($this->once())
             ->method('invalidateTags')
-            ->with(['type-map']);
+            ->with(['tm']);
 
         $this->cachePurger->contentType();
     }
@@ -259,7 +259,7 @@ class PersistenceCachePurgerTest extends TestCase
         $this->cacheService
             ->expects($this->once())
             ->method('invalidateTags')
-            ->with(['type-123']);
+            ->with(['t-123']);
 
         $this->cachePurger->contentType(123);
     }
@@ -282,7 +282,7 @@ class PersistenceCachePurgerTest extends TestCase
         $this->cacheService
             ->expects($this->once())
             ->method('invalidateTags')
-            ->with(['type-group-123', 'type-map']);
+            ->with(['tg-123', 'tm']);
 
         $this->cachePurger->contentTypeGroup(123);
     }
@@ -305,7 +305,7 @@ class PersistenceCachePurgerTest extends TestCase
         $this->cacheService
             ->expects($this->once())
             ->method('invalidateTags')
-            ->with(['section-123']);
+            ->with(['se-123']);
 
         $this->cachePurger->section(123);
     }
@@ -332,7 +332,7 @@ class PersistenceCachePurgerTest extends TestCase
         $this->cacheService
             ->expects($this->once())
             ->method('invalidateTags')
-            ->with(['language-123', 'language-456', 'language-789']);
+            ->with(['la-123', 'la-456', 'la-789']);
 
         $this->cachePurger->languages([$languageId1, $languageId2, $languageId3]);
     }
@@ -347,7 +347,7 @@ class PersistenceCachePurgerTest extends TestCase
         $this->cacheService
             ->expects($this->once())
             ->method('invalidateTags')
-            ->with(['language-123']);
+            ->with(['la-123']);
 
         $this->cachePurger->languages($languageId);
     }
@@ -374,7 +374,7 @@ class PersistenceCachePurgerTest extends TestCase
         $this->cacheService
             ->expects($this->once())
             ->method('invalidateTags')
-            ->with(['user-123']);
+            ->with(['u-123']);
 
         $this->cachePurger->user(123);
     }
@@ -398,12 +398,12 @@ class PersistenceCachePurgerTest extends TestCase
         $this->cacheService
             ->expects($this->once())
             ->method('deleteItems')
-            ->with(["ez-content-version-info-${contentId}-${versionNo}", "ez-content-${contentId}-version-list"]);
+            ->with(["ez-cvi-${contentId}-${versionNo}", "ez-c-${contentId}-vl"]);
 
         $this->cacheService
             ->expects($this->once())
             ->method('invalidateTags')
-            ->with(["content-${contentId}-version-list", "content-${contentId}-version-${versionNo}"]);
+            ->with(["c-${contentId}-vl", "c-${contentId}-v-${versionNo}"]);
 
         $this->cachePurger->contentVersion($contentId, $versionNo);
     }

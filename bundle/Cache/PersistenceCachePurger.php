@@ -126,9 +126,9 @@ class PersistenceCachePurger implements CacheClearerInterface
                 throw new InvalidArgumentType('$locationIds', 'int[]|null', $id);
             }
 
-            $tags[] = 'location-' . $id;
-            $tags[] = 'urlAlias-location-' . $id;
-            $tags[] = 'urlAlias-location-path-' . $id;
+            $tags[] = 'l-' . $id;
+            $tags[] = 'urlal-' . $id;
+            $tags[] = 'urlalp-' . $id;
         }
 
         // if caller did not provide affected content id's, then try to load location to get it
@@ -144,7 +144,7 @@ class PersistenceCachePurger implements CacheClearerInterface
                 throw new InvalidArgumentType('$contentIds', 'int[]|null', $id);
             }
 
-            $tags[] = 'content-' . $id;
+            $tags[] = 'c-' . $id;
         }
         $this->cache->invalidateTags($tags);
 
@@ -166,8 +166,8 @@ class PersistenceCachePurger implements CacheClearerInterface
         }
 
         // Some extra keys/tags here to make sure we cover differences between misc 7.x kernel versions
-        $this->cache->deleteItems(["ez-content-version-info-${contentId}-${versionNo}", "ez-content-${contentId}-version-list"]);
-        $this->cache->invalidateTags(["content-${contentId}-version-list", "content-{$contentId}-version-{$versionNo}"]);
+        $this->cache->deleteItems(["ez-cvi-${contentId}-${versionNo}", "ez-c-${contentId}-vl"]);
+        $this->cache->invalidateTags(["c-${contentId}-vl", "c-{$contentId}-v-{$versionNo}"]);
     }
 
     /**
@@ -187,9 +187,9 @@ class PersistenceCachePurger implements CacheClearerInterface
         }
 
         if ($id === null) {
-            $this->cache->invalidateTags(['type-map']);
+            $this->cache->invalidateTags(['tm']);
         } elseif (is_scalar($id)) {
-            $this->cache->invalidateTags(['type-' . $id]);
+            $this->cache->invalidateTags(['t-' . $id]);
         } else {
             throw new InvalidArgumentType('$id', 'int|null', $id);
         }
@@ -212,7 +212,7 @@ class PersistenceCachePurger implements CacheClearerInterface
 
         if (is_scalar($id)) {
             // @todo should also clear content type cache for items themselves in case of link/unlink changes, kernel should have a "type-all" tag for this
-            $this->cache->invalidateTags(['type-group-' . $id, 'type-map']);
+            $this->cache->invalidateTags(['tg-' . $id, 'tm']);
         } else {
             throw new InvalidArgumentType('$id', 'int|null', $id);
         }
@@ -234,7 +234,7 @@ class PersistenceCachePurger implements CacheClearerInterface
         }
 
         if (is_scalar($id)) {
-            $this->cache->invalidateTags(['section-' . $id]);
+            $this->cache->invalidateTags(['se-' . $id]);
         } else {
             throw new InvalidArgumentType('$id', 'int|null', $id);
         }
@@ -256,7 +256,7 @@ class PersistenceCachePurger implements CacheClearerInterface
         $ids = (array)$ids;
         $tags = [];
         foreach ($ids as $id) {
-            $tags[] = 'language-' . $id;
+            $tags[] = 'la-' . $id;
         }
 
         $this->cache->invalidateTags($tags);
@@ -275,7 +275,7 @@ class PersistenceCachePurger implements CacheClearerInterface
             return;
         }
 
-        $this->cache->invalidateTags(['content-' . $contentId]);
+        $this->cache->invalidateTags(['c-' . $contentId]);
     }
 
     /**
@@ -298,7 +298,7 @@ class PersistenceCachePurger implements CacheClearerInterface
             // in persistence so we ignore it for now.
             //$this->cache->clear();
         } elseif (is_scalar($id)) {
-            $this->cache->invalidateTags(['user-' . $id]);
+            $this->cache->invalidateTags(['u-' . $id]);
         } else {
             throw new InvalidArgumentType('$id', 'int|null', $id);
         }
