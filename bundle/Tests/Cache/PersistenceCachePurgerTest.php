@@ -9,6 +9,7 @@ namespace eZ\Bundle\EzPublishLegacyBundle\Tests\Cache;
 use eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger;
 use eZ\Publish\SPI\Persistence\Content\Location;
 use eZ\Publish\SPI\Persistence\Content\Location\Handler;
+use Ibexa\Core\Persistence\Cache\Tag\CacheIdentifierGeneratorInterface;
 use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
 use PHPUnit\Framework\TestCase;
 
@@ -25,6 +26,11 @@ class PersistenceCachePurgerTest extends TestCase
     private $locationHandler;
 
     /**
+     * @var \Ibexa\Core\Persistence\Cache\Tag\CacheIdentifierGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $cacheIdentifierGenerator;
+
+    /**
      * @var \eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger
      */
     private $cachePurger;
@@ -34,10 +40,12 @@ class PersistenceCachePurgerTest extends TestCase
         parent::setUp();
         $this->cacheService = $this->createMock(TagAwareAdapterInterface::class);
         $this->locationHandler = $this->createMock(Handler::class);
+        $this->cacheIdentifierGenerator = $this->createMock(CacheIdentifierGeneratorInterface::class);
 
         $this->cachePurger = new PersistenceCachePurger(
             $this->cacheService,
-            $this->locationHandler
+            $this->locationHandler,
+            $this->cacheIdentifierGenerator
         );
     }
 
@@ -162,19 +170,17 @@ class PersistenceCachePurgerTest extends TestCase
         $this->cacheService
             ->expects($this->any())
             ->method('clear')
-            ->will(
-                $this->returnValueMap(
-                    [
-                        ['content', $contentId1, null],
-                        ['content', 'info', $contentId1, null],
-                        ['content', $contentId2, null],
-                        ['content', 'info', $contentId2, null],
-                        ['content', $contentId3, null],
-                        ['content', 'info', $contentId3, null],
-                        ['urlAlias', null],
-                        ['location', null],
-                    ]
-                )
+            ->willReturnMap(
+                [
+                    ['content', $contentId1, null],
+                    ['content', 'info', $contentId1, null],
+                    ['content', $contentId2, null],
+                    ['content', 'info', $contentId2, null],
+                    ['content', $contentId3, null],
+                    ['content', 'info', $contentId3, null],
+                    ['urlAlias', null],
+                    ['location', null],
+                ]
             );
 
         $this->assertSame($locationIds, $this->cachePurger->content($locationIds));
@@ -197,16 +203,14 @@ class PersistenceCachePurgerTest extends TestCase
         $this->cacheService
             ->expects($this->any())
             ->method('clear')
-            ->will(
-                $this->returnValueMap(
-                    [
-                        ['content', $contentId, null],
-                        ['content', 'info', $contentId, null],
-                        ['content', 'info', 'remoteId', null],
-                        ['urlAlias', null],
-                        ['location', null],
-                    ]
-                )
+            ->willReturnMap(
+                [
+                    ['content', $contentId, null],
+                    ['content', 'info', $contentId, null],
+                    ['content', 'info', 'remoteId', null],
+                    ['urlAlias', null],
+                    ['location', null],
+                ]
             );
 
         $this->assertSame([$locationId], $this->cachePurger->content($locationId));
@@ -243,10 +247,19 @@ class PersistenceCachePurgerTest extends TestCase
      */
     public function testClearContentTypeAll()
     {
+        $generatorArguments = [['type_map', [], false]];
+        $tags = ['tm'];
+
+        $this->cacheIdentifierGenerator
+            ->expects($this->exactly(count($tags)))
+            ->method('generateTag')
+            ->withConsecutive(...$generatorArguments)
+            ->willReturnOnConsecutiveCalls(...$tags);
+
         $this->cacheService
             ->expects($this->once())
             ->method('invalidateTags')
-            ->with(['tm']);
+            ->with($tags);
 
         $this->cachePurger->contentType();
     }
@@ -256,12 +269,22 @@ class PersistenceCachePurgerTest extends TestCase
      */
     public function testClearContentType()
     {
+        $typeId = 123;
+        $generatorArguments = [['type', [$typeId], false]];
+        $tags = ['t-' . $typeId];
+
+        $this->cacheIdentifierGenerator
+            ->expects($this->exactly(count($tags)))
+            ->method('generateTag')
+            ->withConsecutive(...$generatorArguments)
+            ->willReturnOnConsecutiveCalls(...$tags);
+
         $this->cacheService
             ->expects($this->once())
             ->method('invalidateTags')
-            ->with(['t-123']);
+            ->with($tags);
 
-        $this->cachePurger->contentType(123);
+        $this->cachePurger->contentType($typeId);
     }
 
     /**
@@ -279,12 +302,25 @@ class PersistenceCachePurgerTest extends TestCase
      */
     public function testClearContentTypeGroup()
     {
+        $typeGroupId = 123;
+        $tags = ['tg-' . $typeGroupId, 'tm'];
+        $generatorArguments = [
+            ['type_group', [$typeGroupId], false],
+            ['type_map', [], false],
+        ];
+
+        $this->cacheIdentifierGenerator
+            ->expects($this->exactly(count($tags)))
+            ->method('generateTag')
+            ->withConsecutive(...$generatorArguments)
+            ->willReturnOnConsecutiveCalls(...$tags);
+
         $this->cacheService
             ->expects($this->once())
             ->method('invalidateTags')
-            ->with(['tg-123', 'tm']);
+            ->with($tags);
 
-        $this->cachePurger->contentTypeGroup(123);
+        $this->cachePurger->contentTypeGroup($typeGroupId);
     }
 
     /**
@@ -302,12 +338,22 @@ class PersistenceCachePurgerTest extends TestCase
      */
     public function testClearSection()
     {
+        $sectionId = 123;
+        $generatorArguments = [['section', [$sectionId], false]];
+        $tags = ['se-' . $sectionId];
+
+        $this->cacheIdentifierGenerator
+            ->expects($this->exactly(count($tags)))
+            ->method('generateTag')
+            ->withConsecutive(...$generatorArguments)
+            ->willReturnOnConsecutiveCalls(...$tags);
+
         $this->cacheService
             ->expects($this->once())
             ->method('invalidateTags')
-            ->with(['se-123']);
+            ->with($tags);
 
-        $this->cachePurger->section(123);
+        $this->cachePurger->section($sectionId);
     }
 
     /**
@@ -328,11 +374,23 @@ class PersistenceCachePurgerTest extends TestCase
         $languageId1 = 123;
         $languageId2 = 456;
         $languageId3 = 789;
+        $tags = ['la-' . $languageId1, 'la-' . $languageId2, 'la-' . $languageId3];
+        $generatorArguments = [
+            ['language', [$languageId1], false],
+            ['language', [$languageId2], false],
+            ['language', [$languageId3], false],
+        ];
+
+        $this->cacheIdentifierGenerator
+            ->expects($this->exactly(count($tags)))
+            ->method('generateTag')
+            ->withConsecutive(...$generatorArguments)
+            ->willReturnOnConsecutiveCalls(...$tags);
 
         $this->cacheService
             ->expects($this->once())
             ->method('invalidateTags')
-            ->with(['la-123', 'la-456', 'la-789']);
+            ->with($tags);
 
         $this->cachePurger->languages([$languageId1, $languageId2, $languageId3]);
     }
@@ -343,11 +401,19 @@ class PersistenceCachePurgerTest extends TestCase
     public function testClearOneLanguage()
     {
         $languageId = 123;
+        $tags = ['la-' . $languageId];
+        $generatorArguments = [['language', [$languageId], false]];
+
+        $this->cacheIdentifierGenerator
+            ->expects($this->exactly(count($tags)))
+            ->method('generateTag')
+            ->withConsecutive(...$generatorArguments)
+            ->willReturnOnConsecutiveCalls(...$tags);
 
         $this->cacheService
             ->expects($this->once())
             ->method('invalidateTags')
-            ->with(['la-123']);
+            ->with($tags);
 
         $this->cachePurger->languages($languageId);
     }
@@ -371,12 +437,22 @@ class PersistenceCachePurgerTest extends TestCase
      */
     public function testClearUser()
     {
+        $userId = 123;
+        $generatorArguments = [['user', [$userId], false]];
+        $tags = ['u-123'];
+
+        $this->cacheIdentifierGenerator
+            ->expects($this->exactly(count($tags)))
+            ->method('generateTag')
+            ->withConsecutive(...$generatorArguments)
+            ->willReturnOnConsecutiveCalls(...$tags);
+
         $this->cacheService
             ->expects($this->once())
             ->method('invalidateTags')
-            ->with(['u-123']);
+            ->with($tags);
 
-        $this->cachePurger->user(123);
+        $this->cachePurger->user($userId);
     }
 
     /**
@@ -395,15 +471,38 @@ class PersistenceCachePurgerTest extends TestCase
      */
     public function testClearVersionOfOneContent($contentId, $versionNo)
     {
+        $keysToBeDeleted = ["ibx-cvi-${contentId}-${versionNo}", "ibx-c-${contentId}-vl"];
+        $tagsToBeInvalidated = ["c-${contentId}-vl", "c-${contentId}-v-${versionNo}"];
+        $keyGeneratorArguments = [
+            ['content_version_info', [$contentId], true],
+            ['content_version_list', [$contentId], true],
+        ];
+        $tagGeneratorArguments = [
+            ['content_version_list', [$contentId], false],
+            ['content_version', [$contentId, $versionNo], false],
+        ];
+
+        $this->cacheIdentifierGenerator
+            ->expects($this->exactly(count($keysToBeDeleted)))
+            ->method('generateKey')
+            ->withConsecutive(...$keyGeneratorArguments)
+            ->willReturnOnConsecutiveCalls(...$keysToBeDeleted);
+
         $this->cacheService
             ->expects($this->once())
             ->method('deleteItems')
-            ->with(["ez-cvi-${contentId}-${versionNo}", "ez-c-${contentId}-vl"]);
+            ->with($keysToBeDeleted);
+
+        $this->cacheIdentifierGenerator
+            ->expects($this->exactly(count($tagsToBeInvalidated)))
+            ->method('generateTag')
+            ->withConsecutive(...$tagGeneratorArguments)
+            ->willReturnOnConsecutiveCalls(...$tagsToBeInvalidated);
 
         $this->cacheService
             ->expects($this->once())
             ->method('invalidateTags')
-            ->with(["c-${contentId}-vl", "c-${contentId}-v-${versionNo}"]);
+            ->with($tagsToBeInvalidated);
 
         $this->cachePurger->contentVersion($contentId, $versionNo);
     }

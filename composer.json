@@ -13,7 +13,7 @@
     "require": {
         "ezsystems/ezpublish-legacy-installer": "^2.0.4",
         "ezsystems/ezpublish-legacy": "^2019.03",
-        "ezsystems/ezpublish-kernel": "^7.5",
+        "ezsystems/ezpublish-kernel": "^7.5.21",
         "ezsystems/ezplatform-xmltext-fieldtype": "^1.8",
         "sensio/distribution-bundle": "^5.0.24",
         "twig/twig": "^1.35 || ^2.5"
