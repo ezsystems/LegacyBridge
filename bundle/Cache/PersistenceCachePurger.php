@@ -10,12 +10,27 @@ use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
 use Symfony\Component\HttpKernel\CacheClearer\CacheClearerInterface;
 use eZ\Publish\SPI\Persistence\Content\Location\Handler as LocationHandlerInterface;
 use eZ\Publish\Core\Base\Exceptions\InvalidArgumentType;
+use Ibexa\Core\Persistence\Cache\Tag\CacheIdentifierGeneratorInterface;
 
 /**
  * Class PersistenceCachePurger.
  */
 class PersistenceCachePurger implements CacheClearerInterface
 {
+    private const LOCATION_IDENTIFIER = 'location';
+    private const URL_ALIAS_LOCATION_IDENTIFIER = 'url_alias_location';
+    private const URL_ALIAS_LOCATION_PATH_IDENTIFIER = 'url_alias_location_path';
+    private const CONTENT_IDENTIFIER = 'content';
+    private const CONTENT_VERSION_INFO_IDENTIFIER = 'content_version_info';
+    private const CONTENT_VERSION_LIST_IDENTIFIER = 'content_version_list';
+    private const CONTENT_VERSION_IDENTIFIER = 'content_version';
+    private const TYPE_MAP_IDENTIFIER = 'type_map';
+    private const TYPE_IDENTIFIER = 'type';
+    private const TYPE_GROUP_IDENTIFIER = 'type_group';
+    private const SECTION_IDENTIFIER = 'section';
+    private const LANGUAGE_IDENTIFIER = 'language';
+    private const USER_IDENTIFIER = 'user';
+
     use Switchable;
 
     /**
@@ -29,6 +44,11 @@ class PersistenceCachePurger implements CacheClearerInterface
     protected $locationHandler;
 
     /**
+     * @var \Ibexa\Core\Persistence\Cache\Tag\CacheIdentifierGeneratorInterface
+     */
+    protected $cacheIdentifierGenerator;
+
+    /**
      * Avoid clearing sub elements if all cache is already cleared, avoids redundant calls to cache.
      *
      * @var bool
@@ -40,11 +60,16 @@ class PersistenceCachePurger implements CacheClearerInterface
      *
      * @param \Symfony\Component\Cache\Adapter\TagAwareAdapterInterface $cache
      * @param \eZ\Publish\SPI\Persistence\Content\Location\Handler $locationHandler (using SPI cache instance so calls are cached)
+     * @param \Ibexa\Core\Persistence\Cache\Tag\CacheIdentifierGeneratorInterface $cacheIdentifierGenerator
      */
-    public function __construct(TagAwareAdapterInterface $cache, LocationHandlerInterface $locationHandler)
-    {
+    public function __construct(
+        TagAwareAdapterInterface $cache,
+        LocationHandlerInterface $locationHandler,
+        CacheIdentifierGeneratorInterface $cacheIdentifierGenerator
+    ) {
         $this->cache = $cache;
         $this->locationHandler = $locationHandler;
+        $this->cacheIdentifierGenerator = $cacheIdentifierGenerator;
     }
 
     /**
@@ -126,9 +151,9 @@ class PersistenceCachePurger implements CacheClearerInterface
                 throw new InvalidArgumentType('$locationIds', 'int[]|null', $id);
             }
 
-            $tags[] = 'location-' . $id;
-            $tags[] = 'urlAlias-location-' . $id;
-            $tags[] = 'urlAlias-location-path-' . $id;
+            $tags[] = $this->cacheIdentifierGenerator->generateTag(self::LOCATION_IDENTIFIER, [$id]);
+            $tags[] = $this->cacheIdentifierGenerator->generateTag(self::URL_ALIAS_LOCATION_IDENTIFIER, [$id]);
+            $tags[] = $this->cacheIdentifierGenerator->generateTag(self::URL_ALIAS_LOCATION_PATH_IDENTIFIER, [$id]);
         }
 
         // if caller did not provide affected content id's, then try to load location to get it
@@ -144,7 +169,7 @@ class PersistenceCachePurger implements CacheClearerInterface
                 throw new InvalidArgumentType('$contentIds', 'int[]|null', $id);
             }
 
-            $tags[] = 'content-' . $id;
+            $tags[] = $this->cacheIdentifierGenerator->generateTag(self::CONTENT_IDENTIFIER, [$id]);
         }
         $this->cache->invalidateTags($tags);
 
@@ -166,8 +191,15 @@ class PersistenceCachePurger implements CacheClearerInterface
         }
 
         // Some extra keys/tags here to make sure we cover differences between misc 7.x kernel versions
-        $this->cache->deleteItems(["ez-content-version-info-${contentId}-${versionNo}", "ez-content-${contentId}-version-list"]);
-        $this->cache->invalidateTags(["content-${contentId}-version-list", "content-{$contentId}-version-{$versionNo}"]);
+        $this->cache->deleteItems([
+            $this->cacheIdentifierGenerator->generateKey(self::CONTENT_VERSION_INFO_IDENTIFIER, [$contentId], true),
+            $this->cacheIdentifierGenerator->generateKey(self::CONTENT_VERSION_LIST_IDENTIFIER, [$contentId], true),
+        ]);
+
+        $this->cache->invalidateTags([
+            $this->cacheIdentifierGenerator->generateTag(self::CONTENT_VERSION_LIST_IDENTIFIER, [$contentId]),
+            $this->cacheIdentifierGenerator->generateTag(self::CONTENT_VERSION_IDENTIFIER, [$contentId, $versionNo]),
+        ]);
     }
 
     /**
@@ -187,9 +219,13 @@ class PersistenceCachePurger implements CacheClearerInterface
         }
 
         if ($id === null) {
-            $this->cache->invalidateTags(['type-map']);
+            $this->cache->invalidateTags([
+                $this->cacheIdentifierGenerator->generateTag(self::TYPE_MAP_IDENTIFIER),
+            ]);
         } elseif (is_scalar($id)) {
-            $this->cache->invalidateTags(['type-' . $id]);
+            $this->cache->invalidateTags([
+                $this->cacheIdentifierGenerator->generateTag(self::TYPE_IDENTIFIER, [$id]),
+            ]);
         } else {
             throw new InvalidArgumentType('$id', 'int|null', $id);
         }
@@ -212,7 +248,10 @@ class PersistenceCachePurger implements CacheClearerInterface
 
         if (is_scalar($id)) {
             // @todo should also clear content type cache for items themselves in case of link/unlink changes, kernel should have a "type-all" tag for this
-            $this->cache->invalidateTags(['type-group-' . $id, 'type-map']);
+            $this->cache->invalidateTags([
+                $this->cacheIdentifierGenerator->generateTag(self::TYPE_GROUP_IDENTIFIER, [$id]),
+                $this->cacheIdentifierGenerator->generateTag(self::TYPE_MAP_IDENTIFIER),
+            ]);
         } else {
             throw new InvalidArgumentType('$id', 'int|null', $id);
         }
@@ -234,7 +273,9 @@ class PersistenceCachePurger implements CacheClearerInterface
         }
 
         if (is_scalar($id)) {
-            $this->cache->invalidateTags(['section-' . $id]);
+            $this->cache->invalidateTags([
+                $this->cacheIdentifierGenerator->generateTag(self::SECTION_IDENTIFIER, [$id]),
+            ]);
         } else {
             throw new InvalidArgumentType('$id', 'int|null', $id);
         }
@@ -256,7 +297,7 @@ class PersistenceCachePurger implements CacheClearerInterface
         $ids = (array)$ids;
         $tags = [];
         foreach ($ids as $id) {
-            $tags[] = 'language-' . $id;
+            $tags[] = $this->cacheIdentifierGenerator->generateTag(self::LANGUAGE_IDENTIFIER, [$id]);
         }
 
         $this->cache->invalidateTags($tags);
@@ -275,7 +316,9 @@ class PersistenceCachePurger implements CacheClearerInterface
             return;
         }
 
-        $this->cache->invalidateTags(['content-' . $contentId]);
+        $this->cache->invalidateTags([
+            $this->cacheIdentifierGenerator->generateTag(self::CONTENT_IDENTIFIER, [$contentId]),
+        ]);
     }
 
     /**
@@ -298,7 +341,9 @@ class PersistenceCachePurger implements CacheClearerInterface
             // in persistence so we ignore it for now.
             //$this->cache->clear();
         } elseif (is_scalar($id)) {
-            $this->cache->invalidateTags(['user-' . $id]);
+            $this->cache->invalidateTags([
+                $this->cacheIdentifierGenerator->generateTag(self::USER_IDENTIFIER, [$id]),
+            ]);
         } else {
             throw new InvalidArgumentType('$id', 'int|null', $id);
         }
