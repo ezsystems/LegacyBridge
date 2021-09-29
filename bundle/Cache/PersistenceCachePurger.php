@@ -103,7 +103,7 @@ class PersistenceCachePurger implements CacheClearerInterface
      *
      * Sets a internal flag 'allCleared' to avoid clearing cache several times
      */
-    protected function flushSpiCache()
+    private function flushSpiCache()
     {
         if ($this->isSwitchedOff()) {
             return;
