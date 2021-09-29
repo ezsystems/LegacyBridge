@@ -222,6 +222,8 @@ services:
     ezpublish_legacy.persistence_cache_purger:
         class: eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger
         public: false
+        calls:
+            - [setContainer, ["@service_container"]]
         arguments:
             - "@ezpublish.cache_pool"
             - "@ezpublish.spi.persistence.cache.locationHandler"

@@ -7,6 +7,7 @@
 namespace eZ\Bundle\EzPublishLegacyBundle\Cache;
 
 use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\HttpKernel\CacheClearer\CacheClearerInterface;
 use eZ\Publish\SPI\Persistence\Content\Location\Handler as LocationHandlerInterface;
 use eZ\Publish\Core\Base\Exceptions\InvalidArgumentType;
@@ -30,6 +31,8 @@ class PersistenceCachePurger implements CacheClearerInterface
     private const SECTION_IDENTIFIER = 'section';
     private const LANGUAGE_IDENTIFIER = 'language';
     private const USER_IDENTIFIER = 'user';
+
+    use ContainerAwareTrait;
 
     use Switchable;
 
@@ -73,13 +76,23 @@ class PersistenceCachePurger implements CacheClearerInterface
     }
 
     /**
-     * Clear all persistence cache.
+     * Clear all persistence cache if that is allowed by config.
      *
      * In legacy kernel used when user presses clear all cache button in admin interface.
+     */
+    public function all()
+    {
+        if ($this->container->getParameter('ezpublish_legacy.clear_all_spi_cache_from_legacy')) {
+            $this->flushSpiCache();
+        }
+    }
+
+    /**
+     * Clear all persistence cache.
      *
      * Sets a internal flag 'allCleared' to avoid clearing cache several times
      */
-    public function all()
+    protected function flushSpiCache()
     {
         if ($this->isSwitchedOff()) {
             return;
@@ -358,6 +371,8 @@ class PersistenceCachePurger implements CacheClearerInterface
      */
     public function clear($cacheDir)
     {
-        $this->all();
+        if ($this->container->getParameter('ezpublish_legacy.clear_all_spi_cache_on_symfony_clear_cache')) {
+            $this->flushSpiCache();
+        }
     }
 }
