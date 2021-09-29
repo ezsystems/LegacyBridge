@@ -7,7 +7,6 @@
 namespace eZ\Bundle\EzPublishLegacyBundle\Cache;
 
 use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\HttpKernel\CacheClearer\CacheClearerInterface;
 use eZ\Publish\SPI\Persistence\Content\Location\Handler as LocationHandlerInterface;
 use eZ\Publish\Core\Base\Exceptions\InvalidArgumentType;
@@ -31,8 +30,6 @@ class PersistenceCachePurger implements CacheClearerInterface
     private const SECTION_IDENTIFIER = 'section';
     private const LANGUAGE_IDENTIFIER = 'language';
     private const USER_IDENTIFIER = 'user';
-
-    use ContainerAwareTrait;
 
     use Switchable;
 
@@ -59,6 +56,16 @@ class PersistenceCachePurger implements CacheClearerInterface
     protected $allCleared = false;
 
     /**
+     * @var bool
+     */
+    private $clearAllSPICacheOnSymfonyClearCache;
+
+    /**
+     * @var bool
+     */
+    private $clearAllSpiCacheFromLegacy;
+
+    /**
      * Setups current handler with everything needed.
      *
      * @param \Symfony\Component\Cache\Adapter\TagAwareAdapterInterface $cache
@@ -68,11 +75,15 @@ class PersistenceCachePurger implements CacheClearerInterface
     public function __construct(
         TagAwareAdapterInterface $cache,
         LocationHandlerInterface $locationHandler,
-        CacheIdentifierGeneratorInterface $cacheIdentifierGenerator
+        CacheIdentifierGeneratorInterface $cacheIdentifierGenerator,
+        bool $clearAllSPICacheOnSymfonyClearCache = true,
+        bool $clearAllSpiCacheFromLegacy = true
     ) {
         $this->cache = $cache;
         $this->locationHandler = $locationHandler;
         $this->cacheIdentifierGenerator = $cacheIdentifierGenerator;
+        $this->clearAllSPICacheOnSymfonyClearCache = $clearAllSPICacheOnSymfonyClearCache;
+        $this->clearAllSpiCacheFromLegacy = $clearAllSpiCacheFromLegacy;
     }
 
     /**
@@ -82,7 +93,7 @@ class PersistenceCachePurger implements CacheClearerInterface
      */
     public function all()
     {
-        if ($this->container->getParameter('ezpublish_legacy.clear_all_spi_cache_from_legacy')) {
+        if ($this->clearAllSpiCacheFromLegacy) {
             $this->flushSpiCache();
         }
     }
@@ -371,7 +382,7 @@ class PersistenceCachePurger implements CacheClearerInterface
      */
     public function clear($cacheDir)
     {
-        if ($this->container->getParameter('ezpublish_legacy.clear_all_spi_cache_on_symfony_clear_cache')) {
+        if ($this->clearAllSPICacheOnSymfonyClearCache) {
             $this->flushSpiCache();
         }
     }

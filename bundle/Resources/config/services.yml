@@ -222,12 +222,12 @@ services:
     ezpublish_legacy.persistence_cache_purger:
         class: eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger
         public: false
-        calls:
-            - [setContainer, ["@service_container"]]
         arguments:
             - "@ezpublish.cache_pool"
             - "@ezpublish.spi.persistence.cache.locationHandler"
             - '@Ibexa\Core\Persistence\Cache\Tag\CacheIdentifierGeneratorInterface'
+            - '%ezpublish_legacy.clear_all_spi_cache_on_symfony_clear_cache%'
+            - '%ezpublish_legacy.clear_all_spi_cache_from_legacy%'
         tags:
             - { name: kernel.cache_clearer }
         lazy: true

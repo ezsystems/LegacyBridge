@@ -39,11 +39,17 @@ class EzPublishLegacyExtension extends Extension
         }
 
         if (isset($config['clear_all_spi_cache_on_symfony_clear_cache'])) {
-            $container->setParameter('ezpublish_legacy.clear_all_spi_cache_on_symfony_clear_cache', $config['clear_all_spi_cache_on_symfony_clear_cache']);
+            $container->setParameter(
+                'ezpublish_legacy.clear_all_spi_cache_on_symfony_clear_cache',
+                $config['clear_all_spi_cache_on_symfony_clear_cache']
+            );
         }
 
         if (isset($config['clear_all_spi_cache_from_legacy'])) {
-            $container->setParameter('ezpublish_legacy.clear_all_spi_cache_from_legacy', $config['clear_all_spi_cache_from_legacy']);
+            $container->setParameter(
+                'ezpublish_legacy.clear_all_spi_cache_from_legacy',
+                $config['clear_all_spi_cache_from_legacy']
+            );
         }
 
         // Templating
