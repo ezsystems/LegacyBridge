@@ -121,7 +121,7 @@ can find the information you need in [installation guide for eZ Platform](https:
 
 ### Clearing of cache
 
-Legacy bridge will by default also clear SPI cache ( stored in redis, memcached or disk) when content-view cache is
+Legacy bridge will by default also clear SPI cache (stored in redis, memcached or disk) when content-view cache is
 cleared in legacy. This behaviour can be disabled using the setting:
 
 ```
