@@ -63,7 +63,7 @@ class PersistenceCachePurger implements CacheClearerInterface
     /**
      * @var bool
      */
-    private $clearAllSpiCacheFromLegacy;
+    private $clearAllSPICacheFromLegacy;
 
     /**
      * Setups current handler with everything needed.
@@ -77,13 +77,13 @@ class PersistenceCachePurger implements CacheClearerInterface
         LocationHandlerInterface $locationHandler,
         CacheIdentifierGeneratorInterface $cacheIdentifierGenerator,
         bool $clearAllSPICacheOnSymfonyClearCache = true,
-        bool $clearAllSpiCacheFromLegacy = true
+        bool $clearAllSPICacheFromLegacy = true
     ) {
         $this->cache = $cache;
         $this->locationHandler = $locationHandler;
         $this->cacheIdentifierGenerator = $cacheIdentifierGenerator;
         $this->clearAllSPICacheOnSymfonyClearCache = $clearAllSPICacheOnSymfonyClearCache;
-        $this->clearAllSpiCacheFromLegacy = $clearAllSpiCacheFromLegacy;
+        $this->clearAllSPICacheFromLegacy = $clearAllSPICacheFromLegacy;
     }
 
     /**
@@ -93,8 +93,8 @@ class PersistenceCachePurger implements CacheClearerInterface
      */
     public function all()
     {
-        if ($this->clearAllSpiCacheFromLegacy) {
-            $this->flushSpiCache();
+        if ($this->clearAllSPICacheFromLegacy) {
+            $this->flushSPICache();
         }
     }
 
@@ -103,7 +103,7 @@ class PersistenceCachePurger implements CacheClearerInterface
      *
      * Sets a internal flag 'allCleared' to avoid clearing cache several times
      */
-    private function flushSpiCache()
+    private function flushSPICache()
     {
         if ($this->isSwitchedOff()) {
             return;
@@ -383,7 +383,7 @@ class PersistenceCachePurger implements CacheClearerInterface
     public function clear($cacheDir)
     {
         if ($this->clearAllSPICacheOnSymfonyClearCache) {
-            $this->flushSpiCache();
+            $this->flushSPICache();
         }
     }
 }
