@@ -243,9 +243,11 @@ class PersistenceCachePurger implements CacheClearerInterface
         }
 
         if ($id === null) {
-            $this->cache->invalidateTags([
-                $this->cacheIdentifierGenerator->generateTag(self::TYPE_MAP_IDENTIFIER),
-            ]);
+            if ($this->clearAllSPICacheFromLegacy) {
+                $this->cache->invalidateTags([
+                    $this->cacheIdentifierGenerator->generateTag(self::TYPE_MAP_IDENTIFIER),
+                ]);
+            }
         } elseif (is_scalar($id)) {
             $this->cache->invalidateTags([
                 $this->cacheIdentifierGenerator->generateTag(self::TYPE_IDENTIFIER, [$id]),
