@@ -118,3 +118,23 @@ rewrite "^/var/storage/packages/(.*)" "/var/storage/packages/$1" break;
 Last step, if you are on *nix operation system, is to make sure to run
 the appropriate command for setting correct folder permissions, you
 can find the information you need in [installation guide for eZ Platform](https://doc.ezplatform.com/en/latest/getting_started/install_ez_platform/).
+
+### Clearing of cache
+
+Legacy bridge will by default also clear SPI cache (stored in redis, memcached or disk) when content-view cache is
+cleared in legacy. This behaviour can be disabled using the setting:
+
+```
+// app/config/ezplatform.yml
+ez_publish_legacy:
+    clear_all_spi_cache_from_legacy: false
+```
+
+Legacy bridge will also alter the default behaviour of Symfony's `bin/console cache:clear` command so that SPI cache
+is cleared when it is executed. This behaviour can be disabled using the setting:
+
+```
+// app/config/ezplatform.yml
+ez_publish_legacy:
+    clear_all_spi_cache_on_symfony_clear_cache: false
+```

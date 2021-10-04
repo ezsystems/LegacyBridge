@@ -19,6 +19,8 @@ class Configuration extends SiteAccessConfiguration
         $rootNode
             ->children()
                 ->booleanNode('enabled')->defaultTrue()->end()
+                ->booleanNode('clear_all_spi_cache_on_symfony_clear_cache')->defaultTrue()->end()
+                ->booleanNode('clear_all_spi_cache_from_legacy')->defaultTrue()->end()
                 ->scalarNode('root_dir')
                     ->validate()
                         ->ifTrue(

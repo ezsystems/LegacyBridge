@@ -56,6 +56,16 @@ class PersistenceCachePurger implements CacheClearerInterface
     protected $allCleared = false;
 
     /**
+     * @var bool
+     */
+    private $clearAllSPICacheOnSymfonyClearCache;
+
+    /**
+     * @var bool
+     */
+    private $clearAllSPICacheFromLegacy;
+
+    /**
      * Setups current handler with everything needed.
      *
      * @param \Symfony\Component\Cache\Adapter\TagAwareAdapterInterface $cache
@@ -65,21 +75,35 @@ class PersistenceCachePurger implements CacheClearerInterface
     public function __construct(
         TagAwareAdapterInterface $cache,
         LocationHandlerInterface $locationHandler,
-        CacheIdentifierGeneratorInterface $cacheIdentifierGenerator
+        CacheIdentifierGeneratorInterface $cacheIdentifierGenerator,
+        bool $clearAllSPICacheOnSymfonyClearCache = true,
+        bool $clearAllSPICacheFromLegacy = true
     ) {
         $this->cache = $cache;
         $this->locationHandler = $locationHandler;
         $this->cacheIdentifierGenerator = $cacheIdentifierGenerator;
+        $this->clearAllSPICacheOnSymfonyClearCache = $clearAllSPICacheOnSymfonyClearCache;
+        $this->clearAllSPICacheFromLegacy = $clearAllSPICacheFromLegacy;
+    }
+
+    /**
+     * Clear all persistence cache if that is allowed by config.
+     *
+     * In legacy kernel used when user presses clear all cache button in admin interface.
+     */
+    public function all()
+    {
+        if ($this->clearAllSPICacheFromLegacy) {
+            $this->flushSPICache();
+        }
     }
 
     /**
      * Clear all persistence cache.
      *
-     * In legacy kernel used when user presses clear all cache button in admin interface.
-     *
      * Sets a internal flag 'allCleared' to avoid clearing cache several times
      */
-    public function all()
+    private function flushSPICache()
     {
         if ($this->isSwitchedOff()) {
             return;
@@ -219,9 +243,11 @@ class PersistenceCachePurger implements CacheClearerInterface
         }
 
         if ($id === null) {
-            $this->cache->invalidateTags([
-                $this->cacheIdentifierGenerator->generateTag(self::TYPE_MAP_IDENTIFIER),
-            ]);
+            if ($this->clearAllSPICacheFromLegacy) {
+                $this->cache->invalidateTags([
+                    $this->cacheIdentifierGenerator->generateTag(self::TYPE_MAP_IDENTIFIER),
+                ]);
+            }
         } elseif (is_scalar($id)) {
             $this->cache->invalidateTags([
                 $this->cacheIdentifierGenerator->generateTag(self::TYPE_IDENTIFIER, [$id]),
@@ -358,6 +384,8 @@ class PersistenceCachePurger implements CacheClearerInterface
      */
     public function clear($cacheDir)
     {
-        $this->all();
+        if ($this->clearAllSPICacheOnSymfonyClearCache) {
+            $this->flushSPICache();
+        }
     }
 }
