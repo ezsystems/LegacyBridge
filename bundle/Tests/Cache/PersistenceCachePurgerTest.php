@@ -9,7 +9,7 @@ namespace eZ\Bundle\EzPublishLegacyBundle\Tests\Cache;
 use eZ\Bundle\EzPublishLegacyBundle\Cache\PersistenceCachePurger;
 use eZ\Publish\SPI\Persistence\Content\Location;
 use eZ\Publish\SPI\Persistence\Content\Location\Handler;
-use Ibexa\Core\Persistence\Cache\Tag\CacheIdentifierGeneratorInterface;
+use Ibexa\Core\Persistence\Cache\Identifier\CacheIdentifierGeneratorInterface;
 use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
 use PHPUnit\Framework\TestCase;
 
@@ -26,7 +26,7 @@ class PersistenceCachePurgerTest extends TestCase
     private $locationHandler;
 
     /**
-     * @var \Ibexa\Core\Persistence\Cache\Tag\CacheIdentifierGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @var \Ibexa\Core\Persistence\Cache\Identifier\CacheIdentifierGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $cacheIdentifierGenerator;
 

@@ -10,7 +10,7 @@ use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
 use Symfony\Component\HttpKernel\CacheClearer\CacheClearerInterface;
 use eZ\Publish\SPI\Persistence\Content\Location\Handler as LocationHandlerInterface;
 use eZ\Publish\Core\Base\Exceptions\InvalidArgumentType;
-use Ibexa\Core\Persistence\Cache\Tag\CacheIdentifierGeneratorInterface;
+use Ibexa\Core\Persistence\Cache\Identifier\CacheIdentifierGeneratorInterface;
 
 /**
  * Class PersistenceCachePurger.
@@ -44,7 +44,7 @@ class PersistenceCachePurger implements CacheClearerInterface
     protected $locationHandler;
 
     /**
-     * @var \Ibexa\Core\Persistence\Cache\Tag\CacheIdentifierGeneratorInterface
+     * @var \Ibexa\Core\Persistence\Cache\Identifier\CacheIdentifierGeneratorInterface
      */
     protected $cacheIdentifierGenerator;
 
@@ -70,7 +70,7 @@ class PersistenceCachePurger implements CacheClearerInterface
      *
      * @param \Symfony\Component\Cache\Adapter\TagAwareAdapterInterface $cache
      * @param \eZ\Publish\SPI\Persistence\Content\Location\Handler $locationHandler (using SPI cache instance so calls are cached)
-     * @param \Ibexa\Core\Persistence\Cache\Tag\CacheIdentifierGeneratorInterface $cacheIdentifierGenerator
+     * @param \Ibexa\Core\Persistence\Cache\Identifier\CacheIdentifierGeneratorInterface $cacheIdentifierGenerator
      */
     public function __construct(
         TagAwareAdapterInterface $cache,
